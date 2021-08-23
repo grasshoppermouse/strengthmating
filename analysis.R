@@ -1,32 +1,103 @@
 library(survey)
+library(tidyverse)
 library(nhanesGH)
 library(visreg)
-library(ggplot2)
 library(hagenutils)
-library(tidyverse)
 library(patchwork)
 library(foreign)
 
-m <- svyglm(partnered ~ strength_centered * sex + age_centered, family = binomial, designsGH$d.design.adults)
+
+
+# partnered status models -------------------------------------------------
+
+
+m <- svyglm(partnered ~ strength_centered * sex + age_centered * sex, family = binomial, designsG$d.design.adults)
 summary(m)
 visreg(m, xvar = 'strength_centered', by = 'sex', scale = 'response', gg = T) + theme_minimal()
 
 # Males
-smooth_partnered_m <- svysmooth(strength ~ age, subset(designsGH$d.design.male, partnered == T))
-smooth_unpartnered_m <- svysmooth(strength ~ age, subset(designsGH$d.design.male, partnered == F))
+smooth_partnered_m <- svysmooth(strength ~ age, subset(designsG$d.design.male, partnered == T))
+smooth_unpartnered_m <- svysmooth(strength ~ age, subset(designsG$d.design.male, partnered == F))
 d1 <- svysmooth2df(partnered = smooth_partnered_m, unpartnered = smooth_unpartnered_m)
 ggplot(d1, aes(age, strength, colour = Smooth)) +
   geom_line() +
   theme_minimal(15)
 
 # Females
-smooth_partnered_f <- svysmooth(strength ~ age, subset(designsGH$d.design.female, partnered == T))
-smooth_unpartnered_f <- svysmooth(strength ~ age, subset(designsGH$d.design.female, partnered == F))
+smooth_partnered_f <- svysmooth(strength ~ age, subset(designsG$d.design.female, partnered == T))
+smooth_unpartnered_f <- svysmooth(strength ~ age, subset(designsG$d.design.female, partnered == F))
 d2 <- svysmooth2df(partnered = smooth_partnered_f, unpartnered = smooth_unpartnered_f)
 ggplot(d2, aes(age, strength, colour = Smooth)) +
   geom_line() +
   theme_minimal(15)
 
+
+#partnered status - anthropometrics
+
+
+
+m14 <- svyglm(partnered ~ age_centered*sex + strength_centered*sex + height_centered*sex + weight_centered + bmi_centered*sex, family=quasibinomial(), design=designsG$d.design.adults)
+summary(m14)
+
+m14.1 <- svyglm(partnered ~ age_centered*sex + strength_centered*sex + height_centered*sex + weight_centered * sex +
+                  height_centered * weight_centered, family=quasibinomial(), design=designsG$d.design.adults)
+summary(m14.1)
+
+m14.2 <- svyglm(partnered ~ strength_centered*sex + armlength + leglength + height_centered + age_centered*sex + weight_centered, family=quasibinomial(), design=designsG$d.design.adults)
+summary(m14.2)
+
+m15 <- svyglm(partnered ~ height_centered*sex + age_centered*sex, family=quasibinomial(), design=designsG$d.design.adults)
+summary(m15)
+
+#partnered status - socioeconomic
+m13 <- svyglm(partnered ~ age_centered*sex + strength_centered*sex + race, family=quasibinomial(), design=designsG$d.design.adults)
+summary(m13)
+visreg(m13, by = "race", xvar = "sex",  scale = "response", rug = FALSE, gg = TRUE) + coord_flip()
+
+visreg(m13, xvar="strength_centered", by = "sex", scale= "response", rug = TRUE, gg= TRUE)
+visreg(m13, xvar="age_centered", by = "sex", scale= "response", rug = TRUE, gg= TRUE)
+
+m16 <- svyglm(partnered ~ age_centered*sex + strength_centered*sex + edu + race, family=quasibinomial(), design=designsG$d.design.adults )
+summary(m16)
+
+#partnered status - health
+m17 <- svyglm(partnered ~ age_centered*sex + strength_centered*sex + perceived_abnormal_weight +
+                whitebloodcell_centered + hemoglobin_centered + special_equipment + chronic_disease_score + physical_disease_count + depression, family=quasibinomial(), design=designsG$d.design.adults)
+summary(m17)
+
+m18 <- svyglm(partnered ~ age_centered*sex + strength_centered*sex + perceived_abnormal_weight +
+                race + special_equipment + whitebloodcell + hemoglobin*sex + chronic_disease_score + physical_disease_count, family=quasibinomial(), design=designsG$d.design.adults)
+summary(m18)
+
+m19 <- svyglm(partnered ~ strength_centered*sex + race + hemoglobin_centered*sex + age_centered*sex + special_equipment +
+                chronic_disease_score + physical_disease_count + whitebloodcell_centered, family=quasibinomial(), design=designsG$d.design.adults)
+summary(m19, df.resid = Inf)
+
+#partnered status - hormone
+
+m20 <- svyglm(partnered ~ strength_centered*sex + age_centered*sex + log(testosterone)*sex,  family=quasibinomial(), design=designsG$d.design.adults)
+summary(m20)
+exp(coef(m20))
+
+visreg(m20, xvar = "testosterone", by = "sex", scale = "response", xtrans = log)
+
+designsG$d.design.adults <- update(designsG$d.design.adults, household_size2 = ifelse(partnered, household_size -1, household_size))
+
+designsG$d.design.adults <- update(designsG$d.design.adults, testosterone_sup = ifelse(TESTOSTERONE > 0, TRUE, FALSE))
+
+
+m20b <- svyglm(partnered ~ strength_centered*sex + age_centered*sex + log(testosterone)*sex + household_size2,  family=quasibinomial(), design=designsG$d.design.adults)
+summary(m20b)
+exp(coef(m20))
+
+m20c <- svyglm(partnered ~ strength_centered*sex + age_centered*sex + log(testosterone)*sex + testosterone_sup,  family=quasibinomial(), design=designsG$d.design.adults)
+summary(m20c)
+# visreg(m20c, xvar = "testosterone2", by = "sex", xtrans = log)
+
+# m21 <- svyglm(partnered ~ strength_centered*sex + age_centered*sex + t4free,  family=quasibinomial(), design=designsG$d.design.adults)
+# summary(m21)
+
+ggplot(d_G, aes(age, testosterone, colour=sex)) + geom_point(alpha = 0.1) + geom_smooth() + ylim(0,1000) + scale_y_log10()
 
 # Exploratory (G only) ----------------------------------------------------
 
@@ -80,37 +151,6 @@ summary(m11)
 m12 <- svyglm(whitebloodcell ~ strength_centered*sex + age_centered, family= quasipoisson(), design=designsG$d.design.adults)
 summary(m12)
 
-#partnered status - anthropometrics
-m13 <- svyglm(partnered ~ age_centered*sex + strength_centered*sex + race, family=quasibinomial(), design=designsG$d.design.adults)
-summary(m13)
-visreg(m13, xvar = "race", scale = "response", rug = FALSE, gg = TRUE) + coord_flip()
-
-
-visreg(m13, xvar="strength_centered", by = "sex", scale= "response", rug = TRUE, gg= TRUE)
-visreg(m13, xvar="age_centered", by = "sex", scale= "response", rug = TRUE, gg= TRUE)
-
-m14 <- svyglm(partnered ~ age_centered*sex + strength_centered*sex + height_centered + weight_centered + bmi_centered*sex, family=quasibinomial(), design=designsG$d.design.adults)
-summary(m14)
-
-m15 <- svyglm(partnered ~ height_centered*sex + age_centered*sex, family=quasibinomial(), design=designsG$d.design.adults)
-summary(m15)
-
-#partnered status - socioeconomic
-m16 <- svyglm(partnered ~ age_centered*sex + strength_centered*sex + edu + race, family=quasibinomial(), design=designsG$d.design.adults )
-summary(m16)
-
-#partnered status - health
-m17 <- svyglm(partnered ~ age_centered*sex + strength_centered*sex + perceived_abnormal_weight +
-                whitebloodcell + hemoglobin + special_equipment + chronic_disease_score + physical_disease_count, family=quasibinomial(), design=designsG$d.design.adults)
-summary(m17)
-
-m18 <- svyglm(partnered ~ age_centered*sex + strength_centered*sex + perceived_abnormal_weight +
-                race + special_equipment + whitebloodcell + hemoglobin*sex + chronic_disease_score + physical_disease_count, family=quasibinomial(), design=designsG$d.design.adults)
-summary(m18)
-
-m19 <- svyglm(partnered ~ strength_centered*sex + race + hemoglobin_centered*sex + age_centered*sex + special_equipment +
-                chronic_disease_score + physical_disease_count + whitebloodcell_centered, family=quasibinomial(), design=designsG$d.design.adults)
-summary(m19, df.resid = Inf)
 
 #correlation matrix
 d <-
@@ -161,7 +201,7 @@ mal_pos <- ggdotchart(x[x > .1])
 
 paq <- read.xport("../nhanesGH/data-raw/NHANES data/PAQ_G.XPT")
 names(paq)
-m <- prcomp(na.omit(paq[-c(1,21)]), scale. = TRUE)
+# m <- prcomp(na.omit(paq[-c(1,21)]), scale. = TRUE)
 
 
 
