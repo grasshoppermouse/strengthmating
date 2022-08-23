@@ -1,0 +1,78 @@
+---
+title: "Grip strength and mating success in US adults"
+author: "C. B. Smith and E. H. Hagen"
+date: "8/1/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(ggplot2)
+library(dplyr)
+library(psych)
+library(xtable)
+library(knitr)
+library(kableExtra)
+source('analysis.R')
+```
+
+## Abstract
+
+Previous research posits that the dramatic male bias in upper body strength is due to sexual selection, either from advantages conferred by greater strength in male-male contests or female preference for stronger mates. Others have proposed that strength is a cue of important mate qualities, such as health or immune function. The sexual selection hypothesis is supported by studies that have found that grip strength is associated with both mating success and reproductive success in men. Although there is some evidence that strength is associated with reproductive success in women, the relationship between female strength and mating outcomes is poorly understood.  
+
+Using data from the 2011-2012 phase of the National Health and Nutrition Examination Survey (NHANES), a large representative sample of the US (N = 3328), the current study found that grip strength was a significant positive predictor of several outcome measures of adult mating success (partnership status, lifetime number of sexual partners, and past year number of sexual partners), e.g., 3-5 more lifetime partners in those with strength 1 SD above vs. 1 SD below the mean, even controlling for numerous anthropometric, socioeconomic, hormone, health, and physical activity related confounds. However, there was either no significant sex difference in the effect of grip strength, or the effect in females was smaller than males but still positive. Hence, grip strength is positively related to mating success for females as well as males, contrary to some versions of the sexual selection hypothesis. We discuss possible explanations for these findings.
+
+
+
+#Introduction
+
+#Methods
+
+All measures were obtained from the NHANES 2011-2012 (G) and 2013-2014 (H) survey cycles (See SI for NHANES variable names).
+ 
+## Outcome Variables: mating success
+
+Mating success models included either umber of sexual partners, past year and lifetime, or partnered status. Participants self-reported the number of sexual partners from the past year and in their lifetime. We used a poisson distribution to model number of partners. All  models of number of sexual partners included partnered status as a predictor. Partnered status was a binary outcome variable assigned a value of 1 if participants reported being either married or living with a partner, and a 0 if participants reported being single, divorced, or separated. 
+
+## Outcome variables: health
+
+We also modeled white blood cell count, a measure of innate immunity. 
+
+## Predictor Variables
+
+Grip strength, an index of upper body strength and physical formidability, was measured 3 times on each hand using a dynamometer. We used combined grip strength, which was the sum of the highest reading of each hand. All regression models included sex (male/female), age, grip strength, and an age $\times$ strength interaction term, per the original paper, along with potential confounds described below [@hagen2016].
+
+## Potential confounds
+ 
+We specified four regression models in order to determine if the effect of grip strength on mating success was due to confounds with a range of anthropometric, socioeconomic, health, and hormone variables that have been associated with grip strength.
+
+The anthropometric model included our main predictor variables plus standing height, weight, BMI≥30, and an interaction term BMI≥30:sex. The socioeconomic model included education level, whether the participant was living alone, and Poverty Income Ratio (PIR). PIR was calculated as the ratio of family income to the local poverty threshold for each participant, controlling for family size (range 0-5, 0 indicates no income; 1 is income equal to the poverty threshold; values greater than 5 set to 5 to protect anonymity). (Include ethnicity? need explicit justification)
+
+The hormone model included only serum total testosterone because thyroid-stimulating hormone and free thyroxine (T4 free) were not collected in the 2013-2014 NHANES survey cycle.
+
+The health model included white blood cell count, hemoglobin, and perceived abnormal weight. We use a single item, "Special Equipment" (PFQ054) (e.g., cane, walker), to control for physical disability. We also created two variables: "Chronic disease score" (CDS) and "Physical disease difficulty" (PDD) since there is a bidirectional relationship between depression and chronic illness [@katon2011]. The CDS was a score (0-6) of chronic diseases including diabetes, cancer, stroke, arthritis, heart disease, and respiratory disease (asthma, emphysema, or chronic bronchitis). A point was added for each disease a participant indicated they had been diagnosed with, regardless of any impairment due to the disease [@jokela2019]. Physical disease difficulty was calculated from a separate NHANES question, which asked participants to list up to five health conditions which specifically caused them to have difficulties with physical activities (0-5) (we excluded counts for "depression/anxiety/emotional problem" and for "other impairment/problem" because these conceptually overlapped with our depression outcome variable).
+
+
+#Analysis
+
+#Results
+```{r summarytable}
+designsG$d.design.adults %>%
+  tbl_svysummary(by = sex, include = c(age, edu, maritalstatus, income, race, bmi, 
+                             whitebloodcell, strength, testosterone, partnered, 
+                             height, weight, special_equipment)) 
+```
+
+
+
+
+```{r anthropometric}
+
+```
+
+
+
+```{r }
+
+```
+

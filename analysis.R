@@ -6,6 +6,7 @@ library(hagenutils)
 library(patchwork)
 library(foreign)
 library(effects)
+library(gtsummary)
 #library(sjstats)
 
 #remove 10 males who report taking testosterone supplements
@@ -549,3 +550,25 @@ plot(allEffects(m))
 #only asks about hormonal birth control pills and depo-provera :|
 
 
+designsG$d.design.adults %>%
+  tbl_svysummary(include = c(age, edu, maritalstatus, income, race, bmi,
+                             whitebloodcell, strength, testosterone, partnered,
+                             height, weight, special_equipment),
+                 statistic = list(all_continuous() ~ "{mean} ({sd})",  # stats and format for continuous columns
+                                  all_categorical() ~ "{n} / {N} ({p}%)"),   # stats and format for categorical columns
+                 digits = all_continuous() ~ 2,          # rounding for continuous columns
+                 #type   = all_categorical() ~ "categorical",                 # force all categorical levels to display
+                 type = list(where(is.numeric) ~ "continuous"),
+                 label  = list(                                   # display labels for column names
+                   age  = "Age (years)",
+                   edu = "Education (highest level completed)" ,
+                   maritalstatus = "Marital Status",
+                   income = "2021 Household Income ($)",
+                   bmi = "BMI (kg/m^2)"),
+                 missing_text = "Missing"             # how missing values should display
+  )
+
+designsG$d.design.adults %>%
+  tbl_svysummary(by = sex, include = c(age, edu, maritalstatus, income, race, bmi,
+                             whitebloodcell, strength, testosterone, partnered,
+                             height, weight, special_equipment))
