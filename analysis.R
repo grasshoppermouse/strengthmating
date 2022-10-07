@@ -76,14 +76,21 @@ m14 <- svyglm(partnered ~ age_centered*sex + strength_centered*sex + height_cent
 summary(m14)
 plot(allEffects(m14))
 nobs(m14)
+nobs(mp)
+
+mp <- svyglm(partnered ~ sex + age, family = quasibinomial(), design=designsG$d.design)
+summary(mp) #no sex difference after controlling for age in adults 18-60
+
 
 # m14.1 <- svyglm(partnered ~ age_centered*sex + strength_centered*sex + height_centered*sex + weight_centered * sex +
 #                   height_centered * weight_centered, family=quasibinomial(), design=designsG$d.design.adults)
 # summary(m14.1)
 
-m14.2 <- svyglm(partnered ~ strength_centered*sex + armlength + leglength + height_centered + age_centered*sex + weight_centered, family=quasibinomial(), design=designsG$d.design.adults)
+designsG$d.design.adults <- update(designsG$d.design.adults, leglenth_prop = leglength/height)
+m14.2 <- svyglm(partnered ~ strength_centered*sex + leglenth_prop*sex + age_centered*sex + weight_centered, family=quasibinomial(), design=designsG$d.design.adults)
 summary(m14.2)
-plot(allEffects(m14.2))
+plot(allEffects(m14.2)) #marginal negative effect of armlength on partnered, no theory
+Anova(m14.2, type = 3)
 
 # m15 <- svyglm(partnered ~ height_centered*sex + age_centered*sex, family=quasibinomial(), design=designsG$d.design.adults)
 # summary(m15)
@@ -92,6 +99,7 @@ plot(allEffects(m14.2))
 m13 <- svyglm(partnered ~ age_centered*sex + strength_centered*sex + race, family=quasibinomial(), design=designsG$d.design.adults)
 summary(m13)
 nobs(m13)
+
 
 # visreg(m13, by = "race", xvar = "sex",  scale = "response", rug = FALSE, gg = TRUE) + coord_flip()
 #
@@ -173,11 +181,12 @@ plot(emmeans(m, specs = "strength_centered", by = "sex", type = "response"))
 # visreg(m)
 
 # lifetime partners (anthropometric model)
-manth1 <- svyglm(sex_partners ~ age_centered*sex + strength_centered*sex + height_centered*sex + weight_centered + bmi_centered*sex + partnered, family=quasipoisson(), design=designsG$d.design.adults)
+manth1 <- svyglm(sex_partners ~ age_centered*sex + strength_centered*sex + height_centered*sex + weight_centered*sex + partnered, family=quasipoisson(), design=designsG$d.design.adults)
 summary(manth1)
 # visreg(manth1)
 plot(allEffects(manth1))
 
+plot(svysmooth(weight~age, designsG$d.design.adult.male))
 
 # lifetime partners (socioeconomic model)
 msoc1 <- svyglm(sex_partners ~ age_centered*sex + strength_centered*sex + edu + race + partnered, family=quasipoisson(), design=designsG$d.design.adults )
@@ -205,6 +214,25 @@ summary(mpy, df.resid = Inf)
 # past year partners (anthropometric model)
 manth2 <- svyglm(sex_partners_year ~ age_centered*sex + strength_centered*sex + height_centered*sex + weight_centered + bmi_centered*sex + partnered*strength_centered, family=quasipoisson(), design=designsG$d.design.adults)
 summary(manth2, df.resid = Inf)
+
+manth2.1 <- svyglm(sex_partners_year ~ poly(age_centered, 2) + strength_centered*sex + weight_centered*sex + partnered*strength_centered*sex, family=quasipoisson(), design=designsG$d.design.adults)
+summary(manth2.1)
+plot(allEffects(manth2.1))
+Anova(manth2.1, type = 3)
+
+plot(svysmooth(strength~age, designsG$d.design.adult.female)) #inverted U relationship for both males and females
+#bimodalstrengthXsex partner svysmooth relationship, both males and females
+
+m <- svyglm(sex_partners ~ poly(strength_centered, 3)*sex + poly(age_centered, 2)*sex, family = quasipoisson(), design=designsG$d.design.adults)
+
+
+#age not linearly related to sex partners, nor is strength
+plot(svysmooth(sex_partners~testosterone, bandwidth = 40, designsG$d.design.adult.male))
+#age effect v cohort effect v period effect
+
+svyhist(~log10(testosterone), designsG$d.design.adult.male)
+
+ggplot(d_G, aes(age, sex_partners, color = sex)) + geom_point() + geom_smooth() + scale_y_log10()
 
 # past year partners (socioeconomic model)
 msoc2 <- svyglm(sex_partners_year ~ age_centered*sex + strength_centered*sex + edu + race + partnered*strength_centered, family=quasipoisson(), design=designsG$d.design.adults )
