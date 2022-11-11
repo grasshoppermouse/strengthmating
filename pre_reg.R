@@ -58,7 +58,7 @@ plot(allEffects(m2_totalpartners_mod))
 
 ggplot(d_G, aes(age_first_sex, sex_partners)) + geom_count() + scale_y_log10() +facet_grid(I(cut(age, 5))~sex) +geom_smooth()
 
-m2 <- svyglm(
+m2_vaginal_sex_partners <- svyglm(
   vaginal_sex_partners ~
     age_centered * sex +
     sex * strength_centered +
@@ -102,7 +102,7 @@ ggplot(d_G, aes(sex_partners, vaginal_sex_partners)) + geom_count() + geom_ablin
 
 ggplot(d_G, aes(sex_partners, sex_partners_year)) + geom_count() + geom_abline(slope = 1) + facet_wrap(~sex) + scale_x_log10() + scale_y_log10()
 
-m <- svyglm(
+m_vaginal_pastyear <- svyglm(
   vaginal_sex_partners_year ~
     age_centered +
     sex * strength_centered +
@@ -148,6 +148,8 @@ plot(allEffects(m2_agefirstsex_mod))
 
 # bone mineral density not collected in G, collected in H in altered sample
 
+# not including in rep because we do not have ffm
+
 adults = d_G$age>=18 & d_G$age<=60
 
 d.design.dietary <-
@@ -159,21 +161,119 @@ d.design.dietary <-
     data = d_G
   )
 
-d.design.adults <-
+d.design.dietary.adults <-
   subset(
-    d.design,
+    d.design.dietary,
     adults
   )
 
 m <- svyglm(
-  avgcalories ~
-    age_centered +
-    sex * strength_centered +
-    partnered +
-    bmi_centered +
-    edu +
-    tot_MET,
-  family = quasipoisson(),
+  log(avgcalories) ~
+    age +
+    sex * tot_MET +
+    strength +
+    weight +
+    height,
+  family = gaussian(),
+  design = d.design.dietary.adults
+)
+summary(m)
+plot(allEffects(m))
+
+x <- c(na.omit(d_G$avgcalories))
+
+m <- svyglm(
+  log(avgcalories) ~
+    age +
+    #sex +
+    total_work_MET *sex +
+    total_rec_MET *sex +
+    wob_MET * sex +
+    strength +
+    weight ,
+  family = gaussian(),
+  design = d.design.dietary.adults
+)
+summary(m)
+plot(allEffects(m))
+
+x <- c(na.omit(d_G$whitebloodcell))
+
+descdist(x, discrete = T)
+
+
+# wbcc --------------------------------------------------------------------
+
+
+m_wbcc_exact <- svyglm(
+  log(whitebloodcell) ~
+    age +
+    strength * sex +
+    bmi,
+  family = gaussian(),
   design = designsG$d.design.adults
 )
+summary(m_wbcc_exact)
+
+
+
+
+m <- svyglm(
+  log(lymphocytes) ~
+    age +
+    strength +
+    sex +
+    bmi,
+  family = gaussian(),
+  design = designsG$d.design.adults
+)
+summary(m)
+
+
+m <- svyglm(
+  log(1+monocytes) ~
+    age +
+    strength +
+    sex +
+    bmi,
+  family = gaussian(),
+  design = designsG$d.design.adults
+)
+summary(m)
+
+
+m <- svyglm(
+  log(neutrophils) ~
+    age +
+    strength +
+    sex +
+    bmi,
+  family = gaussian(),
+  design = designsG$d.design.adults
+)
+summary(m)
+
+m <- svyglm(
+  log(1+eosinophils) ~
+    age +
+    strength +
+    sex +
+    bmi,
+  family = gaussian(),
+  design = designsG$d.design.adults
+)
+summary(m)
+
+
+m <- svyglm(
+  log(1+basophils) ~
+    age +
+    strength +
+    sex +
+    bmi,
+  family = gaussian(),
+  design = designsG$d.design.adults
+)
+summary(m)
+
 
