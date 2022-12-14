@@ -1,7 +1,7 @@
 ---
-title: "Grip strength and mating success in US adults"
+title: "Grip strength, mating success, and immune function in US adults: a registered report "
 author: "C. B. Smith and E. H. Hagen"
-date: "8/1/2022"
+date: "12/14/2022"
 output: html_document
 ---
 
@@ -13,71 +13,460 @@ library(psych)
 library(xtable)
 library(knitr)
 library(kableExtra)
-source('analysis.R')
+source('pre_reg.R')
 ```
 EHB Research Report
 
-## Abstract
+##Abstract
 
-Previous research posits that the dramatic male bias in upper body strength is due to sexual selection, either from advantages conferred by greater strength in male-male contests or female preference for stronger mates. Others have proposed that strength is a cue of important mate qualities, such as health or immune function. The sexual selection hypothesis is supported by studies that have found that grip strength is associated with both mating success and reproductive success in men. Although there is some evidence that strength is associated with reproductive success in women, the relationship between female strength and mating outcomes is poorly understood.  
+Evidence suggests that the mating benefits of muscle mass in human males trade off with costs of increased energy intake and decreased measures of native immunity, likely due to an evolutionary history of sexual selection. It is unknown if females experience a similar tradeoff. Using data from the 2011-2012 phase of the National Health and Nutrition Examination Survey, a large representative sample of the US, we will test whether grip strength, a proxy for upper body strength, is a positive predictor of self-reported outcome measures of adult mating success (lifetime number of sexual partners, past year number of sexual partners, and age at first intercourse) in both males and females, and negatively related to a measure of native immune function, white blood cell count, controlling for numerous anthropometric, socioeconomic, hormone, health, and physical activity related confounds. These results replicate an earlier study of US males. However, there was either no significant sex difference in the effect of grip strength, or the effect in females was smaller than males but still positive, evidence that a similar trade off in the costs and benefits of muscle exists for women.
 
-Using data from the 2011-2012 phase of the National Health and Nutrition Examination Survey (NHANES), a large representative sample of the US (N = 3328), the current study found that grip strength was a significant positive predictor of several outcome measures of adult mating success (partnership status, lifetime number of sexual partners, and past year number of sexual partners), e.g., 3-5 more lifetime partners in those with strength 1 SD above vs. 1 SD below the mean, even controlling for numerous anthropometric, socioeconomic, hormone, health, and physical activity related confounds. However, there was either no significant sex difference in the effect of grip strength, or the effect in females was smaller than males but still positive. Hence, grip strength is positively related to mating success for females as well as males, contrary to some versions of the sexual selection hypothesis. We discuss possible explanations for these findings.
+#1.	Introduction
+a.	Literature review
+
+1.1	Sexual dimorphism in modern humans: height, weight, limb length, upper body strength, lower body strength. Relative to dimorphism in australopiths and early homo; Relative to: extant non-human primates
+
+Sexual dimorphism refers to sex differences in morphological and behavioral traits, excluding reproductive organs (Plavcan, 2001). There is a modest 7-8% stature dimorphism in humans (Gray & Wolf, 1980; Gaulin & Boster, 1985) and a difference of about 15–20% in body mass (Mayhew & Salm, 1990). This is partly due to women’s copious storage of fat, unique among primates. While humans are only moderately dimorphic in terms of overall body mass, this is not the case of allocation of fat and muscle, which are highly dimorphic (Puts, 2010). Human males have 40% more fat free mass and 60% more total lean muscle mass. On average, men have 61% more overall muscle mass and 78% more muscle mass in the upper arms. This concentrated muscle dimorphism in the arms and back translates to 90% greater upper body strength in men than women (Lassek & Gaulin, 2009). Sexual size dimorphism in humans begins in utero where male embryos measure larger than female. Newborn boys are more likely to be larger for gestational age than female newborns, while female newborns exhibit higher average skinfold difference and higher relative fat mass. However, no sex typical differences in stature are observed during early childhood and the prepubertal period. Other traits that are dimorphic in humans include digit ratio, voice pitch, facial features, and canine length. 
+
+Whether modern human sexual size dimorphism is inherited or derived remains debated (Plavcan, 2012). Changes in body size and stature occurred over the course of human evolution, particularly the early homo species, characterized by taller stature, human-like limb proportions, and larger brains than the earlier australopithecines. Likely reflecting a shift from the plant-based diet of the australopiths to the scavenging strategy of early homo (Gallagher, 2013). Previous research posits that the dramatic male bias in upper body strength is due to sexual selection, either from advantages conferred by greater strength in male-male contests or female preference for stronger mates. Others have proposed that strength is a cue of important mate qualities, such as health or immune function. The sexual selection hypothesis is supported by studies that have found that grip strength is associated with both mating success and reproductive success in men. Although there is some evidence that strength is associated with reproductive success in women, the relationship between female strength and mating outcomes is poorly understood. 
+
+
+##1.2	Sexual dimorphism hypotheses
+
+1.2.1 Sexual selection 
+
+Alternatively, masculine traits could arise through male-male competition if formidable men were more successful at attaining resources and mates, which could arise either directly through physical contests or indirectly. It also could be the case that female choice still plays a role if women preferentially mate with more formidable men. 
+
+Sexual dimorphism in formidability is taken as evidence of sexual selection, as larger size or strength, typically in males, indicates competition for access to mates. 
+
+Sexual size dimorphism also has implications for male reproductive success when it is skewed by the number of females a male can inseminate and male-male competition and mate guarding increase RS, as well as social behavior including degree of polygyny and competition in male dominance hierarchies. 
+
+
+Furthermore, contests override other mechanisms of sexual selection, because when males can exclude other males from mating opportunities mate choice and sperm competition become irrelevant (Puts, 2010). 
+
+In extant species, sexual dimorphism in body weight and canine size are strongly associated with degree of intrasexual competition, and the same relationship is used to infer about the sexual behavior of extinct australopithecines (Plavcan & van Shaik, 1997). 
+Lidborg et al (2022) found that voice pitch, height and testosterone levels were associated with mating success in low fertility populations, but only muscularity was associated with actual reproductive success in high fertility populations. 
+
+Male anthropoid primates compete for access to mates and this competition results in reproductive skew, and it is presumed that formidability in body and canine size increase the chance of success in such competitions (Plavcan, 2012). In nonhuman primates, dimorphism in canine size is one example. Large canines are hypothesized to function as weapons, and although males and females may compete for different things (mates, resources) selection will still drive canine size as long as it relates to winning and losing such competitions. Because dimorphism is typically measured as a ratio of male to female size, it is equally important to consider female variation as male since that ratio will vary as a function of either. Female primates are sometimes involved in aggressive contests, which, following the logic applied to male contests, indicates that canines might be weapons that are useful in competition, as such factors that influence female canine size is as important as male. There is a high degree of variation in canine size of female primates. 
+
+Evidence that muscularity and strength are related to formidability: 
+
+Several studies have found that whereas females are more likely to experience anger, males are more likely to express anger (Campbell& Muncer, 2008; Barrett et al., 2013) and that there appears to be a cognitive mechanism for the assessment of others’ strength based on their bodies. Sell et al., (2009) found that perceived fighting ability was not due to variation in size, but variation in perceived upper body strength, such that men’s actual upper body strength predicted both their perceived strength and fighting ability while controlling for height, weight, and age. Although raters can estimate women’s strength from the same cues they do men’s, they are much less accurate.
+
+1.2.1.1 Intrasexual competition in women
+
+Because of the costs and constraints of anisogamy, internal gestation, and lactation women bear more of the costs of reproduction than men. This also means that women’s reproductive success is not constrained by number of mates, but typically by resource access. Therefore, sexual selection for contests is not expected to have shaped traits in women. Human males, however, invest extensively in offspring compared to other primates, forming a different basis for female mate competition. Furthermore, women may face a tradeoff in selecting mates based on their paternal investment or the health or formidability benefits of traits like muscularity since there is some evidence that more masculine men reduce investment in partners and offspring. 
+
+Limitations on energetic throughput (ie the amount of energy required to sustain more muscle is not possible during key life history events including gestation and lactation, but also baby carrying) evolution of homo, food sharing, investment in reproduction. 
+
+
+1.2.2 The immunocompetence handicap hypothesis 
+
+The immunocompetence handicap hypothesis states that secondary sexual features which are produced through testosterone, like strength, could be costly signals of good genetic quality and immunocompetence because only high-quality males can pay the immunosuppressive costs of testosterone (Folstad & Karter, 1992), although evidence that testosterone is actually immunosuppressive is mixed (Nowak et al., 2018). Under this hypothesis masculine traits arise through female choice if females preferentially choose to mate with males displaying these traits indicating heritable phenotypic quality, therefore passing those traits to their offspring. The relationship between testosterone levels in adolescence is only weakly related to testosterone levels in adulthood (van Bokhoven et al., 2006), and masculine traits are not consistently associated with testosterone (Peters et al., 2008). 
+
+
+1.3 Relationship between stature, strength, and reproductive/mating success; Measuring mating success v reproductive success; Link to strength and work effort, importance for child-rearing and reproductive success. 
+
+Dufour and Sauther (2002) argue that both human and nonhuman primates increase energy intake, rely on body tissue stores, reduce physical active and in some cases increase metabolic efficiency to meet the costs of lactation. Likewise, strength has been critical for childrearing in the ancestral past, linking strength and reproductive success in women. 
+
+Sexual dimorphism in stature and body composition is also influence by a number of social factors such as social status, disease burden, workload, and nutritional factors–many of which are associated with gender roles, such as division of labor and subsequent workload and food distribution. Sexual size dimorphism in humans is physiologically based in sex specific differences in biological factors including genes and hormones, the result of natural selection, but also in environmental factors that more closely track social status and gender roles, such as hormone secretion and nutrition (Kirchengast, 2014). 
+
+Previous research has shown that greater muscle mass in males predicts numbers of total and past-year self-reported sex partners, but that it also involves costs such as increased daily energy intake and decreased immune function (Lassek & Gaulin, 2009). We plan to expand these analyses to include women, and using a different proxy for muscle mass, grip strength.
+
+What role do a history of mild polygyny, inter-male competition, but other contributing factors such as high levels of egalitarianism, phylogenetic inertia, and sex-biased parental investment play in modern levels of dimorphism?   
+
+
+##1.3	Experimental aims and hypotheses
+
+1.	Is strength positively associated with reproductive success in women as well as men? 
+2.	Why is strength positively associated with reproductive success in men and women?  
+3.	Under what conditions would we still expect sexual dimorphism in strength even when it is positively associated with reproductive success for both males and females? 
 
 
 
-#Introduction
+Based on pilot data, we predict that grip strength will be positively associated with mating success and negatively associated with white blood cell count, in women as well as men, although the coefficient size might be smaller. 
 
-#Methods
 
-All measures were obtained from the NHANES 2011-2012 (G) and 2013-2014 (H) survey cycles (See SI for NHANES variable names).
+#2	Method
+3	Participants
+NHANES uses a complex, multi-stage sampling strategy in order to collect data representative of the civilian, non-institutionalized U.S. population. NHANES combines interview, examination, and laboratory data to assess health status and identify health risks for adults and children in the United States. Data collection occurs in new cycles every two years. Participants are US adults between the ages of 18 and 65, the years when grip strength is the most stable. For each model, participants will be included if they have complete data for each predictor variable. 
+
+This study is a secondary registration of publicly available data collected for the Centers for Disease Control National Health and Nutrition Examination Survey (NHANES). We developed models through exploratory analyses of one dataset to be tested in a holdout dataset. 
+Our key predictor variable for our models is combined grip strength, which was measured in NHANES cycles G (2011-2012) and H (2013-2014).  Our hypotheses were developed through exploratory analysis using 2011-2012 data series, we will use the 2013-2014 data for confirmatory analyses.
+
+4	Procedures
+
+Lassek and Gaulin (2009) utilized stepwise regression to automatically eliminate candidate predictors from their models. Since stepwise regression has since been found to overfit data and therefore fail to replicate in future samples, we use generalized linear models here. We defined our models using the models reported by Lassek and Gaulin using the predictors that were not eliminated by the step wise regression.  
+
+4.1 Measures
+
+Predictor variable: 
+Grip strength
+
+Lassek and Gaulin operationalized formidability through fat-free mass and limb muscle volume. We operationalized formidability as grip strength, which was measured three times on each hand using a dynamometer. We used combined grip strength which was the sum of the highest reading of each hand. All models included sex (male/female) and age in years. 
+
+Control variables: 
+We controlled for potential confounds where possible. 
+
+Body mass index (BMI), calculated as kg/m^2
+Partnered status: Participants were coded as partnered if they reported being married or living with a partner, and unpartnered if they reported being widowed, divorced, separated, or never married. 
+Education 
+Current salary Measures of wealth available in NHANES are collected at the household level, and as such do not accurately reflect wealth or poverty at the individual level. As a measure of wealth, we used occupation codes collected for each participant by NHANES and imputed the median salary calculated for that occupation category by the 
+MET
+
+Outcome variables: 
+Mating success
+Total number of partners in lifetime (In your lifetime, with how many men/women have you had any kind of sex?)
+Total number of sexual partners in past year (In the past 12 months, with how many women have you had any kind of sex?)
+Age at first sexual intercourse (How old were you when you had sex for the first time?)
+
+We used generalized linear models using the survey package to incorporate survey weights. For models of lifetime and past year numbers of partners we modeled the outcomes using a poisson distribution, since these variables are count data. Models of age at first sexual intercourse utilized a normal distribution. 
+
+In keeping with the outcome variables utilized in the original paper, we used number of partners for any kind of sex above. Since, however, NHANES also collects more specific data on sexual behavior we also tested Models 1 and 2 using lifetime and past year numbers of vaginal sex partners respectively, since heterosexual vaginal intercourse should be more directly related to reproductive success than other kinds of sex. In these questions participants were asked “In your lifetime, with how many men/women have you had vaginal sex?” and “In the past 12 months, with how many men/women have you had vaginal sex?” 
  
-## Outcome Variables: mating success
+Total number of vaginal sex partners lifetime 
+Total number of vaginal sex partners past year
 
-Mating success models included either umber of sexual partners, past year and lifetime, or partnered status. Participants self-reported the number of sexual partners from the past year and in their lifetime. We used a poisson distribution to model number of partners. All  models of number of sexual partners included partnered status as a predictor. Partnered status was a binary outcome variable assigned a value of 1 if participants reported being either married or living with a partner, and a 0 if participants reported being single, divorced, or separated. 
+Because of the way these questions are framed, (e.g. female participants were asked about their male partners) these models predict heterosexual behavior, however it is not necessarily the case that all of the participants included in these models identified as heterosexual. 
+	
+The sexual behavior questionnaire was self-administered on a computer in a private room at the examination center, using the Audio Computer Assisted Self Interview system, which allows participants to hear questions through headphones as well as read them on screen. Only respondents who could self-report were asked these questions. 
 
-## Outcome variables: health
+In industrialized populations like the U.S. widespread access to contraceptives unlinks reproductive success from sexual behavior. Measures of mating success, including number of sexual partners and age at first sexual intercourse, are used as proxies as they are assumed to have been strongly correlated with reproductive success under ancestral conditions (Pérusse, 1993). 
 
-We also modeled white blood cell count, a measure of innate immunity. 
+Native immunity
+White blood cell count (1000 cells/ µL) 
 
-## Predictor Variables
+Missing variables 
+We do not have data on bone mineral density
 
-Grip strength, an index of upper body strength and physical formidability, was measured 3 times on each hand using a dynamometer. We used combined grip strength, which was the sum of the highest reading of each hand. All regression models included sex (male/female), age, grip strength, and an age $\times$ strength interaction term, per the original paper, along with potential confounds described below [@hagen2016].
+We did not include a model of daily energy intake as reported by Lassek and Gaulin, because the gold-standard research utilizes fat-free mass as a predictor, which the original authors use. Grip strength is therefore unlikely to provide novel insight into explaining daily energy intake. 	
 
-## Potential confounds
- 
-We specified four regression models in order to determine if the effect of grip strength on mating success was due to confounds with a range of anthropometric, socioeconomic, health, and hormone variables that have been associated with grip strength.
+Lassek and Gaulin (2009) utilized stepwise regression to automatically eliminate candidate predictors from their models. Since stepwise regression has since been found to overfit data and therefore fail to replicate in future samples, we use generalized linear models here. We defined our models using the models reported by Lassek and Gaulin using the predictors that were not eliminated by the step wise regression.  
+4.1	Pilot study
 
-The anthropometric model included our main predictor variables plus standing height, weight, BMI≥30, and an interaction term BMI≥30:sex. The socioeconomic model included education level, whether the participant was living alone, and Poverty Income Ratio (PIR). PIR was calculated as the ratio of family income to the local poverty threshold for each participant, controlling for family size (range 0-5, 0 indicates no income; 1 is income equal to the poverty threshold; values greater than 5 set to 5 to protect anonymity). (Include ethnicity? need explicit justification)
+#4.1.1	Results 
 
-The hormone model included only serum total testosterone because thyroid-stimulating hormone and free thyroxine (T4 free) were not collected in the 2013-2014 NHANES survey cycle.
+Descriptive statistics 
 
-The health model included white blood cell count, hemoglobin, and perceived abnormal weight. We use a single item, "Special Equipment" (PFQ054) (e.g., cane, walker), to control for physical disability. We also created two variables: "Chronic disease score" (CDS) and "Physical disease difficulty" (PDD) since there is a bidirectional relationship between depression and chronic illness [@katon2011]. The CDS was a score (0-6) of chronic diseases including diabetes, cancer, stroke, arthritis, heart disease, and respiratory disease (asthma, emphysema, or chronic bronchitis). A point was added for each disease a participant indicated they had been diagnosed with, regardless of any impairment due to the disease [@jokela2019]. Physical disease difficulty was calculated from a separate NHANES question, which asked participants to list up to five health conditions which specifically caused them to have difficulties with physical activities (0-5) (we excluded counts for "depression/anxiety/emotional problem" and for "other impairment/problem" because these conceptually overlapped with our depression outcome variable).
+Mating benefits model 1: Lifetime number of sexual partners
+Mating benefits model 2: Past year number of sexual partners 
+Mating benefits model 3: Age at first sexual intercourse
+Immune costs model 
+
+Mating benefits model 1: Lifetime number of sexual partners
+Using exploratory data, we added additional predictors to the model of lifetime sexual partners. We found that when age at first sexual intercourse was added as a predictor, strength was no longer a significant predictor. 
+Mating benefits model 2: Past year number of sexual partners 
+
+Mating benefits model 3: Age at first sexual intercourse
+Immune costs model 
 
 
-#Analysis
-
-#Results
 ```{r summarytable}
-designsG$d.design.adults %>%
-  tbl_svysummary(by = sex, include = c(age, edu, maritalstatus, income, race, bmi, 
-                             whitebloodcell, strength, testosterone, partnered, 
-                             height, weight, special_equipment)) 
+d_G[d_G$age>=18 & d_G$age<=60,]  %>% select("sex", "age", "race", "strength", "bmi", "partnered", "edu", "height", "weight", "whitebloodcell", "testosterone") %>%
+  tbl_summary(by = sex,
+              statistic = list(all_continuous() ~ "{mean} ({sd})",
+                               all_categorical() ~ "{n} / {N} ({p}%)"),
+              digits = all_continuous() ~ 2,
+        #      type = list(where(is.numeric) ~ "continuous"),
+             # type = list(partnered ~ "categorical"),
+              type = all_dichotomous() ~ "categorical",
+              label  = list(
+                age = "Age (Years)",
+                race = "Race and Ethnicity",
+                strength = "Combined Grip Strength",
+                bmi = "BMI (kg/m^2)",
+                partnered = "Partnered Status",
+                edu = "Education", 
+                height = "Height (cm)", 
+                weight = "Weight (kg)", 
+                whitebloodcell = "WBCC (1000 cells/µL)", 
+                testosterone = "Testosterone (ng/dL)",
+                age_first_sex = "Age at first sex (Years)", 
+                sex_partners = "Lifetime number of sexual partners", 
+                sex_partners_year = "Past year number of sex partners"), 
+              missing_text = "Missing"
+  ) %>% add_p() %>%
+  add_overall() %>%
+  add_n() %>%
+  modify_header(label ~ "**Variable**") %>%
+  modify_spanning_header(c("stat_1", "stat_2") ~ "**Sex**") %>% 
+    modify_caption("**Table 1. Participant Characteristics**")
+
+
+
+# designsG$d.design.adults %>%
+#   tbl_svysummary(by = sex, include = c(age, edu, maritalstatus, income, race, bmi, 
+#                              whitebloodcell, strength, testosterone, partnered, 
+#                              height, weight, special_equipment)) 
 ```
 
 
 
 
-```{r anthropometric}
+```{r table2_exact}
+
+mm1 <- tbl_regression(mm1_exact, 
+                      label = list(
+                        age_centered = "Age",
+                        sex = "Sex",
+                        strength_centered = "Grip strength",
+                        partnered = "Currently partnered",
+                        bmi_centered = "BMI"
+                      )) %>%
+  add_significance_stars(
+    hide_se = TRUE,
+    pattern = "{estimate}{stars}<br>({std.error})"
+  ) %>%
+  modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+  modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
 
 
+mm2 <- tbl_regression(mm2_exact, 
+                      label = list(
+                        sex = "Sex",
+                        strength_centered = "Grip strength",
+                        partnered = "Currently partnered",
+                        bmi_centered = "BMI"
+                      )) %>%
+  add_significance_stars(
+    hide_se = TRUE,
+    pattern = "{estimate}{stars}<br>({std.error})"
+  ) %>%
+  modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+  modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
 
+mm3 <- tbl_regression(mm3_exact, 
+                 label = list(
+    age_centered = "Age",
+    sex = "Sex",
+    strength_centered = "Grip strength",
+    partnered = " Currently partnered",
+    edu = "Education",
+    total_work_MET = "Occupational exertion"
+  )) %>%
+  add_significance_stars(
+    hide_se = TRUE,
+    pattern = "{estimate}{stars}<br>({std.error})"
+  ) %>%
+  modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+  modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
 
+  tbl_merge(
+    tbls = list(mm1, mm2, mm3),
+     tab_spanner = c("Lifetime number of sexual partners",
+                     "Past year number of sexual partners",
+                     "Age at first sexual intercourse")) %>% 
+  as_gt() %>%
+  gt::tab_header(title = "Table 2. Exact Models of Mating Success",
+                 subtitle = "Standardized regression coefficents from generalized
+                 linear models for three indices of mating success for men and women ages
+                 18-59. Models derived from Lassek and Gaulin 2009")
 
 ```
 
 
 
-```{r }
+```{r table2_mod}
+
+mm1_m <- tbl_regression(mm1_mod, 
+                        label = list(
+                          age_centered = "Age",
+                          sex = "Sex",
+                          strength_centered = "Grip strength",
+                          partnered = "Partnered",
+                          median_salary_current = "Median Salary",
+                          age_first_sex = "Age at first sex"
+                        ))  %>%
+  add_significance_stars(
+    hide_se = TRUE,
+    pattern = "{estimate}{stars}<br>({std.error})"
+  ) %>%
+  modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+  modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+  
+mm2_m <- tbl_regression(mm2_mod, 
+                        label = list(
+                          sex = "Sex",
+                          strength_centered = "Grip strength",
+                          partnered = "Partnered",
+                          bmi_centered = "BMI"
+                        )) %>%
+  add_significance_stars(
+    hide_se = TRUE,
+    pattern = "{estimate}{stars}<br>({std.error})"
+  ) %>%
+  modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+  modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+
+
+    
+mm3_m <- tbl_regression(mm3_mod, 
+                        label = list(
+                          age_centered = "Age",
+                          edu = "Education",
+                          total_work_MET = "Occupational exertion",
+                          sex = "Sex",
+                          strength_centered = "Grip strength"
+                        )) %>%
+  add_significance_stars(
+    hide_se = TRUE,
+    pattern = "{estimate}{stars}<br>({std.error})"
+  ) %>%
+  modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+  modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+
+
+  tbl_merge(
+    tbls = list(mm1_m, mm2_m, mm3_m),
+    tab_spanner = c("Lifetime number of sexual partners",
+                    "Past year number of sexual partners",
+                    "Age at first sexual intercourse")) %>% 
+   as_gt() %>%
+  gt::tab_header(title = "Table 3. Modified Models of Mating Success",
+                 subtitle = "Standardized regression coefficents from generalized
+                 linear models for three indicies of mating success. Models derived
+                 from exploratory data")
 
 ```
+
+
+```{r table2_vaginalsex}
+
+mm1_v <- tbl_regression(m1_vaginal_sex_partners, 
+                        label = list(
+                          age_centered = "Age",
+                          edu = "Education",
+                          sex = "Sex",
+                          strength_centered = "Grip strength"
+                        )) %>%
+  add_significance_stars(
+    hide_se = TRUE,
+    pattern = "{estimate}{stars}<br>({std.error})"
+  ) %>%
+  modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+  modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+  
+mm2_v <- tbl_regression(m2_vaginal_pastyear, 
+                        label = list(
+                          age_centered = "Age",
+                          edu = "Education",
+                          sex = "Sex",
+                          strength_centered = "Grip strength"
+                        )) %>%
+  add_significance_stars(
+    hide_se = TRUE,
+    pattern = "{estimate}{stars}<br>({std.error})"
+  ) %>%
+  modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+  modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+  
+  tbl_merge(
+    tbls = list(mm1_v, mm2_v),
+    tab_spanner = c("Lifetime number of vaginal sex partners",
+                    "Past year number of vaginal sex partners")) %>% 
+   as_gt() %>%
+  gt::tab_header(title = "Table 4. Models of Mating Success (Vaginal Sex)",
+                 subtitle = "Standardized regression coefficents from generalized
+                 linear models for lifetime and past year vaginal sex partners")
+
+```
+
+
+
+```{r immunemodel}
+
+m_wbc <- tbl_regression(m_wbcc_exact, 
+                        label = list(
+                          bmi = "BMI", 
+                          sex = "Sex",
+                          strength_centered = "Grip strength"
+                        )) %>%
+  add_significance_stars(
+    hide_se = TRUE,
+    pattern = "{estimate}{stars}<br>({std.error})"
+  ) %>%
+  modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+  modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+
+m_lymph <- tbl_regression(m_l, 
+                        label = list(
+                          bmi = "BMI", 
+                          sex = "Sex",
+                          strength_centered = "Grip strength"
+                        )) %>%
+  add_significance_stars(
+    hide_se = TRUE,
+    pattern = "{estimate}{stars}<br>({std.error})"
+  ) %>%
+  modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+  modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+m_mono <- tbl_regression(m_m, 
+                        label = list(
+                          bmi = "BMI", 
+                          sex = "Sex",
+                          strength_centered = "Grip strength"
+                        )) %>%
+  add_significance_stars(
+    hide_se = TRUE,
+    pattern = "{estimate}{stars}<br>({std.error})"
+  ) %>%
+  modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+  modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+
+m_neutro <- m_wbc <- tbl_regression(m_n, 
+                        label = list(
+                          bmi = "BMI", 
+                          sex = "Sex",
+                          strength_centered = "Grip strength"
+                        )) %>%
+  add_significance_stars(
+    hide_se = TRUE,
+    pattern = "{estimate}{stars}<br>({std.error})"
+  ) %>%
+  modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+  modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+
+
+m_eos <- tbl_regression(m_e, 
+                        label = list(
+                          bmi = "BMI", 
+                          sex = "Sex",
+                          strength_centered = "Grip strength"
+                        )) %>%
+  add_significance_stars(
+    hide_se = TRUE,
+    pattern = "{estimate}{stars}<br>({std.error})"
+  ) %>%
+  modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+  modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+
+m_baso <- tbl_regression(m_b, 
+                        label = list(
+                          bmi = "BMI", 
+                          sex = "Sex",
+                          strength_centered = "Grip strength"
+                        )) %>%
+  add_significance_stars(
+    hide_se = TRUE,
+    pattern = "{estimate}{stars}<br>({std.error})"
+  ) %>%
+  modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+  modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+
+tbl_merge(
+    tbls = list(m_wbc, m_lymph, m_mono, m_neutro, m_eos, m_baso),
+    tab_spanner = c("White blood cell count",
+                    "Lymphocyte count", 
+                    "Monocyte count", 
+                    "Neutrophil count", 
+                    "Eosinophil count", 
+                    "Basophil count")) %>% 
+   as_gt() %>%
+  gt::tab_header(title = "Table 4. Models of Immune Function",
+                 subtitle = "Regression coefficents from generalized
+                 linear models of white blood cell count, and cell type counts")
+
+
+```
+
 
