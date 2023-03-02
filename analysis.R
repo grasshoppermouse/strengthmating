@@ -181,7 +181,7 @@ plot(emmeans(m, specs = "strength_centered", by = "sex", type = "response"))
 # visreg(m)
 
 # lifetime partners (anthropometric model)
-manth1 <- svyglm(sex_partners ~ age_centered*sex + strength_centered*sex + height_centered*sex + weight_centered*sex + partnered, family=quasipoisson(), design=designsG$d.design.adults)
+manth1 <- svyglm(sex_partners ~ age_centered*sex + strength_centered*sex + partnered + height_centered*sex + weight_centered*sex , family=quasipoisson(), design=designsG$d.design.adults)
 summary(manth1)
 # visreg(manth1)
 plot(allEffects(manth1))
@@ -199,7 +199,7 @@ summary(mheal1)
 nobs(mheal1)
 
 #lifetime partners (hormone model)
-mhor1 <- svyglm(sex_partners ~ strength_centered*sex + age_centered*sex + log(testosterone)*sex + partnered,  family=quasipoisson(), design=designsG$d.design.adults)
+mhor1 <- svyglm(sex_partners ~ age_centered*sex + strength_centered*sex + log(testosterone)*sex + partnered,  family=quasipoisson(), design=designsG$d.design.adults)
 summary(mhor1)
 plot(allEffects(mhor1))
 
@@ -245,7 +245,7 @@ summary(mheal2)
 nobs(mheal2)
 
 # past year partners (hormone model)
-mhor2 <- svyglm(sex_partners_year ~ strength_centered*sex + age_centered*sex + testosterone_centered*sex + partnered*strength_centered,  family=quasipoisson(), design=designsG$d.design.adults)
+mhor2 <- svyglm(sex_partners_year ~ strength_centered*sex + age_centered*sex + log(testosterone)*sex + partnered*strength_centered,  family=quasipoisson(), design=designsG$d.design.adults)
 summary(mhor2, df.resid = Inf)
 
 #phys activity past year

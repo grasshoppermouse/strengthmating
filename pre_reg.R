@@ -29,28 +29,58 @@ library(gtsummary)
 
 # conceptual rep of Lassek and Gaulin, using grip strength and including males and females
 
-# Model 1 (Table 2) Lifetime sexual partners ------------------------------
+# Table 2 (Exact models: Total partners, Partners past year, age at first intercourse)
 
 mm1_exact <- svyglm(
   sex_partners ~
-    age_centered + #* sex + #include interaction since we include sex?
-    partnered +
-    sex * strength_centered + #include interaction since we include sex?
-    bmi_centered,
+    age_centered * strength_centered + # * sex + #include interaction in SI
+    partnered + #* sex +
+    sex * strength_centered + #always include
+    bmi_centered * sex,
   family = quasipoisson(),
   design = designsG$d.design.adults
 )
 summary(mm1_exact)
 
+
+mm2_exact <- svyglm(
+  sex_partners_year ~
+    # age_centered * strength_centered +
+    sex * strength_centered +
+    partnered*strength_centered +
+    #  partnered*sex +
+    #  bmi_centered*sex  #add to SI
+    bmi_centered*partnered, #leave in
+  family = quasipoisson(),
+  design = designsG$d.design.adults
+)
+summary(mm2_exact)
+
+mm3_exact <- svyglm(
+  age_first_sex ~
+    age_centered +
+    partnered +
+    edu +
+    total_work_MET +
+    sex*strength_centered,
+  family = quasipoisson(),
+  design = designsG$d.design.adults
+)
+summary(mm3_exact)
+
+# Model 1 (Table 2) Lifetime sexual partners ------------------------------
+
+
+
 mm1_mod <- svyglm(
   sex_partners ~
     age_centered * sex +
     strength_centered * sex +
-    partnered +
+    partnered, # +
     # bmi_centered*sex +
     #  edu +
-    median_salary_current +
-    age_first_sex*sex,
+   # median_salary_current +
+   # age_first_sex*sex,
   family = quasipoisson(),
   design = designsG$d.design.adults
 )
@@ -75,15 +105,7 @@ summary(m1_vaginal_sex_partners)
 
 # Past year sexual partners -----------------------------------------------
 
-mm2_exact <- svyglm(
-  sex_partners_year ~
-    sex * strength_centered +
-    partnered*strength_centered +
-    bmi_centered,
-  family = quasipoisson(),
-  design = designsG$d.design.adults
-)
-summary(mm2_exact)
+
 
 mm2_mod <- svyglm(
   sex_partners_year ~
@@ -91,11 +113,11 @@ mm2_mod <- svyglm(
     bmi_centered*partnered +
  #   edu*partnered +
 #    median_salary_current*partnered +
-    age*partnered +
+   # age*partnered +
   # total_work_MET +
   # total_rec_MET +
-  sex*strength_centered +
-  age_first_sex * sex,
+  sex*strength_centered,
+#  age_first_sex, #* sex, leave out since no rationale
  # tot_MET*sex,
   family = quasipoisson(),
   design = designsG$d.design.adults
@@ -122,17 +144,7 @@ summary(m2_vaginal_pastyear, df.resid = Inf)
 
 # Age at first intercourse ------------------------------------------------
 
-mm3_exact <- svyglm(
-  age_first_sex ~
-    age_centered +
-    partnered +
-    edu +
-    total_work_MET +
-    sex*strength_centered,
-  family = quasipoisson(),
-  design = designsG$d.design.adults
-)
-summary(mm3_exact)
+
 
 mm3_mod <- svyglm(
   age_first_sex ~
@@ -282,4 +294,16 @@ m_b <- svyglm(
 )
 summary(m_b)
 
+### hormone model with by sex testosterone
 
+mhor1a <-
+  svyglm(
+    sex_partners ~
+      age_centered * sex +
+      strength_centered * sex +
+      partnered +
+      testosterone_sex_centered * sex,
+    family = quasipoisson(),
+    design = designsG$d.design.adults
+  )
+summary(mhor1a, df = Inf)
