@@ -1,0 +1,666 @@
+---
+title: "Grip strength, mating success, and immune function in US adults: a registered report "
+author: "C. B. Smith and E. H. Hagen"
+date: 03/23/2023
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
+library(ggplot2)
+library(dplyr)
+library(psych)
+library(xtable)
+library(knitr)
+library(kableExtra)
+library(weights)
+library(jtools)
+library(reshape2)
+library(gtsummary)
+library(corrplot)
+source('draft_analysis.R')
+```
+EHB Research Report
+
+## Abstract
+
+Evidence suggests that the mating benefits of muscle mass in human males trade off with costs of increased energy intake and decreased measures of native immunity, likely due to an evolutionary history of sexual selection. It is unknown if females experience a similar tradeoff. Using data from the 2011-2012 phase of the National Health and Nutrition Examination Survey, a large representative sample of the US, we will test whether grip strength, a proxy for upper body strength, is a positive predictor of self-reported outcome measures of adult mating success (lifetime number of sexual partners, past year number of sexual partners, and age at first intercourse) in both males and females, and negatively related to a measure of native immune function, white blood cell count, controlling for numerous anthropometric, socioeconomic, hormone, health, and physical activity related confounds. These results replicate an earlier study of US males. However, there was either no significant sex difference in the effect of grip strength, or the effect in females was smaller than males but still positive, evidence that a similar trade off in the costs and benefits of muscle exists for women.
+
+
+## Methods
+
+To assess the relationship between strength and reproductive and immune outcomes we used data from the Centers for Disease Control National Health and Nutrition Examination Survey (NHANES) from years 2011-2014. NHANES uses a complex, multi-stage sampling strategy in order to collect data representative of the civilian, non-institutionalized U.S. population. NHANES combines interview, examination, and laboratory data to assess health status and identify health risks for adults and children in the United States. Data collection occurs in new cycles every two years. 
+
+
+We will use data from years 2011-2014 since grip strength, our key predictor variable was collected in those years. We developed models based on previous research and through exploratory analyses of the 2011-2012 dataset to be tested in the 2013-2014 dataset. We include data from US adults between the ages of 18 and 65, the years when grip strength is the most stable. For each model, participants will be included if they have complete data for each predictor variable. 
+
+
+### Outcome variables: 
+In industrialized populations like the U.S., widespread access to contraceptives unlinks reproductive success from sexual behavior. Measures of mating success, including number of sexual partners and age at first sexual intercourse, are used as proxies as they are assumed to have been strongly correlated with reproductive success under ancestral conditions (Pérusse, 1993).Our main outcome was mating success, which we operationalized in three ways. 1) Total sexual partners was a count based on responses to the question: In your lifetime, with how many men/women have you had any kind of sex? 2) Total sexual partners in past year, from the question: In the past 12 months, with how many men/women have you had any kind of sex? Because of the way these questions are framed, (e.g. female participants were asked about their male partners and vice versa) these variables represent heterosexual partners, however it is not necessarily the case that all of the participants included in these models identified as heterosexual. 3) Age at first sexual intercourse reported from: How old were you when you had sex for the first time?. The sexual behavior questionnaire was self-administered on a computer in a private room at the examination center, using the Audio Computer Assisted Self Interview system, which allows participants to hear questions through headphones as well as read them on screen. Only respondents who could self-report were asked these questions. 
+
+Our second outcome measure was immune investment, which we operationalized as white blood cell count (1000 cells/ µL). In the original paper, Lassek and Gaulin also use C-reactive protein, but CRP was not measured in the 2011-2014 data collection years and so is not included here. 
+
+### Predictor variables: 
+Our main predictor variable is formidability, which Lassek and Gaulin operationalized as fat-free mass and limb muscle volume. We operationalized formidability as grip strength (kg), which was measured three times on each hand using a dynamometer. We used combined grip strength which was the sum of the highest reading of each hand. All models also included sex (male/female), age in years, partnered status (partnered included participants who reported either being married or living with a partner while unpartnered included participants who reported being single, widowed, divorced, or separated). The interaction between sex and strength was crucial for our models since we want to know whether the effect of strength on mating and immune outcomes is different for women than for men. Likewise, we also interacted age and partnered status with sex.
+
+### Models:
+We specified five models for each mating success outcome measure in order to determine if the effect of grip strength on those outcomes was due to confounds with socioeconomic, health, hormone, or physical activity variables that have been associated either with strength or sexual behavior. 
+
+### Baseline (anthropometric) model
+We first derived a simple baseline model from Lassek and Gaulin (2009) for each outcome measure (total number of partners, past year number of partners, and age at first intercourse) predicted by grip strength, age, sex, This model also includes an anthropometric control, body mass index (BMI), calculated as kg/m^2, since body size could be related to either strength or mating outcomes. 
+
+### Additional control variables: 
+The socioeconomic control model included education and race as categorical variables. The health model included a number of variables related to health, which could affect either strength or sexual behavior. White blood cell count (1000 cells/ µL) and hemoglobin (g/dL) were included to control for acute infection. Depression was measured using the Patient Health Questionnaire-9 (PHQ-9), a validated nine-item screening instrument. Each item represents a symptom of depression, and for each participants were asked to consider how frequently they had been bothered by that symptom over the past two weeks, rated on a scale from 0 (not at all) to 3 (nearly everyday). These ratings were summed to produce a depression score ranging from 0-27. Chronic illness was included using a 'chronic disease score (0-6) a count of chronic diseases participants reported having been diagnosed with including diabetes, cancer, stroke, arthritis, heart disease and respiratory disease. A point was added for each disease a participant indicated they had been diagnosed with, regardless of any impairment due to the disease. We then controlled for impairment resulting from chronic illness (Disease Impairment Score; 0-5) calculated from a different NHANES question, which asked participants to list up to five health conditions that specifically cause them to have difficulties with physical activities. We also controlled for physical disability and using the item "special equipment" which referred to participants' report that they needed special equipment to walk. Finally the 'perceived abnormal weight' variable was coded as true or false depending on whether a participant reported that they perceived their weight to be abnormal.   
+
+The hormone control model included testosterone. Since the difference in mean testosterone between men and women is an order of magnitude apart, and testosterone was highly confounded with sex. We therefore centered testosterone at the mean and divided by two standard deviations within each sex. The physical activity control model included four dichotomous variables coded as 1 if participants reported that their work or recreation caused large increases in heart rate or breathing for at least 10 minutes continuously (vigorous work and/or rec), or small increases in breathing or heart rate for 10 minutes continuously (moderate work and/or rec), and zero if they did not. 
+
+Current salary Measures of wealth available in NHANES are collected at the household level, and as such do not accurately reflect wealth or poverty at the individual level. As a measure of wealth, we used occupation codes collected for each participant by NHANES and imputed the median salary calculated for that occupation category (source?).
+
+###
+
+In keeping with the outcome variables utilized in the original paper, we used number of partners for any kind of sex above. Since, however, NHANES also collects more specific data on sexual behavior we also tested Models 1 and 2 using lifetime and past year numbers of vaginal sex partners respectively, since heterosexual vaginal intercourse should be more directly related to reproductive success than other kinds of sex. In these questions participants were asked “In your lifetime, with how many men/women have you had vaginal sex?” and “In the past 12 months, with how many men/women have you had vaginal sex?” 
+
+
+Missing variables 
+We do not have data on bone mineral density
+
+We did not include a model of daily energy intake as reported by Lassek and Gaulin, because the gold-standard research utilizes fat-free mass as a predictor, which the original authors use. Grip strength is therefore unlikely to provide novel insight into explaining daily energy intake. 	
+
+## Analysis 
+Lassek and Gaulin (2009) utilized stepwise regression to automatically eliminate candidate predictors from their models. Since stepwise regression has since been found to overfit data and therefore fail to replicate in future samples, we use generalized linear models from the survey package to incorporate survey weights. For models of lifetime and past year numbers of partners we modeled the outcomes using a poisson distribution, since these variables are count data. Models of age at first sexual intercourse and white blood cell count utilized a normal distribution. 
+
+
+## Results
+
+### Exploratory Analysis 
+
+```{r summarytable, fig.width = 12, fig.height = 16}
+d_G[d_G$age >= 18 &
+      d_G$age <= 60, ]  %>% select(
+        "sex_partners",
+        "sex_partners_year",
+        "age_first_sex",
+        "sex",
+        "strength",
+        "age",
+        "partnered",
+        "bmi",
+        "edu",
+        "race",
+        "whitebloodcell",
+        "hemoglobin",
+        "depression",
+        "chronic_disease_score",
+        "physical_disease_count",
+        "special_equipment",
+        "perceived_abnormal_weight",
+        "testosterone",
+        "vigorous_work",
+        "vigorous_rec",
+        "moderate_work",
+        "moderate_rec"
+      ) %>%
+  mutate(race = factor(
+    race,
+    labels = c(
+      "Mexican American",
+      "Other Hispanic",
+      "Non-Hispanic White",
+      "Non-Hispanic Black",
+      "Non-Hispanic Asian",
+      "Other Race"
+    )
+  )) %>%
+  mutate(edu = factor(
+    edu,
+    labels = c(
+      "Less than 9th grade",
+      "9-11th grade",
+      "High school graduate/GED or equivalent",
+      "Some college or AA degree",
+      "College graduate or above"
+    )
+  )) %>%
+  tbl_summary(
+    by = sex,
+    statistic = list(
+      all_continuous() ~ "{mean} ({sd})",
+      all_categorical() ~ "{n} / {N} ({p}%)"
+    ),
+    digits = all_continuous() ~ 2,
+    type = list(
+      chronic_disease_score ~ "continuous",
+      physical_disease_count ~ "continuous"
+    ),
+    label  = list(
+      age_first_sex = "Age at first sex (years)",
+      sex_partners = "Lifetime number of sexual partners",
+      sex_partners_year = "Past year number of sexual partners",
+      strength = "Combined Grip Strength (kg)",
+      age = "Age (years)",
+      bmi = "Body mass index (kg/m^2)",
+      partnered = "Partnered",
+      edu = "Education",
+      race = "Race and Ethnicity",
+      whitebloodcell = "White blood cell count (1000 cells/µL)",
+      hemoglobin = "Hemoglobin (g/dL)",
+      testosterone = "Testosterone (ng/dL)",
+      perceived_abnormal_weight = "Perceived abnormal weight",
+      special_equipment = "Special equipment needed to walk",
+      chronic_disease_score = "Chronic Disease Score (0-6)",
+      physical_disease_count = "Disease Impairment Score (0-5)",
+      depression = "Depression Score (0-27)",
+      vigorous_work = "Work involves vigorous activity",
+      moderate_work = "Work involves moderate activity",
+      vigorous_rec = "Recreation involves vigorous activity",
+      moderate_rec = "Recreation involves moderate activity"
+    ),
+    missing_text = "Missing"
+  ) %>% add_p() %>%
+  add_overall() %>%
+  add_n() %>%
+  modify_header(label ~ "**Variable**") %>%
+  modify_spanning_header(c("stat_1", "stat_2") ~ "**Sex**") %>%
+  modify_caption("**Table 1. Participant Characteristics**") %>%
+  bold_labels() 
+
+
+```
+
+
+```{r}
+
+designsG$d.design.adults %>%
+  tbl_svysummary(
+    by = sex,
+    statistic = list(
+      all_continuous() ~ "{mean} ({sd})",
+      all_categorical() ~ "{n} / {N} ({p}%)"
+    ),
+    digits = all_continuous() ~ 2,
+    type = list(
+      chronic_disease_score ~ "continuous",
+      physical_disease_count ~ "continuous"
+    ),
+    label  = list(
+      age_first_sex = "Age at first sex (years)",
+      sex_partners = "Lifetime number of sexual partners",
+      sex_partners_year = "Past year number of sexual partners",
+      strength = "Combined Grip Strength (kg)",
+      age = "Age (Years)",
+      bmi = "Body mass index (kg/m^2)",
+      height = "Height (cm)",
+      weight = "Weight (kg)",
+      partnered = "Partnered",
+      edu = "Education",
+      race = "Race and Ethnicity",
+      whitebloodcell = "White blood cell count (1000 cells/µL)",
+      hemoglobin = "Hemoglobin (g/dL)",
+      testosterone = "Testosterone (ng/dL)",
+      perceived_abnormal_weight = "Perceived abnormal weight",
+      special_equipment = "Special equipment needed to walk",
+      chronic_disease_score = "Chronic Disease Score (0-6)",
+      physical_disease_count = "Disease Impairment Score (0-5)",
+      depression = "Depression Score (0-27)",
+      vigorous_work = "Work involves vigorous activity",
+      moderate_work = "Work involves moderate activity",
+      vigorous_rec = "Recreation involves vigorous activity",
+      moderate_rec = "Recreation involves moderate activity"
+    ),
+    missing_text = "Missing",
+    include = c(
+      "sex_partners",
+      "sex_partners_year",
+      "age_first_sex",
+      "sex",
+      "strength",
+      "age",
+      "partnered",
+      "bmi",
+      "edu",
+      "race",
+      "whitebloodcell",
+      "hemoglobin",
+      "depression",
+      "chronic_disease_score",
+      "physical_disease_count",
+      "special_equipment",
+      "perceived_abnormal_weight",
+      "testosterone",
+      "vigorous_work",
+      "vigorous_rec",
+      "moderate_work",
+      "moderate_rec"
+    )
+  ) %>%
+  add_p() %>%
+  add_overall() %>%
+  add_n() %>%
+  modify_header(label ~ "**Variable**") %>%
+  modify_spanning_header(c("stat_1", "stat_2") ~ "**Sex**") %>%
+  modify_caption("**Table 1. Participant Characteristics**") %>%
+  bold_labels() 
+
+
+```
+
+
+
+
+
+
+
+```{r exact, fig.width = 12, fig.height = 8}
+
+forestplot(
+  m_agefirst,
+  m_lifetime,
+  m_pastyear,
+  intercept = F,
+  facet = F,
+  dodgewidth = .5,
+  modelnames = mnames1,
+  varnames = vnames
+)$plot + theme_minimal(20) +
+  geom_pointrange(size = 1.2, position = position_dodge(width = .5)) +
+  labs(title = "Exact Models: Regression coefficients from generalized linear models", color = "Model") +
+  guides(colour = guide_legend(reverse = T))
+
+#visualize coefs from models derived from lassek and gaulin. 
+#add coef table below to match l and g 
+
+
+```
+
+
+
+
+```{r table2_exact}
+
+mm1 <- tbl_regression(m_lifetime, 
+                      label = list(
+                        age_centered = "Age",
+                        sex = "Sex",
+                        strength_centered = "Grip strength",
+                        partnered = "Currently partnered",
+                        bmi_centered = "BMI"
+                      )) %>%
+  add_significance_stars(
+    hide_se = TRUE,
+    pattern = "{estimate}{stars}<br>({std.error})"
+  ) %>%
+  modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+  modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+
+
+mm2 <- tbl_regression(m_pastyear, 
+                      label = list(
+                        age_centered = "Age",
+                        sex = "Sex",
+                        strength_centered = "Grip strength",
+                        partnered = "Currently partnered",
+                        bmi_centered = "BMI"
+                      )) %>%
+  add_significance_stars(
+    hide_se = TRUE,
+    pattern = "{estimate}{stars}<br>({std.error})"
+  ) %>%
+  modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+  modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+
+mm3 <- tbl_regression(m_agefirst, 
+                      label = list(
+                        age_centered = "Age",
+                        sex = "Sex",
+                        strength_centered = "Grip strength",
+                        partnered = "Currently partnered",
+                        bmi_centered = "BMI", 
+                        edu = "Education",
+                        total_work_MET = "Occupational exertion"
+    #              label = list(
+    # age_centered = "Age",
+    # sex = "Sex",
+    # strength_centered = "Grip strength",
+    # partnered = " Currently partnered", 
+    # bmi_centered = "BMI"
+    # edu = "Education",
+    # total_work_MET = "Occupational exertion"
+  )) %>%
+  add_significance_stars(
+    hide_se = TRUE,
+    pattern = "{estimate}{stars}<br>({std.error})"
+  ) %>%
+  modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+  modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+
+  tbl_merge(
+    tbls = list(mm1, mm2, mm3),
+     tab_spanner = c("Lifetime number of sexual partners",
+                     "Past year number of sexual partners",
+                     "Age at first sexual intercourse")) %>% 
+  as_gt() %>%
+  gt::tab_header(title = "Table 2. Exact Models of Mating Success",
+                 subtitle = "Standardized regression coefficents from generalized
+                 linear models for three indices of mating success for men and women ages
+                 18-59. Models derived from Lassek and Gaulin 2009")
+
+```
+
+```{r lifetime, fig.width = 12, fig.height = 42}
+
+#include groups of potential confounds to explore lack of sex effect for all 4 mating outcomes 
+
+fig1 <- forestplot(
+  manth1, msoc1, mheal1, mphys1, mhor1a,
+  intercept = F,
+  facet = F,
+  dodgewidth = .8,
+  modelnames = mnames, varnames = vnames)$plot + theme_minimal(20) +
+  geom_pointrange(size = 1.2, position = position_dodge(width = .7)) +
+  labs(title = "Lifetime Number of Sexual Partners", color = "Controls") +
+  coord_cartesian(clip = "off")
+# + xlim(-2.5, 3.55)
+
+fig2 <- forestplot(
+  manth2,msoc2,mheal2, mphys2, mhor2a,
+  intercept = F,
+  facet = F,
+  dodgewidth = .8,
+  modelnames = mnames,
+  varnames = vnames
+)$plot + theme_minimal(20) +
+  geom_pointrange(size = 1.2, position = position_dodge(.8)) +
+  labs(title = "Past Year Number of Sexual Partners", color = "Controls") +
+  coord_cartesian(clip = "off")
+# + xlim(-2.5, 3.55)
+
+fig3 <- forestplot(
+  manth3, msoc3, mheal3, mphys3, mhor3a,
+  intercept = F,
+  facet = F,
+  dodgewidth = .8,
+  modelnames = mnames,
+  varnames = vnames)$plot +
+  theme_minimal(20) +
+  geom_pointrange(size = 1.2, position = position_dodge(width = .7)) +
+  labs(title = "Age at First Sex", color = "Controls") +
+  coord_cartesian(clip = "off")
+# + xlim(-2.5, 3.55)
+
+fig4 <- forestplot(
+  manth4, msoc4, mheal4, mphys4, mhor4a,
+  intercept = F,
+  facet = F,
+  dodgewidth = .8,
+  modelnames = mnames,
+  varnames = vnames)$plot +
+  theme_minimal(20) + geom_pointrange(size = 1.2, position = position_dodge(width = .8)) +
+  labs(title = "Currently Partnered", color = "Controls") +
+  coord_cartesian(clip = "off")
+# + xlim(-2.5, 3.55)
+
+fig1234 <- ggarrange(fig1, fig2, fig3, fig4,
+                     labels = "AUTO",
+                     font.label = list(size = 20),
+                     ncol = 1, nrow = 4,
+                     common.legend = TRUE, legend="bottom")
+
+ annotate_figure(fig1234,
+                       top = text_grob("Figure 2. Regression coefficients from generalized linear models of mating success\n",
+                                       size = 20, face = "bold",
+                                       hjust = 0,
+                                       x = 0.01),
+                       bottom = text_grob("\nVariables labelled (S) have been standarized by 2 SD. Base level of race/ethnicity is Mexican American.",
+                                          size = 18))
+
+```
+
+```{r table2_mod}
+# 
+# mm1_m <- tbl_regression(mm1_mod, 
+#                         label = list(
+#                           age_centered = "Age",
+#                           sex = "Sex",
+#                           strength_centered = "Grip strength",
+#                           partnered = "Partnered",
+#                           median_salary_current = "Median Salary",
+#                           age_first_sex = "Age at first sex"
+#                         ))  %>%
+#   add_significance_stars(
+#     hide_se = TRUE,
+#     pattern = "{estimate}{stars}<br>({std.error})"
+#   ) %>%
+#   modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+#   modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+#   
+# mm2_m <- tbl_regression(mm2_mod, 
+#                         label = list(
+#                           sex = "Sex",
+#                           strength_centered = "Grip strength",
+#                           partnered = "Partnered",
+#                           bmi_centered = "BMI"
+#                         )) %>%
+#   add_significance_stars(
+#     hide_se = TRUE,
+#     pattern = "{estimate}{stars}<br>({std.error})"
+#   ) %>%
+#   modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+#   modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+# 
+# 
+#     
+# mm3_m <- tbl_regression(mm3_mod, 
+#                         label = list(
+#                           age_centered = "Age",
+#                           edu = "Education",
+#                           total_work_MET = "Occupational exertion",
+#                           sex = "Sex",
+#                           strength_centered = "Grip strength"
+#                         )) %>%
+#   add_significance_stars(
+#     hide_se = TRUE,
+#     pattern = "{estimate}{stars}<br>({std.error})"
+#   ) %>%
+#   modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+#   modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+# 
+# 
+#   tbl_merge(
+#     tbls = list(mm1_m, mm2_m, mm3_m),
+#     tab_spanner = c("Lifetime number of sexual partners",
+#                     "Past year number of sexual partners",
+#                     "Age at first sexual intercourse")) %>% 
+#    as_gt() %>%
+#   gt::tab_header(title = "Table 3. Modified Models of Mating Success",
+#                  subtitle = "Standardized regression coefficents from generalized
+#                  linear models for three indicies of mating success. Models derived
+#                  from exploratory data")
+
+```
+
+
+```{r table2_vaginalsex}
+
+# mm1_v <- tbl_regression(m1_vaginal_sex_partners, 
+#                         label = list(
+#                           age_centered = "Age",
+#                           edu = "Education",
+#                           sex = "Sex",
+#                           strength_centered = "Grip strength"
+#                         )) %>%
+#   add_significance_stars(
+#     hide_se = TRUE,
+#     pattern = "{estimate}{stars}<br>({std.error})"
+#   ) %>%
+#   modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+#   modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+#   
+# mm2_v <- tbl_regression(m2_vaginal_pastyear, 
+#                         label = list(
+#                           age_centered = "Age",
+#                           edu = "Education",
+#                           sex = "Sex",
+#                           strength_centered = "Grip strength"
+#                         )) %>%
+#   add_significance_stars(
+#     hide_se = TRUE,
+#     pattern = "{estimate}{stars}<br>({std.error})"
+#   ) %>%
+#   modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+#   modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+#   
+#   tbl_merge(
+#     tbls = list(mm1_v, mm2_v),
+#     tab_spanner = c("Lifetime number of vaginal sex partners",
+#                     "Past year number of vaginal sex partners")) %>% 
+#    as_gt() %>%
+#   gt::tab_header(title = "Table 4. Models of Mating Success (Vaginal Sex)",
+#                  subtitle = "Standardized regression coefficents from generalized
+#                  linear models for lifetime and past year vaginal sex partners")
+
+```
+
+
+```{r immunefig, fig.width = 12, fig.height = 8}
+fig5 <- forestplot(
+  mwbc,
+  intercept = F,
+  facet = F,
+  dodgewidth = .8,
+  varnames = vnames)$plot +
+  theme_minimal(25) +
+  geom_pointrange(size = 2, position = position_dodge(width = .8)) +
+  labs(title = "White blood cell count") +
+  # labs(title = "Figure.3 Regression coefficients from generalized linear model of immune investment.",
+  #      subtitle = "White Blood Cell Count",
+  #      caption = "Variables with (S) have been standarized by 2 SD.") +
+  theme(legend.position = "none")
+
+ annotate_figure(fig5,
+                           top = text_grob("Figure 3. Regression coefficients from generalized linear model of immune investment\n",
+                                           size = 20, face = "bold",
+                                           hjust = 0,
+                                           x = 0.01),
+                           bottom = text_grob("Variables labelled (S) have been standarized by 2 SD.",
+                                              size = 18))
+
+```
+
+Regression coefficients for predictors of WBC count in men and women 18-59, exact model from lassek and gaulin
+
+```{r immunemodel}
+
+tbl_regression(
+  mwbc,
+  label = list(
+    age_centered = "Age",
+    bmi_centered = "BMI",
+    sex = "Sex",
+    strength_centered = "Grip strength"
+  )
+) %>%
+  add_significance_stars(hide_se = TRUE,
+                         pattern = "{estimate}{stars}<br>({std.error})") %>%
+  modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+  modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+
+# m_lymph <- tbl_regression(m_l, 
+#                         label = list(
+#                           bmi = "BMI", 
+#                           sex = "Sex",
+#                           strength_centered = "Grip strength"
+#                         )) %>%
+#   add_significance_stars(
+#     hide_se = TRUE,
+#     pattern = "{estimate}{stars}<br>({std.error})"
+#   ) %>%
+#   modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+#   modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+# m_mono <- tbl_regression(m_m, 
+#                         label = list(
+#                           bmi = "BMI", 
+#                           sex = "Sex",
+#                           strength_centered = "Grip strength"
+#                         )) %>%
+#   add_significance_stars(
+#     hide_se = TRUE,
+#     pattern = "{estimate}{stars}<br>({std.error})"
+#   ) %>%
+#   modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+#   modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+# 
+# m_neutro <- m_wbc <- tbl_regression(m_n, 
+#                         label = list(
+#                           bmi = "BMI", 
+#                           sex = "Sex",
+#                           strength_centered = "Grip strength"
+#                         )) %>%
+#   add_significance_stars(
+#     hide_se = TRUE,
+#     pattern = "{estimate}{stars}<br>({std.error})"
+#   ) %>%
+#   modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+#   modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+# 
+# 
+# m_eos <- tbl_regression(m_e, 
+#                         label = list(
+#                           bmi = "BMI", 
+#                           sex = "Sex",
+#                           strength_centered = "Grip strength"
+#                         )) %>%
+#   add_significance_stars(
+#     hide_se = TRUE,
+#     pattern = "{estimate}{stars}<br>({std.error})"
+#   ) %>%
+#   modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+#   modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+# 
+# m_baso <- tbl_regression(m_b, 
+#                         label = list(
+#                           bmi = "BMI", 
+#                           sex = "Sex",
+#                           strength_centered = "Grip strength"
+#                         )) %>%
+#   add_significance_stars(
+#     hide_se = TRUE,
+#     pattern = "{estimate}{stars}<br>({std.error})"
+#   ) %>%
+#   modify_header(label ~ "**Variable**", estimate ~ "**Beta (SE)**") %>%
+#   modify_footnote(estimate ~ "SE = Standard Error", abbreviation = TRUE)
+# 
+# tbl_merge(
+#     tbls = list(m_wbc, m_lymph, m_mono, m_neutro, m_eos, m_baso),
+#     tab_spanner = c("White blood cell count",
+#                     "Lymphocyte count", 
+#                     "Monocyte count", 
+#                     "Neutrophil count", 
+#                     "Eosinophil count", 
+#                     "Basophil count")) %>% 
+#    as_gt() %>%
+#   gt::tab_header(title = "Table 4. Models of Immune Function",
+#                  subtitle = "Regression coefficents from generalized
+#                  linear models of white blood cell count, and cell type counts")
+
+
+```
+
+```{r immunemodelalternate, fig.width = 12, fig.height = 8}
+
+forestplot(
+  mwbc_alt,
+  intercept = F,
+  facet = F,
+  dodgewidth = .8,
+  varnames = vnames)$plot +
+  theme_minimal(25) +
+  geom_pointrange(size = 2, position = position_dodge(width = .8)) +
+  labs(title = "White blood cell count") +
+  # labs(title = "Figure.3 Regression coefficients from generalized linear model of immune investment.",
+  #      subtitle = "White Blood Cell Count",
+  #      caption = "Variables with (S) have been standarized by 2 SD.") +
+  theme(legend.position = "none")
+
+
+```
+
