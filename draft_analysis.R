@@ -47,8 +47,8 @@ vnames <- c(
 
 m_lifetime <- svyglm(
   sex_partners ~
-    age_centered * sex +
     strength_centered * sex +
+    age_centered * sex +
     partnered * strength_centered +
     bmi_centered * sex,
   family = quasipoisson(),
