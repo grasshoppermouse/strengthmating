@@ -1,4 +1,35 @@
 
+m_lifetime <- svyglm(
+  sex_partners ~
+    strength_centered * sex +
+    age_centered * sex +
+    partnered +
+    bmi_centered * sex,
+  family = quasipoisson(),
+  design = designsG$d.design.adults
+)
+
+sum <- summary(m_lifetime, df.resid = Inf)
+
+
+
+
+#04.07.2023
+library(hagenutils)
+fem <- svysmooth(whitebloodcell~age, designsG$d.design.adult.female)
+
+mal <- svysmooth(whitebloodcell~age, designsG$d.design.adult.male)
+
+d <- svysmooth2df(female = fem, male = mal)
+
+ggplot(d, aes(age, whitebloodcell, colour = Smooth)) + geom_line()
+
+
+library(mgcv)
+
+m <- gam(whitebloodcell ~ s(strength, by = sex) + s(age, by = sex), data = d_G)
+
+
 #03.31.23
 
 cordat <- d_G[, c("age", "strength", "bmi")]

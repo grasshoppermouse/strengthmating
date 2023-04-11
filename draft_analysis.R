@@ -14,13 +14,13 @@ vnames <- c(
   "age_centered" = "Age (S)",
   "partneredTRUE" = "Partnered",
   "strength_centered:partneredTRUE" = "Partnered x Strength (S)",
-  "age_centered:sexfemale" = "Age x Sex (Female)",
+  "age_centered:sexfemale" = "Age (S) x Sex (Female)",
   "height_centered" = "Height (S)",
   "weight_centered" = "Weight (S)",
   "bmi_centered" = "BMI (S)",
-  "sexfemale:bmi_centered" = "Sex (Female) x BMI",
-  "sexfemale:height_centered" = "Sex (Female) x Height",
-  "sexfemale:weight_centered" = "Sex (Female) x Weight",
+  "sexfemale:bmi_centered" = "Sex (Female) x BMI (S)",
+  "sexfemale:height_centered" = "Sex (Female) x Height (S)",
+  "sexfemale:weight_centered" = "Sex (Female) x Weight (S)",
   'perceived_abnormal_weightTRUE' = "Perceived Abnormal Weight",
   "whitebloodcell_centered" = "White Blood Cell Count (S)",
   "hemoglobin_centered" = "Hemoglobin (S)",
@@ -30,8 +30,8 @@ vnames <- c(
   "depression" = "Depression Score",
   "log(testosterone)" = "Testosterone (log)",
   "sexfemale:log(testosterone)" = "Sex (Female) x Testosterone (log)",
-  "testosterone_sex_centered" = "Testosterone centered by sex",
-  "sexfemale:testosterone_sex_centered"= "sex (Female) x testosterone",
+  "testosterone_sex_centered" = "Testosterone (S by Sex)",
+  "sexfemale:testosterone_sex_centered"= "Sex (Female) x Testosterone (S by Sex)",
   "vigorous_rec" = "Vigorous Recreation",
   "moderate_rec" = "Moderate Recreation",
   "vigorous_work" = "Vigorous Work",
@@ -114,17 +114,17 @@ mnames1 <- c(
 # Lifetime partner models -------------------------------------------------
 
 
-# lifetime partners (anthropometric model)
-manth1 <-
-  svyglm(
-    sex_partners ~
-      age_centered * sex +
-      strength_centered * sex +
-      partnered * strength_centered + #added strength interaction 03.23 to match past year since lifetime partners is a function of past year
-      bmi_centered * sex,
-    family = quasipoisson(),
-    design = designsG$d.design.adults
-  )
+# lifetime partners (anthropometric model) #no longer needed since baseline model includes bmi
+# manth1 <-
+#   svyglm(
+#     sex_partners ~
+#       age_centered * sex +
+#       strength_centered * sex +
+#       partnered * strength_centered + #added strength interaction 03.23 to match past year since lifetime partners is a function of past year
+#       bmi_centered * sex,
+#     family = quasipoisson(),
+#     design = designsG$d.design.adults
+#   )
 
 
 # lifetime partners (socioeconomic model)
@@ -133,13 +133,13 @@ msoc1 <-
     sex_partners ~
       age_centered * sex +
       strength_centered * sex +
-      partnered +
+      partnered * strength_centered + #added strength interaction 03.23 to match past year since lifetime partners is a function of past year
       edu +
       race,
     family = quasipoisson(),
     design = designsG$d.design.adults
   )
-summary(msoc1, df.resid=Inf)
+summary(msoc1, df.resid = Inf)
 
 # lifetime partners (health model)
 mheal1 <-
@@ -147,7 +147,7 @@ mheal1 <-
     sex_partners ~
       age_centered * sex +
       strength_centered * sex +
-      partnered +
+      partnered * strength_centered + #added strength interaction 03.23 to match past year since lifetime partners is a function of past year
       perceived_abnormal_weight +
       whitebloodcell_centered +
       hemoglobin_centered +
@@ -160,17 +160,17 @@ mheal1 <-
   )
 summary(mheal1)
 
-mhor1a <-
+mhor1 <-
   svyglm(
     sex_partners ~
       age_centered * sex +
       strength_centered * sex +
-      partnered +
+      partnered * strength_centered + #added strength interaction 03.23 to match past year since lifetime partners is a function of past year
       testosterone_sex_centered * sex,
     family = quasipoisson(),
     design = designsG$d.design.adults
   )
-summary(mhor1a, df = Inf)
+summary(mhor1, df = Inf)
 
 #phys activity
 mphys1 <-
@@ -178,7 +178,7 @@ mphys1 <-
     sex_partners ~
       age_centered * sex +
       strength_centered * sex +
-      partnered +
+      partnered * strength_centered + #added strength interaction 03.23 to match past year since lifetime partners is a function of past year
       vigorous_rec +
       moderate_rec +
       vigorous_work +
@@ -193,17 +193,17 @@ summary(mphys1)
 
 # past year partners (anthropometric model)
 
-manth2 <-
-  svyglm(
-    sex_partners_year ~
-      age_centered * sex +
-      strength_centered * sex +
-      partnered * strength_centered +
-      bmi_centered * sex,
-    family = quasipoisson(),
-    design = designsG$d.design.adults
-  )
-summary(manth2)
+# manth2 <-
+#   svyglm(
+#     sex_partners_year ~
+#       age_centered * sex +
+#       strength_centered * sex +
+#       partnered * strength_centered +
+#       bmi_centered * sex,
+#     family = quasipoisson(),
+#     design = designsG$d.design.adults
+#   )
+# summary(manth2)
 
 # past year partners (socioeconomic model)
 msoc2 <-
@@ -238,7 +238,7 @@ mheal2 <-
   )
 summary(mheal2)
 
-mhor2a <-
+mhor2 <-
   svyglm(
     sex_partners_year ~
       age_centered * sex +
@@ -248,7 +248,7 @@ mhor2a <-
     family = quasipoisson(),
     design = designsG$d.design.adults
   )
-summary(mhor2a)
+summary(mhor2)
 
 #phys activity past year
 mphys2 <-
@@ -271,17 +271,17 @@ summary(mphys2)
 # Age at first sex models -------------------------------------------------
 
 #age first sex (anthropometric)
-manth3 <-
-  svyglm(
-    age_first_sex ~
-      age_centered * sex +
-      strength_centered * sex +
-      partnered +
-      bmi_centered * sex,
-    family = gaussian(),
-    design = designsG$d.design.adults
-  )
-summary(manth3)
+# manth3 <-
+#   svyglm(
+#     age_first_sex ~
+#       age_centered * sex +
+#       strength_centered * sex +
+#       partnered +
+#       bmi_centered * sex,
+#     family = gaussian(),
+#     design = designsG$d.design.adults
+#   )
+# summary(manth3)
 
 #age first sex (socioeconomic)
 msoc3 <-
@@ -316,7 +316,7 @@ mheal3 <-
   )
 summary(mheal3)
 
-mhor3a <-
+mhor3 <-
   svyglm(
     age_first_sex ~
       age_centered * sex +
@@ -326,7 +326,7 @@ mhor3a <-
     family = gaussian(),
     design = designsG$d.design.adults
   )
-summary(mhor3a)
+summary(mhor3)
 
 #age at first sex (physical activity)
 
@@ -348,16 +348,16 @@ summary(mphys3)
 
 # partnered models --------------------------------------------------------
 
-manth4 <-
-  svyglm(
-    partnered ~
-      age_centered * sex +
-      strength_centered * sex +
-      bmi_centered * sex,
-    family = quasibinomial(),
-    design = designsG$d.design.adults
-  )
-summary(manth4)
+# manth4 <-
+#   svyglm(
+#     partnered ~
+#       age_centered * sex +
+#       strength_centered * sex +
+#       bmi_centered * sex,
+#     family = quasibinomial(),
+#     design = designsG$d.design.adults
+#   )
+# summary(manth4)
 
 #partnered status - socioeconomic
 msoc4 <-
@@ -391,7 +391,7 @@ mheal4 <-
 summary(mheal4)
 
 #partnered status - hormone
-mhor4a <-
+mhor4 <-
   svyglm(
     partnered ~
       age_centered * sex +
@@ -400,7 +400,7 @@ mhor4a <-
     family = quasibinomial(),
     design = designsG$d.design.adults
   )
-summary(mhor4a)
+summary(mhor4)
 
 #phys activity
 
@@ -425,8 +425,7 @@ summary(mphys4)
 mwbc <- svyglm(whitebloodcell ~
                  age_centered * sex +
                  strength_centered * sex +
-                 bmi_centered * sex +
-                 testosterone_sex_centered * sex,
+                 bmi_centered * sex,
                family= quasipoisson(),
                design=designsG$d.design.adults)
 summary(mwbc)
@@ -447,10 +446,10 @@ mwbc_alt <- svyglm(whitebloodcell ~
 # coef plots --------------------------------------------------------------
 
 mnames <- c(
-  "Anthropometric",
+ # "Anthropometric", baseline model has bmi
   "Socieoeconomic",
   "Health",
-  #  "Hormone", old model removed since log(testosterone) is confounded with sex
+  # "Hormone", old model removed since log(testosterone) is confounded with sex
   "Physical Activity",
   "Hormone" #sub new model with sex centered testosterone
 )
@@ -493,107 +492,107 @@ vnames <- c(
 )
 
 
-fig1 <- forestplot(
-  manth1, msoc1, mheal1, mphys1, mhor1a,
-  intercept = F,
-  facet = F,
-  dodgewidth = .8,
-  modelnames = mnames, varnames = vnames)$plot + theme_minimal(20) +
-  geom_pointrange(size = 1.2, position = position_dodge(width = .7)) +
-  labs(title = "Lifetime Number of Sexual Partners", color = "Controls") +
-  coord_cartesian(clip = "off")
-
-
-fig2 <- forestplot(
-  manth2,msoc2,mheal2, mphys2, mhor2a,
-  intercept = F,
-  facet = F,
-  dodgewidth = .8,
-  modelnames = mnames,
-  varnames = vnames
-)$plot + theme_minimal(20) +
-  geom_pointrange(size = 1.2, position = position_dodge(.8)) +
-  labs(title = "Past Year Number of Sexual Partners", color = "Controls") +
-  coord_cartesian(clip = "off")
-
-
-fig3 <- forestplot(
-  manth3, msoc3, mheal3, mphys3, mhor3a,
-  intercept = F,
-  facet = F,
-  dodgewidth = .8,
-  modelnames = mnames,
-  varnames = vnames)$plot +
-  theme_minimal(20) +
-  geom_pointrange(size = 1.2, position = position_dodge(width = .7)) +
-  labs(title = "Age at First Sex", color = "Controls") +
-  coord_cartesian(clip = "off")
-
-
-fig4 <- forestplot(
-  manth4, msoc4, mheal4, mphys4, mhor4a,
-  intercept = F,
-  facet = F,
-  dodgewidth = .8,
-  modelnames = mnames,
-  varnames = vnames)$plot +
-  theme_minimal(20) + geom_pointrange(size = 1.2, position = position_dodge(width = .8)) +
-  labs(title = "Currently Partnered", color = "Controls") +
-  coord_cartesian(clip = "off")
-
-
-fig1234 <- ggarrange(fig1, fig2, fig3, fig4,
-                     labels = "AUTO",
-                     font.label = list(size = 20),
-                     ncol = 1, nrow = 4,
-                     common.legend = TRUE, legend="bottom")
-
-fig <- annotate_figure(fig1234,
-                       top = text_grob("Figure 2. Regression coefficients from generalized linear models of mating success\n",
-                                       size = 20, face = "bold",
-                                       hjust = 0,
-                                       x = 0.01),
-                       bottom = text_grob("\nVariables labelled (S) have been standarized by 2 SD. Base level of race/ethnicity is Mexican American.",
-                                          size = 18))
-
-
-
-fig5 <- forestplot(
-  mwbc,
-  intercept = F,
-  facet = F,
-  dodgewidth = .8,
-  varnames = vnames)$plot +
-  theme_minimal(25) +
-  geom_pointrange(size = 2, position = position_dodge(width = .8)) +
-  labs(title = "White blood cell count") +
-  # labs(title = "Figure.3 Regression coefficients from generalized linear model of immune investment.",
-  #      subtitle = "White Blood Cell Count",
-  #      caption = "Variables with (S) have been standarized by 2 SD.") +
-  theme(legend.position = "none")
-
-fig_wbc <- annotate_figure(fig5,
-                           top = text_grob("Figure 3. Regression coefficients from generalized linear model of immune investment\n",
-                                           size = 20, face = "bold",
-                                           hjust = 0,
-                                           x = 0.01),
-                           bottom = text_grob("Variables labelled (S) have been standarized by 2 SD.",
-                                              size = 18))
-
-
-
-forestplot(
-  mwbc_alt,
-  intercept = F,
-  facet = F,
-  dodgewidth = .8,
-  varnames = vnames)$plot +
-  theme_minimal(25) +
-  geom_pointrange(size = 2, position = position_dodge(width = .8)) +
-  labs(title = "White blood cell count") +
-  # labs(title = "Figure.3 Regression coefficients from generalized linear model of immune investment.",
-  #      subtitle = "White Blood Cell Count",
-  #      caption = "Variables with (S) have been standarized by 2 SD.") +
-  theme(legend.position = "none")
-
+# fig1 <- forestplot(
+#   manth1, msoc1, mheal1, mphys1, mhor1a,
+#   intercept = F,
+#   facet = F,
+#   dodgewidth = .8,
+#   modelnames = mnames, varnames = vnames)$plot + theme_minimal(20) +
+#   geom_pointrange(size = 1.2, position = position_dodge(width = .7)) +
+#   labs(title = "Lifetime Number of Sexual Partners", color = "Controls") +
+#   coord_cartesian(clip = "off")
+#
+#
+# fig2 <- forestplot(
+#   manth2,msoc2,mheal2, mphys2, mhor2a,
+#   intercept = F,
+#   facet = F,
+#   dodgewidth = .8,
+#   modelnames = mnames,
+#   varnames = vnames
+# )$plot + theme_minimal(20) +
+#   geom_pointrange(size = 1.2, position = position_dodge(.8)) +
+#   labs(title = "Past Year Number of Sexual Partners", color = "Controls") +
+#   coord_cartesian(clip = "off")
+#
+#
+# fig3 <- forestplot(
+#   manth3, msoc3, mheal3, mphys3, mhor3a,
+#   intercept = F,
+#   facet = F,
+#   dodgewidth = .8,
+#   modelnames = mnames,
+#   varnames = vnames)$plot +
+#   theme_minimal(20) +
+#   geom_pointrange(size = 1.2, position = position_dodge(width = .7)) +
+#   labs(title = "Age at First Sex", color = "Controls") +
+#   coord_cartesian(clip = "off")
+#
+#
+# fig4 <- forestplot(
+#   manth4, msoc4, mheal4, mphys4, mhor4a,
+#   intercept = F,
+#   facet = F,
+#   dodgewidth = .8,
+#   modelnames = mnames,
+#   varnames = vnames)$plot +
+#   theme_minimal(20) + geom_pointrange(size = 1.2, position = position_dodge(width = .8)) +
+#   labs(title = "Currently Partnered", color = "Controls") +
+#   coord_cartesian(clip = "off")
+#
+#
+# fig1234 <- ggarrange(fig1, fig2, fig3, fig4,
+#                      labels = "AUTO",
+#                      font.label = list(size = 20),
+#                      ncol = 1, nrow = 4,
+#                      common.legend = TRUE, legend="bottom")
+#
+# fig <- annotate_figure(fig1234,
+#                        top = text_grob("Figure 2. Regression coefficients from generalized linear models of mating success\n",
+#                                        size = 20, face = "bold",
+#                                        hjust = 0,
+#                                        x = 0.01),
+#                        bottom = text_grob("\nVariables labelled (S) have been standarized by 2 SD. Base level of race/ethnicity is Mexican American.",
+#                                           size = 18))
+#
+#
+#
+# fig5 <- forestplot(
+#   mwbc,
+#   intercept = F,
+#   facet = F,
+#   dodgewidth = .8,
+#   varnames = vnames)$plot +
+#   theme_minimal(25) +
+#   geom_pointrange(size = 2, position = position_dodge(width = .8)) +
+#   labs(title = "White blood cell count") +
+#   # labs(title = "Figure.3 Regression coefficients from generalized linear model of immune investment.",
+#   #      subtitle = "White Blood Cell Count",
+#   #      caption = "Variables with (S) have been standarized by 2 SD.") +
+#   theme(legend.position = "none")
+#
+# fig_wbc <- annotate_figure(fig5,
+#                            top = text_grob("Figure 3. Regression coefficients from generalized linear model of immune investment\n",
+#                                            size = 20, face = "bold",
+#                                            hjust = 0,
+#                                            x = 0.01),
+#                            bottom = text_grob("Variables labelled (S) have been standarized by 2 SD.",
+#                                               size = 18))
+#
+#
+#
+# forestplot(
+#   mwbc_alt,
+#   intercept = F,
+#   facet = F,
+#   dodgewidth = .8,
+#   varnames = vnames)$plot +
+#   theme_minimal(25) +
+#   geom_pointrange(size = 2, position = position_dodge(width = .8)) +
+#   labs(title = "White blood cell count") +
+#   # labs(title = "Figure.3 Regression coefficients from generalized linear model of immune investment.",
+#   #      subtitle = "White Blood Cell Count",
+#   #      caption = "Variables with (S) have been standarized by 2 SD.") +
+#   theme(legend.position = "none")
+#
 
