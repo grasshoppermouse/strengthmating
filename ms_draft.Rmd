@@ -20,7 +20,16 @@ library(gtsummary)
 library(corrplot)
 source('draft_analysis.R')
 ```
-EHB Research Report
+EHB Registered Report
+
+1.4 Experimental aims and hypotheses
+
+In a large, nationally representative US sample, we predict that hand grip strength will be significantly positively associated with male mating success but not female mating success. We also predict that there will be a negative association between male grip strength and white blood cell count, but no association between female grip strength and white blood cell count.
+
+
+2. Exploratory analysis
+
+In order to inform our hypotheses and refine our models, we first conducted exploratory analyses.
 
 ## Methods
 
@@ -35,34 +44,32 @@ In industrialized populations like the U.S., widespread access to contraceptives
 
 Our second outcome measure was immune investment, which we operationalized as white blood cell count (1000 cells/ µL). In the original paper, Lassek and Gaulin also modelled C-reactive protein (CRP) as an outcome variable, but CRP was not measured in the 2011-2014 data collection years and so is not included here. 
 
+Finally, we modeled dietary energy intake in the form of calories consumed. Participants reported all food and beverages they consumed in the 24 hours prior to their interview. This interview was repeated for a different 24 hour period 3-10 days later to obtain dietary recalls for two separate days. These data were then used to estimate energy intake in the form of kila-calories calculated by matching reported foods to the USDA's Food and Nutrient Database for Dietary Studies. We used the number of calories for each participant averaged across their two recall days. 
+
 ### Predictor variables: 
 Our main predictor variable is formidability, which Lassek and Gaulin operationalized as fat-free mass and limb muscle volume. We operationalized formidability as combined grip strength (kg), the sum of the highest of three readings taken on each hand using a dynamometer. All models also included sex (male/female), age in years, partnered status (partnered included participants who reported either being married or living with a partner whereas unpartnered included participants who reported being single, widowed, divorced, or separated). The interaction between sex and strength was crucial for our models since we want to test if the effect of strength on mating and immune outcomes is different for women than for men. Likewise, we also interacted age and partnered status with sex. We interacted age with sex since menopause occurs within the age range of our participants. For models of past year number of sexual partners we included an interaction between partnered status and grip strength since being currently partnered would plausibly impact mating behavior in the past year regardless of strength. 
 
 ### Models:
 
 #### Baseline (anthropometric) model
-We first derived a simple baseline model from Lassek and Gaulin (2009) for each outcome measure (total number of partners, past year number of partners, and age at first intercourse) predicted by age, sex, grip strength, and current partnered status. This model also includes an anthropometric control, body mass index (BMI), calculated as kg/m^2, since body size could impact either strength or mating outcomes. We interacted age, strength, and BMI with sex to assess differences in these predictors for men and women. 
+We first derived a simple baseline model from Lassek and Gaulin (2009) for each outcome measure (total number of partners, past year number of partners, and age at first intercourse) predicted by age, sex, grip strength, and partnered status. This model also includes an anthropometric control, body mass index (BMI), calculated as kg/m^2, since body size could impact either strength or mating outcomes. We interacted age, strength, and BMI with sex to assess differences in these predictors for men and women. 
 
 #### Additional control variables: 
-to additionally test if the association of strength with mating success shown in Lassek and Gaulin (2009) was due to some unmeasured variable, we fit regression models with a much wider range of potential confounds. We specified four additional models for each mating success outcome measure in order to determine if the effect of grip strength on those outcomes was due to confounds with anthropometric, socioeconomic, health, hormone, or physical activity variables that have been associated either with strength or sexual behavior. 
+In order to test if the association of strength with mating success shown in Lassek and Gaulin (2009) was due to some unmeasured variable, we fit regression models with a much wider range of potential confounds. We specified four additional models for each mating success outcome measure in order to determine if the effect of grip strength on those outcomes was due to confounds with socioeconomic, health, hormone, or physical activity variables that have been associated either with strength or sexual behavior. 
 
-The socioeconomic control model included education and race as categorical variables. 
+First, the socioeconomic control model included education and race as categorical variables, since there is evidence that race is related to variation in both strength (Johnson & Wilson, 2019) and sexual behavior (Fenton et al., 2005).There is also variation in sexual behavior by education (Chandra et al., 2011). 
 
-The health model included a number of variables related to health, which could affect either strength or sexual behavior. White blood cell count (1000 cells/ µL) and hemoglobin (g/dL) were included to control for acute infection. Depression was measured using the Patient Health Questionnaire-9 (PHQ-9), a validated nine-item screening instrument. Each item represents a symptom of depression, and for each one participants were asked to consider how frequently they had been bothered by that symptom over the past two weeks, rated on a scale from 0 (not at all) to 3 (nearly everyday). These ratings were summed to produce a depression score ranging from 0-27. Chronic illness was included using a 'chronic disease score (0-6) a count of chronic diseases participants reported having been diagnosed with including diabetes, cancer, stroke, arthritis, heart disease and respiratory disease. A point was added for each disease a participant indicated they had been diagnosed with, regardless of any impairment due to the disease. We then controlled for impairment resulting from chronic illness (Disability Score; 0-5) calculated from a different NHANES question, which asked participants to list up to five health conditions that specifically cause them to have difficulties with physical activities. We also controlled for physical disability and using the item "special equipment" which referred to participants' report that they needed special equipment to walk. Finally the 'perceived abnormal weight' variable was coded as true or false depending on whether a participant reported that they perceived their weight to be abnormal.   
+The health model included a number of variables related to health, which could affect either strength or sexual behavior. White blood cell count (1000 cells/ µL) and hemoglobin (g/dL) were included to control for acute infection. Depression, which is negatively related to strength (Smith et al., 2022), was measured using the Patient Health Questionnaire-9 (PHQ-9), a validated nine-item screening instrument. Each item represents a symptom of depression, and for each one participants were asked to consider how frequently they had been bothered by that symptom over the past two weeks, rated on a scale from 0 (not at all) to 3 (nearly everyday). These ratings were summed to produce a depression score ranging from 0-27. Chronic illness was included using Chronic Disease Score (0-6) a count of chronic diseases participants reported having been diagnosed with including diabetes, cancer, stroke, arthritis, heart disease and respiratory disease. A point was added for each disease a participant reported being diagnosed with, regardless of any impairment due to the disease. We then controlled for impairment resulting from chronic illness (Disability Score; 0-5) calculated from a different NHANES question, which asked participants to list up to five health conditions that specifically cause them to have difficulties with physical activities. We also controlled for physical disability and using the item "special equipment" which referred to participants' report that they needed special equipment to walk. Finally the 'perceived abnormal weight' variable was coded as true or false depending on whether a participant reported that they perceived their weight to be abnormal.   
 
-The hormone control model included serum total testosterone. Since male mean testosterone is an order of magnitude higher than female,  testosterone was highly confounded with sex. We therefore computed a testosterone value as follows: we centered testosterone at the mean and divided by two standard deviations within each sex. 
+The hormone control model included serum total testosterone (ng/dL). Since male mean testosterone is an order of magnitude higher than the female mean, testosterone was highly confounded with sex. We therefore computed a testosterone value as follows: we centered testosterone at the mean and divided by two standard deviations within each sex, differing from other centered and standardized variables which we centered and standardized across all male and female values. 
 
 The physical activity control model included four dichotomous variables coded as 1 if participants reported that their work and/or recreation caused large increases in heart rate or breathing for at least 10 minutes continuously (vigorous work and/or rec), or small increases in breathing or heart rate for 10 minutes continuously (moderate work and/or rec), and zero if they reported their work and/or recreation did not. 
 
-Our outcome variables were identical to those used by Lassk and Gaulin (2009) ie lifetime, past year number of partners and age at first sex. However, the NHANES questions include any kind of sex (e.g. oral, vaginal, anal). Since, however, NHANES also collects more specific data on sexual behavior we also fit Models 1 and 2 using lifetime and past year numbers of vaginal sex partners respectively, since heterosexual vaginal intercourse should be more directly related to reproductive success than other kinds of sex. In these questions participants were asked “In your lifetime, with how many men/women have you had vaginal sex?” and “In the past 12 months, with how many men/women have you had vaginal sex?” 
-
-We did not include a model of daily energy intake as reported by Lassek and Gaulin, because the gold-standard research utilizes fat-free mass as a predictor, which the original authors use. Grip strength is therefore unlikely to provide novel insight into explaining daily energy intake. 	
-
 #### Analysis 
-Lassek and Gaulin (2009) utilized stepwise regression to automatically eliminate candidate predictors from their models. Since stepwise regression has since been found to overfit data and therefore fail to replicate in future samples (Smith, 2018), we use generalized linear models from the survey package to incorporate survey weights. For models of lifetime and past year numbers of partners we modeled the outcomes using a poisson distribution, since these variables are count data. Models of age at first sexual intercourse and white blood cell count utilized a normal distribution. Analyses include adults ages 18-59 because this is period when the majority of reproduction takes place and because these are the years when grip strength is the most stable. 
+All analyses were completed in `r R.version.string`, using the survey package in order to incorporate the survey sampling weights and to preserve the representative structure of the sample. Lassek and Gaulin (2009) utilized stepwise regression to automatically eliminate candidate predictors from their models. Since stepwise regression has since been found to overfit data and therefore fail to replicate in future samples (Smith, 2018), we use generalized linear models from the survey package to incorporate survey weights. For models of lifetime and past year numbers of partners we modeled the outcomes using a poisson distribution, since these variables are count data. Models of age at first sexual intercourse and white blood cell count utilized a normal distribution. Analyses include adults ages 18-59 because this is period when the majority of reproduction takes place and because these are the years when grip strength is the most stable. 
 
 
-### 3. Results: Exploratory Analysis
+### 3. Results
 
 #### 3.1 Descriptive statistics 
 
@@ -271,23 +278,23 @@ fig1234 <- ggarrange(fig1, fig2, fig3, fig4,
 ```
 
 ```{r}
-l1 <- tbl_regression(msoc1)  
-
-l2 <- tbl_regression(mheal1) 
-
-l3 <- tbl_regression(mhor1) 
-
-l4 <- tbl_regression(mphys1) 
-  tbl_merge(
-    tbls = list(l1, l2, l3, l4),
-    tab_spanner = c("Socioeconomic",
-                    "Health",
-                    "Hormone",
-                    "Physical Activity")) %>%
-   as_gt() %>%
-  gt::tab_header(title = "Lifetime number of partners control models",
-                 subtitle = "Standardized regression coefficents from generalized
-                 linear models")
+# l1 <- tbl_regression(msoc1)  
+# 
+# l2 <- tbl_regression(mheal1) 
+# 
+# l3 <- tbl_regression(mhor1) 
+# 
+# l4 <- tbl_regression(mphys1) 
+#   tbl_merge(
+#     tbls = list(l1, l2, l3, l4),
+#     tab_spanner = c("Socioeconomic",
+#                     "Health",
+#                     "Hormone",
+#                     "Physical Activity")) %>%
+#    as_gt() %>%
+#   gt::tab_header(title = "Lifetime number of partners control models",
+#                  subtitle = "Standardized regression coefficents from generalized
+#                  linear models")
 
 ```
 
@@ -668,6 +675,10 @@ designsG$d.design.adults %>%
 
 
 ```
+
+## 4. Confirmatory Analysis
+
+### 4.1 Method
 
 
 ### Discussion

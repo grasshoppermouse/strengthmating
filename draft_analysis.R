@@ -47,9 +47,9 @@ vnames <- c(
 
 m_lifetime <- svyglm(
   sex_partners ~
-    strength_centered * sex +
     age_centered * sex +
-    partnered * strength_centered +
+    strength_centered * sex +
+    partnered +
     bmi_centered * sex,
   family = quasipoisson(),
   design = designsG$d.design.adults
@@ -59,7 +59,7 @@ m_pastyear <- svyglm(
   sex_partners_year ~
     age_centered * sex +
     strength_centered * sex +
-    partnered * strength_centered +
+    partnered * strength_centered + #keeping partnered x strength interaction only for this model
     bmi_centered * sex,
   family = quasipoisson(),
   design = designsG$d.design.adults
@@ -133,7 +133,7 @@ msoc1 <-
     sex_partners ~
       age_centered * sex +
       strength_centered * sex +
-      partnered * strength_centered + #added strength interaction 03.23 to match past year since lifetime partners is a function of past year
+      partnered + #* strength_centered + #added strength interaction 03.23 to match past year since lifetime partners is a function of past year; took out 4.6
       edu +
       race,
     family = quasipoisson(),
@@ -147,7 +147,7 @@ mheal1 <-
     sex_partners ~
       age_centered * sex +
       strength_centered * sex +
-      partnered * strength_centered + #added strength interaction 03.23 to match past year since lifetime partners is a function of past year
+      partnered +
       perceived_abnormal_weight +
       whitebloodcell_centered +
       hemoglobin_centered +
@@ -158,19 +158,19 @@ mheal1 <-
     family = quasipoisson(),
     design = designsG$d.design.adults
   )
-summary(mheal1)
+summary(mheal1, df.resid = Inf)
 
 mhor1 <-
   svyglm(
     sex_partners ~
       age_centered * sex +
       strength_centered * sex +
-      partnered * strength_centered + #added strength interaction 03.23 to match past year since lifetime partners is a function of past year
+      partnered +
       testosterone_sex_centered * sex,
     family = quasipoisson(),
     design = designsG$d.design.adults
   )
-summary(mhor1, df = Inf)
+summary(mhor1, df.resid = Inf)
 
 #phys activity
 mphys1 <-
@@ -178,7 +178,7 @@ mphys1 <-
     sex_partners ~
       age_centered * sex +
       strength_centered * sex +
-      partnered * strength_centered + #added strength interaction 03.23 to match past year since lifetime partners is a function of past year
+      partnered +
       vigorous_rec +
       moderate_rec +
       vigorous_work +
@@ -186,7 +186,7 @@ mphys1 <-
     family = quasipoisson(),
     design = designsG$d.design.adults
   )
-summary(mphys1)
+summary(mphys1, df.resid = Inf)
 
 
 # Past year partner models ------------------------------------------------
@@ -248,7 +248,7 @@ mhor2 <-
     family = quasipoisson(),
     design = designsG$d.design.adults
   )
-summary(mhor2)
+summary(mhor2, df.resid = Inf)
 
 #phys activity past year
 mphys2 <-
@@ -443,6 +443,13 @@ mwbc_alt <- svyglm(whitebloodcell ~
                family= quasipoisson(),
                design=designsG$d.design.adults)
 
+
+
+# Dietary Intake model ----------------------------------------------------
+
+
+
+
 # coef plots --------------------------------------------------------------
 
 mnames <- c(
@@ -452,6 +459,11 @@ mnames <- c(
   # "Hormone", old model removed since log(testosterone) is confounded with sex
   "Physical Activity",
   "Hormone" #sub new model with sex centered testosterone
+)
+
+immunenames <- c(
+  "WBCC",
+  "WBCC with hormone control"
 )
 
 vnames <- c(
@@ -477,8 +489,8 @@ vnames <- c(
   "depression" = "Depression Score",
   "log(testosterone)" = "Testosterone (log)",
   "sexfemale:log(testosterone)" = "Sex (Female) x Testosterone (log)",
-  "testosterone_sex_centered" = "Testosterone centered by sex",
-  "sexfemale:testosterone_sex_centered"= "sex (Female) x testosterone",
+  "testosterone_sex_centered" = "Testosterone Centered by Sex",
+  "sexfemale:testosterone_sex_centered"= "Sex (Female) x Testosterone Centered by Sex",
   "vigorous_rec" = "Vigorous Recreation",
   "moderate_rec" = "Moderate Recreation",
   "vigorous_work" = "Vigorous Work",
