@@ -5,45 +5,7 @@ library(hagenutils)
 library(ggpubr)
 
 
-# Baseline models ---------------------------------------------------------
-
-vnames <- c(
-  "strength_centered" = "Strength (S)",
-  "sexfemale" = "Sex (Female)",
-  "sexfemale:strength_centered" = "Sex (Female) x Strength",
-  "age_centered" = "Age (S)",
-  "partneredTRUE" = "Partnered",
-  "strength_centered:partneredTRUE" = "Partnered x Strength (S)",
-  "age_centered:sexfemale" = "Age (S) x Sex (Female)",
-  "height_centered" = "Height (S)",
-  "weight_centered" = "Weight (S)",
-  "bmi_centered" = "BMI (S)",
-  "sexfemale:bmi_centered" = "Sex (Female) x BMI (S)",
-  "sexfemale:height_centered" = "Sex (Female) x Height (S)",
-  "sexfemale:weight_centered" = "Sex (Female) x Weight (S)",
-  'perceived_abnormal_weightTRUE' = "Perceived Abnormal Weight",
-  "whitebloodcell_centered" = "White Blood Cell Count (S)",
-  "hemoglobin_centered" = "Hemoglobin (S)",
-  "special_equipmentTRUE" = "Need special equip to walk",
-  "chronic_disease_score" = "Chronic Disease Score",
-  "physical_disease_count" = "Physical Disease Count",
-  "depression" = "Depression Score",
-  "log(testosterone)" = "Testosterone (log)",
-  "sexfemale:log(testosterone)" = "Sex (Female) x Testosterone (log)",
-  "testosterone_sex_centered" = "Testosterone (S by Sex)",
-  "sexfemale:testosterone_sex_centered"= "Sex (Female) x Testosterone (S by Sex)",
-  "vigorous_rec" = "Vigorous Recreation",
-  "moderate_rec" = "Moderate Recreation",
-  "vigorous_work" = "Vigorous Work",
-  "moderate_work" = "Moderate Work",
-  "edu" = "Education",
-  "raceOtherHispanic" = "Other Hispanic",
-  "raceNonHispanicBlack" = "Non-Hispanic Black",
-  "raceNonHispanicAsian" = "Non-Hispanic Asian",
-  "raceNonHispanicWhite" = "Non-Hispanic White",
-  "raceOtherRace" = "Other Race"
-)
-
+# Anthropometric models ---------------------------------------------------------
 
 m_lifetime <- svyglm(
   sex_partners ~
@@ -54,6 +16,10 @@ m_lifetime <- svyglm(
   family = quasipoisson(),
   design = designsG$d.design.adults
 )
+
+#visreg(m_lifetime,  xvar = "strength_centered", by = "sex", scale = "response")
+
+#plot(allEffects(m_lifetime))
 
 m_pastyear <- svyglm(
   sex_partners_year ~
@@ -75,11 +41,24 @@ m_agefirst <-  svyglm(
   design = designsG$d.design.adults
 )
 
+m_partnered <-
+  svyglm(
+    partnered ~
+      age_centered * sex +
+      strength_centered * sex +
+      bmi_centered * sex,
+    family = quasibinomial(),
+    design = designsG$d.design.adults
+  )
+summary(m_partnered, df.resid = Inf)
+
+
 
 mnames1 <- c(
   "Age at first intercourse",
   "Lifetime Number of Sexual Partners",
-  "Past Year Number of Sexual Partners"
+  "Past Year Number of Sexual Partners",
+  "Currently Partnered"
 )
 #
 # vnames1 <- c(
@@ -290,12 +269,12 @@ msoc3 <-
       age_centered * sex +
       strength_centered * sex +
       partnered +
-      edu +
-      race,
+      race +
+      edu,
     family = gaussian(),
     design = designsG$d.design.adults
   )
-summary(msoc3)
+summary(msoc3, df.resid = Inf)
 
 #age first sex (health)
 mheal3 <-
@@ -425,10 +404,10 @@ summary(mphys4)
 mwbc <- svyglm(whitebloodcell ~
                  age_centered * sex +
                  strength_centered * sex +
-                 bmi_centered * sex,
+                 bmi_centered,
                family= quasipoisson(),
                design=designsG$d.design.adults)
-summary(mwbc)
+summary(mwbc, df.resid = Inf)
 
 
 
@@ -438,16 +417,43 @@ summary(mwbc)
 mwbc_alt <- svyglm(whitebloodcell ~
                  age_centered * sex +
                  strength_centered * sex +
-                 bmi_centered * sex +
-                 testosterone_sex_centered * sex,
+                 bmi_centered +
+                 testosterone_sex_centered * sex +
+                foodinsecurity_adult  +
+                  avgcalories +
+                   tot_MET,
                family= quasipoisson(),
                design=designsG$d.design.adults)
 
-
+summary(mwbc_alt, df.resid = Inf)
 
 # Dietary Intake model ----------------------------------------------------
 
+m_energy <- svyglm( #use this
+  avgcalories ~
+    age_centered +
+    tot_MET  +
+    strength_centered +
+    bmi_centered  +
+    sex,
+  family = gaussian(),
+  design = designsG$d.design.dietary.adults
+)
+summary(m_energy, df.resid = Inf)
 
+m_energy_alt <- svyglm( #use this
+  avgcalories ~
+    age_centered +
+    tot_MET +
+    strength_centered +
+    sex +
+    bmi_centered +
+    whitebloodcell +
+    foodinsecurity_adult,
+  family = gaussian(),
+  design = designsG$d.design.dietary.adults
+)
+summary(m_energy_alt, df.resid = Inf)
 
 
 # coef plots --------------------------------------------------------------
@@ -473,13 +479,13 @@ vnames <- c(
   "age_centered" = "Age (S)",
   "partneredTRUE" = "Partnered",
   "strength_centered:partneredTRUE" = "Partnered x Strength (S)",
-  "age_centered:sexfemale" = "Age x Sex (Female)",
+  "age_centered:sexfemale" = "Age (S) x Sex (Female)",
   "height_centered" = "Height (S)",
   "weight_centered" = "Weight (S)",
   "bmi_centered" = "BMI (S)",
-  "sexfemale:bmi_centered" = "Sex (Female) x BMI",
-  "sexfemale:height_centered" = "Sex (Female) x Height",
-  "sexfemale:weight_centered" = "Sex (Female) x Weight",
+  "sexfemale:bmi_centered" = "Sex (Female) x BMI (S)",
+  "sexfemale:height_centered" = "Sex (Female) x Height (S)",
+  "sexfemale:weight_centered" = "Sex (Female) x Weight (S)",
   'perceived_abnormal_weightTRUE' = "Perceived Abnormal Weight",
   "whitebloodcell_centered" = "White Blood Cell Count (S)",
   "hemoglobin_centered" = "Hemoglobin (S)",
@@ -489,8 +495,8 @@ vnames <- c(
   "depression" = "Depression Score",
   "log(testosterone)" = "Testosterone (log)",
   "sexfemale:log(testosterone)" = "Sex (Female) x Testosterone (log)",
-  "testosterone_sex_centered" = "Testosterone Centered by Sex",
-  "sexfemale:testosterone_sex_centered"= "Sex (Female) x Testosterone Centered by Sex",
+  "testosterone_sex_centered" = "Testosterone (S by Sex)",
+  "sexfemale:testosterone_sex_centered"= "Sex (Female) x Testosterone (S by Sex)",
   "vigorous_rec" = "Vigorous Recreation",
   "moderate_rec" = "Moderate Recreation",
   "vigorous_work" = "Vigorous Work",
@@ -500,8 +506,49 @@ vnames <- c(
   "raceNonHispanicBlack" = "Non-Hispanic Black",
   "raceNonHispanicAsian" = "Non-Hispanic Asian",
   "raceNonHispanicWhite" = "Non-Hispanic White",
-  "raceOtherRace" = "Other Race"
+  "raceOtherRace" = "Other Race",
+  "foodinsecurity_adult" = "Food Insecurity",
+  "tot_MET" = "Total MET",
+  "avgcalories" = "Average calories per day"
 )
+
+
+# vnames <- c(
+#   "strength_centered" = "Strength (S)",
+#   "sexfemale" = "Sex (Female)",
+#   "sexfemale:strength_centered" = "Sex (Female) x Strength",
+#   "age_centered" = "Age (S)",
+#   "partneredTRUE" = "Partnered",
+#   "strength_centered:partneredTRUE" = "Partnered x Strength (S)",
+#   "age_centered:sexfemale" = "Age x Sex (Female)",
+#   "height_centered" = "Height (S)",
+#   "weight_centered" = "Weight (S)",
+#   "bmi_centered" = "BMI (S)",
+#   "sexfemale:bmi_centered" = "Sex (Female) x BMI",
+#   "sexfemale:height_centered" = "Sex (Female) x Height",
+#   "sexfemale:weight_centered" = "Sex (Female) x Weight",
+#   'perceived_abnormal_weightTRUE' = "Perceived Abnormal Weight",
+#   "whitebloodcell_centered" = "White Blood Cell Count (S)",
+#   "hemoglobin_centered" = "Hemoglobin (S)",
+#   "special_equipmentTRUE" = "Need special equip to walk",
+#   "chronic_disease_score" = "Chronic Disease Score",
+#   "physical_disease_count" = "Physical Disease Count",
+#   "depression" = "Depression Score",
+#   "log(testosterone)" = "Testosterone (log)",
+#   "sexfemale:log(testosterone)" = "Sex (Female) x Testosterone (log)",
+#   "testosterone_sex_centered" = "Testosterone Centered by Sex",
+#   "sexfemale:testosterone_sex_centered"= "Sex (Female) x Testosterone Centered by Sex",
+#   "vigorous_rec" = "Vigorous Recreation",
+#   "moderate_rec" = "Moderate Recreation",
+#   "vigorous_work" = "Vigorous Work",
+#   "moderate_work" = "Moderate Work",
+#   "edu" = "Education",
+#   "raceOtherHispanic" = "Other Hispanic",
+#   "raceNonHispanicBlack" = "Non-Hispanic Black",
+#   "raceNonHispanicAsian" = "Non-Hispanic Asian",
+#   "raceNonHispanicWhite" = "Non-Hispanic White",
+#   "raceOtherRace" = "Other Race"
+# )
 
 
 # fig1 <- forestplot(

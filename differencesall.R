@@ -154,9 +154,8 @@ designsG$d.design.adults %>%
       dplyr::relocate(n_male, .before = stat_1) %>%
       dplyr::relocate(n_female, .before = stat_2)
   )  %>%
-  add_difference(test = everything() ~ "smd", ,
-                 estimate_fun = purrr::partial(style_ratio, digits = 2)),
-) %>%
+  add_difference(test = everything() ~ "smd",
+                 estimate_fun = purrr::partial(style_ratio, digits = 2)) %>%
   modify_column_hide(columns = ci) %>%
   modify_header(
     label = "**Variable**",

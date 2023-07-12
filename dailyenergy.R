@@ -142,8 +142,9 @@ d.design.dietary.adults <-
   )
 
 m1 <- svyglm(
-  log(avgcalories) ~
+  avgcalories ~
     age +
+    sex +
     total_work_MET  +
     total_rec_MET +
     wob_MET +
@@ -151,23 +152,74 @@ m1 <- svyglm(
     height +
     weight,
   family = gaussian(),
-  design = d.design.dietary.adults
+  design = designsG$d.design.dietary.adults
 )
 summary(m1, df.resid = Inf)
 plot(allEffects(m))
 
 m_energy <- svyglm( #use this
   avgcalories ~
+    age_centered +
+    total_work_MET_centered  +
+    total_rec_MET_centered +
+    wob_MET_centered +
+    strength_centered +
+    sex +
+    bmi_centered +
+    whitebloodcell +
+    foodinsecurity_adult +
+    depression,
+  family = gaussian(),
+  design = designsG$d.design.dietary.adults
+)
+summary(m_energy, df.resid = Inf)
+plot(m)
+
+m_energy <- svyglm( #use this
+  avgcalories ~
+    age_centered +
+    total_work_MET_centered  +
+    total_rec_MET_centered +
+    wob_MET_centered +
+    strength_centered +
+    sex +
+    bmi_centered +
+    whitebloodcell +
+    foodinsecurity_adult,
+  family = gaussian(),
+  design = designsG$d.design.dietary.adults
+)
+summary(m_energy, df.resid = Inf)
+
+m_energy <- svyglm( #use this
+  avgcalories ~
+    age_centered +
+    tot_MET +
+    strength_centered +
+    sex +
+    bmi_centered +
+    whitebloodcell +
+    foodinsecurity_adult,
+  family = gaussian(),
+  design = designsG$d.design.dietary.adults
+)
+summary(m_energy, df.resid = Inf)
+
+m_energy <- glm( #use this
+  avgcalories ~
     age +
     total_work_MET  +
     total_rec_MET +
     wob_MET +
-    strength +
+    log(strength) +
+    sex +
     height +
     weight,
   family = gaussian(),
-  design = d.design.dietary.adults
+  d_G[d_G$age>=18 & d_G$age<=60,]
 )
-summary(m_energy, df.resid = Inf)
-plot(m)
+
+mean_workMET <- svymean(~total_work_MET, designsG$d.design.dietary.adults, na.rm=T)[[1]]
+sd_workMET <- sqrt(svyvar(~total_work_MET, designsG$d.design.dietary.adults, na.rm=T))[[1]]
+designsG$d.design.dietary.adults <- update(designsG$d.design.dietary.adults, total_work_MET_centered = (total_work_MET - mean_workMET)/(2*sd_workMET))
 
