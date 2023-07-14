@@ -56,18 +56,18 @@ mheal1 <-
   )
 summary(mheal1)
 
-#lifetime partners (hormone model)
-mhor1 <-
-  svyglm(
-    sex_partners ~
-      age_centered * sex +
-      strength_centered * sex +
-      partnered +
-     log(testosterone) * sex,
-    family = quasipoisson(),
-    design = designsG$d.design.adults
-  )
-summary(mhor1)
+#lifetime partners (hormone model) #log(test) confounded with sex resulting in huge error bars, sub model below
+# mhor1 <-
+#   svyglm(
+#     sex_partners ~
+#       age_centered * sex +
+#       strength_centered * sex +
+#       partnered +
+#      log(testosterone) * sex,
+#     family = quasipoisson(),
+#     design = designsG$d.design.adults
+#   )
+# summary(mhor1)
 
 mhor1a <-
   svyglm(
@@ -151,17 +151,17 @@ summary(mheal2)
 
 
 # past year partners (hormone model)
-mhor2 <-
-  svyglm(
-    sex_partners_year ~
-      age_centered * sex +
-      strength_centered * sex +
-      partnered * strength_centered +
-      log(testosterone) * sex,
-    family = quasipoisson(),
-    design = designsG$d.design.adults
-  )
-summary(mhor2, df.resid = Inf)
+# mhor2 <-
+#   svyglm(
+#     sex_partners_year ~
+#       age_centered * sex +
+#       strength_centered * sex +
+#       partnered * strength_centered +
+#       log(testosterone) * sex,
+#     family = quasipoisson(),
+#     design = designsG$d.design.adults
+#   )
+# summary(mhor2, df.resid = Inf)
 
 mhor2a <-
   svyglm(
@@ -244,17 +244,17 @@ mheal3 <-
 summary(mheal3)
 
 #age first sex (hormone)
-mhor3 <-
-  svyglm(
-    age_first_sex ~
-      age_centered * sex +
-      strength_centered * sex +
-      partnered +
-      log(testosterone) * sex,
-    family = gaussian(),
-    design = designsG$d.design.adults
-  )
-summary(mhor3)
+# mhor3 <-
+#   svyglm(
+#     age_first_sex ~
+#       age_centered * sex +
+#       strength_centered * sex +
+#       partnered +
+#       log(testosterone) * sex,
+#     family = gaussian(),
+#     design = designsG$d.design.adults
+#   )
+# summary(mhor3)
 
 mhor3a <-
   svyglm(
@@ -334,16 +334,16 @@ summary(mheal4)
 
 #partnered status - hormone
 
-mhor4 <-
-  svyglm(
-    partnered ~
-      age_centered * sex +
-      strength_centered * sex +
-      log(testosterone) * sex,
-    family = quasibinomial(),
-    design = designsG$d.design.adults
-  )
-summary(mhor4)
+# mhor4 <-
+#   svyglm(
+#     partnered ~
+#       age_centered * sex +
+#       strength_centered * sex +
+#       log(testosterone) * sex,
+#     family = quasibinomial(),
+#     design = designsG$d.design.adults
+#   )
+# summary(mhor4)
 
 mhor4a <-
   svyglm(
@@ -391,10 +391,9 @@ mnames <- c(
   "Anthropometric",
   "Socieoeconomic",
   "Health",
-#  "Hormone", removed since testosterone is confounded with sex
+#  "Hormone", old model removed since log(testosterone) is confounded with sex
   "Physical Activity",
-  "Hormone",
-  "New Hormone"
+  "Hormone" #sub new model with sex centered testosterone
 )
 
 vnames <- c(
@@ -439,7 +438,7 @@ vnames <- c(
 
 
 fig1 <- forestplot(
-  manth1, msoc1, mheal1, mphys1, mhor1, mhor1a,
+  manth1, msoc1, mheal1, mphys1, mhor1a,
   intercept = F,
   facet = F,
   dodgewidth = .8,
@@ -450,7 +449,7 @@ fig1 <- forestplot(
 # + xlim(-2.5, 3.55)
 
 fig2 <- forestplot(
-  manth2,msoc2,mheal2, mphys2, mhor2, mhor2a,
+  manth2,msoc2,mheal2, mphys2, mhor2a,
   intercept = F,
   facet = F,
   dodgewidth = .8,
@@ -463,7 +462,7 @@ fig2 <- forestplot(
 # + xlim(-2.5, 3.55)
 
 fig3 <- forestplot(
-  manth3, msoc3, mheal3, mphys3, mhor3, mhor3a,
+  manth3, msoc3, mheal3, mphys3, mhor3a,
   intercept = F,
   facet = F,
   dodgewidth = .8,
@@ -476,7 +475,7 @@ fig3 <- forestplot(
 # + xlim(-2.5, 3.55)
 
 fig4 <- forestplot(
-  manth4, msoc4, mheal4, mphys4, mhor4, mhor4a,
+  manth4, msoc4, mheal4, mphys4, mhor4a,
   intercept = F,
   facet = F,
   dodgewidth = .8,
