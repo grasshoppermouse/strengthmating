@@ -443,9 +443,9 @@ fig1 <- forestplot(
   intercept = F,
   facet = F,
   dodgewidth = .8,
-  modelnames = mnames, varnames = vnames)$plot + theme_minimal(20) +
+  modelnames = mnames, varnames = vnames) + theme_minimal(20) +
   geom_pointrange(size = 1.2, position = position_dodge(width = .7)) +
-labs(title = "Lifetime Number of Sexual Partners", color = "Controls") +
+  labs(title = "Lifetime Number of Sexual Partners", color = "Controls") +
   coord_cartesian(clip = "off")
 # + xlim(-2.5, 3.55)
 
@@ -456,7 +456,7 @@ fig2 <- forestplot(
   dodgewidth = .8,
   modelnames = mnames,
   varnames = vnames
-)$plot + theme_minimal(20) +
+) + theme_minimal(20) +
   geom_pointrange(size = 1.2, position = position_dodge(.8)) +
   labs(title = "Past Year Number of Sexual Partners", color = "Controls") +
   coord_cartesian(clip = "off")
@@ -468,7 +468,7 @@ fig3 <- forestplot(
   facet = F,
   dodgewidth = .8,
   modelnames = mnames,
-  varnames = vnames)$plot +
+  varnames = vnames) +
   theme_minimal(20) +
   geom_pointrange(size = 1.2, position = position_dodge(width = .7)) +
   labs(title = "Age at First Sex", color = "Controls") +
@@ -481,7 +481,7 @@ fig4 <- forestplot(
   facet = F,
   dodgewidth = .8,
   modelnames = mnames,
-  varnames = vnames)$plot +
+  varnames = vnames) +
   theme_minimal(20) + geom_pointrange(size = 1.2, position = position_dodge(width = .8)) +
   labs(title = "Currently Partnered", color = "Controls") +
   coord_cartesian(clip = "off")
@@ -510,7 +510,7 @@ fig5 <- forestplot(
   intercept = F,
   facet = F,
   dodgewidth = .8,
-  varnames = vnames)$plot +
+  varnames = vnames) +
   theme_minimal(25) +
   geom_pointrange(size = 2, position = position_dodge(width = .8)) +
   labs(title = "White blood cell count") +

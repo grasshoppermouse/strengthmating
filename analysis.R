@@ -7,6 +7,8 @@ library(patchwork)
 library(foreign)
 library(effects)
 library(gtsummary)
+library(car)
+library(emmeans)
 #library(sjstats)
 
 #remove 10 males who report taking testosterone supplements
@@ -76,10 +78,10 @@ m14 <- svyglm(partnered ~ age_centered*sex + strength_centered*sex + height_cent
 summary(m14)
 plot(allEffects(m14))
 nobs(m14)
-nobs(mp)
 
 mp <- svyglm(partnered ~ sex + age, family = quasibinomial(), design=designsG$d.design)
 summary(mp) #no sex difference after controlling for age in adults 18-60
+nobs(mp)
 
 
 # m14.1 <- svyglm(partnered ~ age_centered*sex + strength_centered*sex + height_centered*sex + weight_centered * sex +
@@ -223,7 +225,7 @@ Anova(manth2.1, type = 3)
 plot(svysmooth(strength~age, designsG$d.design.adult.female)) #inverted U relationship for both males and females
 #bimodalstrengthXsex partner svysmooth relationship, both males and females
 
-m <- svyglm(sex_partners ~ poly(strength_centered, 3)*sex + poly(age_centered, 2)*sex, family = quasipoisson(), design=designsG$d.design.adults)
+# m <- svyglm(sex_partners ~ poly(strength_centered, 3)*sex + poly(age_centered, 2)*sex, family = quasipoisson(), design=designsG$d.design.adults)
 
 
 #age not linearly related to sex partners, nor is strength
@@ -364,7 +366,7 @@ d <-
 
 x <- d$value
 names(x) <- d$name
-ggdotchart(x[x< -.2])
+# ggdotchart(x[x< -.2])
 
 d_female <-
   d_G %>%
@@ -397,8 +399,8 @@ mal_pos <- ggdotchart(x[x > .1])
 (fem_pos + mal_pos) /
   (fem_neg + mal_neg)
 
-paq <- read.xport("../nhanesGH/data-raw/NHANES data/PAQ_G.XPT")
-names(paq)
+# paq <- read.xport("../nhanesGH/data-raw/NHANES data/PAQ_G.XPT")
+# names(paq)
 # m <- prcomp(na.omit(paq[-c(1,21)]), scale. = TRUE)
 
 
@@ -462,18 +464,18 @@ mpy <- svyglm(sex_partners_year ~ age_centered*sex  + bmi_centered + edu + stren
 summary(mpy)
 plot(allEffects(mpy))
 nobs(mpy)
-visreg(mpy, xvar = "strength_centered", by = "sex", scale = "response", gg = TRUE) + ylim(0,20)
+# visreg(mpy, xvar = "strength_centered", by = "sex", scale = "response", gg = TRUE) + ylim(0,20)
 
 
 # zero inflated model?
 
-m <- glm(sex_partners_year ~ age_centered*sex  + bmi + edu + partnered*strength + strength_centered*sex, family = quasipoisson(), data = d_G, subset = age <=59)
-summary(m)
-plot(allEffects(m))
+# m <- glm(sex_partners_year ~ age_centered*sex  + bmi + edu + partnered*strength + strength_centered*sex, family = quasipoisson(), data = d_G, subset = age <=59)
+# summary(m)
+# plot(allEffects(m))
 
 m <- svyglm(sex_partners_year ~  bmi_centered + edu + partnered*strength + age_centered*sex + strength_centered*sex, family = quasipoisson(), design=designsG$d.design.adults)
 summary(m)
-plot(allEffects(m))
+# plot(allEffects(m))
 
 
 m <- svyglm(partnered ~ age_centered*sex + strength_centered*sex + edu + bmi_centered, family = binomial, designsG$d.design.adults)
@@ -547,7 +549,7 @@ ggplot(d_G, aes(strength, lymphocytes, colour = sex)) + geom_point() + geom_smoo
 ggplot(d_G, aes(sex_partners, numsamesexpartners, colour = factor(eversamesexpartner))) +
          geom_point() + scale_x_log10() +facet_wrap(~sex) + scale_y_log10() + geom_smooth()
 
-svychisq(~(sex_partners>0 & eversamesexpartner) + sex, design = designsG$d.design.adults)
+# svychisq(~(sex_partners>0 & eversamesexpartner) + sex, design = designsG$d.design.adults)
 
 # 1 = heterosexual, 2 = homosexual, 3 = bi, 4 = something else, 5 = not sure
 t <- table(d_G$sexualorientation, d_G$sex, useNA = 'a')
