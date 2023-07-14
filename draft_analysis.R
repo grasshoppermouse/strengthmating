@@ -420,8 +420,8 @@ mwbc_alt <- svyglm(whitebloodcell ~
                  bmi_centered +
                  testosterone_sex_centered * sex +
                 foodinsecurity_adult  +
-                  avgcalories +
-                   tot_MET,
+                  avgcalories_centered +
+                   tot_MET_centered,
                family= quasipoisson(),
                design=designsG$d.design.adults)
 
@@ -432,7 +432,7 @@ summary(mwbc_alt, df.resid = Inf)
 m_energy <- svyglm( #use this
   avgcalories ~
     age_centered +
-    tot_MET  +
+    tot_MET_centered  +
     strength_centered +
     bmi_centered  +
     sex,
@@ -444,11 +444,11 @@ summary(m_energy, df.resid = Inf)
 m_energy_alt <- svyglm( #use this
   avgcalories ~
     age_centered +
-    tot_MET +
+    tot_MET_centered +
     strength_centered +
     sex +
     bmi_centered +
-    whitebloodcell +
+    whitebloodcell_centered +
     foodinsecurity_adult,
   family = gaussian(),
   design = designsG$d.design.dietary.adults
@@ -467,9 +467,9 @@ mnames <- c(
   "Hormone" #sub new model with sex centered testosterone
 )
 
-immunenames <- c(
-  "WBCC",
-  "WBCC with hormone control"
+mmnames <- c(
+  "Replication Model",
+  "Expanded Controls Model"
 )
 
 vnames <- c(
@@ -508,8 +508,8 @@ vnames <- c(
   "raceNonHispanicWhite" = "Non-Hispanic White",
   "raceOtherRace" = "Other Race",
   "foodinsecurity_adult" = "Food Insecurity",
-  "tot_MET" = "Total MET",
-  "avgcalories" = "Average calories per day"
+  "tot_MET_centered" = "Total MET (S)",
+  "avgcalories_centered" = "Average calories per day (S)"
 )
 
 
