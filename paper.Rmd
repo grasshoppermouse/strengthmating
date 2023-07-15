@@ -10,8 +10,8 @@ output:
    latex_engine: xelatex
  bookdown::word_document2:
    number_sections: false
-csl: apa.csl
-bibliography: regrep.bib
+# csl: apa.csl
+# bibliography: regrep.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -28,6 +28,12 @@ library(reshape2)
 library(gtsummary)
 library(corrplot)
 library(patchwork)
+
+# Needed to save figure pdf's
+if (!file.exists('Figures')){
+  dir.create('Figures')
+}
+
 source('draft_analysis.R')
 ```
 EHB Registered Report
@@ -349,7 +355,7 @@ con <- designsG$d.design.adults %>%
       dplyr::relocate(n_female, .before = stat_2)
   )  %>%
   add_difference(test = everything() ~ "smd",
-                 estimate_fun = purrr::partial(style_ratio, digits = 2)) %>%
+                 estimate_fun = list(~purrr::partial(style_ratio, digits = 2))) %>%
   modify_column_hide(columns = ci) %>%
   modify_header(
     label = "**Variable**",
@@ -678,7 +684,7 @@ We extended these findings to include women in order to test the hypothesis that
 
 The lack of a sex difference in the significant positive effect of strength on short term mating success is puzzling. Because men have greater strength than women their partner numbers are higher. Still, women with higher grip strength report more partners than women with lower grip strength even after controlling for a host of potential confounds. It could be that there was selection for more formidable men to prefer more partner variety, and stronger women have a similar preference as a byproduct of selection on men. It could be that there is assortative mating on strength; thus if stronger men are motivated to switch partners more frequently their (stronger) mates would also necessarily have more mates. It may be that stronger women require less male investment and so instead benefit from greater partner numbers through e.g. genetic bet-hedging, forging relationships with multiple males, ability to conduct a more extensive search for high quality long term mate, or through avoiding costly long term partnerships.  It might also be the case that there are some sex-specific confounds that we failed to control for. Finally, greater partner numbers might indicate mating failures rather than mating successes for males or females, although why strength would be associated with mating failures is not clear. 
 
-## 3. Confirmatory Analysis [not yet conducted]
+## 3. Confirmatory Analysis [data not yet observed]
 
 We indicate our predictions for the results of the confirmatory tests, specifically, our predictions for significant coefficients of strength and of the interaction between sex and strength, in Table X. We indicate for each outcome whether we predict a significant positive, negative, or no effect of these variables across our control models. If the effect of strength on the outcome variable is not significant in any single model, especially if the size of the coefficient is markedly reduced, then we will consider that evidence against the sexual selection hypothesis. 
 
