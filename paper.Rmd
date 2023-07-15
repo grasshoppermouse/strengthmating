@@ -1,6 +1,6 @@
 ---
 title: "Grip strength, mating success, and immune and energy costs in a population sample of US women and men: a registered report"
-author: "C. B. Smith and E. H. Hagen"
+author: "Caroline B. Smith and Edward H. Hagen"
 date: "`r Sys.Date()`"
 output:
  bookdown::html_document2:
