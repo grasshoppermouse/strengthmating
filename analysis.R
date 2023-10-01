@@ -1,7 +1,7 @@
 library(survey)
 library(ggplot2)
 library(nhanesGH)
-library(hagenutils)
+library(hagenutils) # has a version of tidy modified to handle df.resid arg of summary.svyglm
 library(ggpubr)
 
 
@@ -460,7 +460,7 @@ summary(m_energy_alt, df.resid = Inf)
 
 mnames <- c(
  # "Anthropometric", baseline model has bmi
-  "Socieoeconomic",
+  "Socioeconomic",
   "Health",
   # "Hormone", old model removed since log(testosterone) is confounded with sex
   "Physical Activity",

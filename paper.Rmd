@@ -34,7 +34,7 @@ if (!file.exists('Figures')){
   dir.create('Figures')
 }
 
-source('draft_analysis.R')
+source('analysis.R')
 ```
 EHB Registered Report
 
@@ -499,7 +499,8 @@ Figure1 <- forestplot(
   modelnames = mnames1,
   varnames = vnames, 
   size = 1.2, 
-  linewidth = 1
+  linewidth = 1,
+  ddf = Inf
 ) + theme_minimal(17) +
 #  geom_pointrange(size = 1.2, position = position_dodge(width = .5)) +
 #  labs(title = "Figure 1. Baseline Models: Regression coefficients from generalized linear models", color = "Model") +
@@ -531,85 +532,77 @@ We also modeled partnered status. While strength was a significant predictor of 
 
 #include groups of potential confounds to explore lack of sex effect for all 4 mating outcomes 
 
-fig1 <- forestplot(
-   msoc1, mheal1, mphys1, mhor1,
-  intercept = F,
-  facet = F,
-  dodgewidth = .8,
-  modelnames = mnames, 
-  varnames = vnames, 
-  size = 0.7, 
-  linewidth = 0.7) + theme_minimal() +
-  theme(axis.text.y = element_text(size = 9), plot.title = element_text(size = 11)) +
- # geom_pointrange(size = 1.2, position = position_dodge(width = .7)) +
-  labs(title = "Lifetime Number of Sexual Partners") 
- # coord_cartesian(clip = "off")
-# + xlim(-2.5, 3.55)
+# "Partnered x Strength (S)"
 
-fig2 <- forestplot(
- msoc2,mheal2, mphys2, mhor2,
-  intercept = F,
-  facet = F,
-  dodgewidth = .8,
-  modelnames = mnames,
-  varnames = vnames, 
- size = 0.7, 
-  linewidth = 0.7
-) + theme_minimal() +
-#  geom_pointrange(size = 1.2, position = position_dodge(.8)) +
-  labs(title = "Past Year Number of Sexual Partners")  +
-  theme(axis.text.y = element_blank(), plot.title = element_text(size = 11))
-#  coord_cartesian(clip = "off")
-# + xlim(-2.5, 3.55)
+forestplot_custom <- function(m1, m2, m3, m4, nm, title, y_axis=F){
+  d <- forestplot(
+    m1, m2, m3, m4,
+    intercept = F,
+    modelnames = mnames, 
+    varnames = vnames,
+    ddf = Inf,
+    draw = F
+  ) 
+  
+  if (!is.null(nm)){
+    for (n in nm){
+      d <- bind_rows(
+        d,
+        tibble(
+          Model = c('Health', 'Hormone', 'Physical Activity', 'Socioeconomic'),
+          term = factor(rep(n, 4)),
+          estimate = c(NA, NA, NA, NA),
+          std.error = c(NA, NA, NA, NA),
+          statistic = c(NA, NA, NA, NA),
+          p.value = c(NA, NA, NA, NA),
+          conf.low = c(NA, NA, NA, NA),
+          conf.high = c(NA, NA, NA, NA)
+        )
+      )
+    }
+    
+  }
+  p <- 
+    d %>% 
+    ggplot(aes(estimate, term, xmin=conf.low, xmax=conf.high, colour=Model, shape=Model)) + 
+    geom_pointrange(size = 0.7, linewidth = 0.7, position = position_dodge(width = 0.8)) +
+    geom_vline(xintercept=0, linetype='longdash') +
+    labs(title = title, y='', x='Estimate (95% CI)', ) +
+    theme_minimal() +
+    theme(plot.title = element_text(size = 11))
+  
+    if (!y_axis){
+      p <- p + theme(axis.text.y = element_blank())
+    }
+  return(p)
+}
 
-fig3 <- forestplot(
+fig1 <- forestplot_custom(
+  msoc2,mheal2, mphys2, mhor2,
+  NULL, 
+  "Past Year Number of Sexual Partners",
+  y_axis = T
+)
+
+fig2 <- forestplot_custom(
+  msoc1, mheal1, mphys1, mhor1, 
+  'Partnered x Strength (S)', 
+  "Lifetime Number of Sexual Partners"
+)
+
+fig3 <- forestplot_custom(
   msoc3, mheal3, mphys3, mhor3,
-  intercept = F,
-  facet = F,
-  dodgewidth = .8,
-  modelnames = mnames,
-  varnames = vnames, 
-  size = 0.7, 
-  linewidth = 0.7) +
-  theme_minimal() +
-#  geom_pointrange(size = 1.2, position = position_dodge(width = .7)) +
-  labs(title = "Age at First Sex")  +
-  theme(axis.text.y = element_blank(), plot.title = element_text(size = 11))
- # coord_cartesian(clip = "off")
-# + xlim(-2.5, 3.55)
+  "Partnered x Strength (S)", 
+  "Age at First Sex"
+)
 
-fig4 <- forestplot(
+fig4 <- forestplot_custom(
   msoc4, mheal4, mphys4, mhor4,
-  intercept = F,
-  facet = F,
-  dodgewidth = .8,
-  modelnames = mnames,
-  varnames = vnames, 
-  size = 0.7, 
-  linewidth = 0.7) +
-  theme_minimal() + 
-  #geom_pointrange(size = 1.2, position = position_dodge(width = .8)) +
-  labs(title = "Currently Partnered")  +
-  theme(axis.text.y = element_blank(), plot.title = element_text(size = 11))
-#  coord_cartesian(clip = "off")
-# + xlim(-2.5, 3.55)
-
+  c("Partnered", "Partnered x Strength (S)"), 
+  "Currently Partnered"
+)
 
 Figure2 <- (fig1 + fig2 + fig3 + fig4) + plot_layout(guides = "collect", ncol = 4) & theme(legend.position = "bottom")
-
-# ggarrange(fig1, fig2, fig3, fig4,
-#                      labels = "AUTO",
-#                      font.label = list(size = 20),
-#                      ncol = 2, nrow = 2,
-#                      common.legend = TRUE, legend="bottom")
-
- # annotate_figure(fig1234,
- #                       top = text_grob("Figure 2. Regression coefficients from generalized linear models of mating success\n",
- #                                       size = 20, face = "bold",
- #                                       hjust = 0,
- #                                       x = 0.01),
- #                       bottom = text_grob("\nVariables labelled (S) have been centered at the mean and standarized by 2 SD Base level of race/ethnicity is Mexican American.",
- #                                          size = 12))
 
 ggsave("Figures/Figure2.pdf", Figure2, width = 14, height = 7)
 
@@ -629,7 +622,8 @@ Figure3 <- forestplot(
   facet = F,
   dodgewidth = .4,
   varnames = vnames, 
-  modelnames = mmnames) +
+  modelnames = mmnames,
+  ddf = Inf) +
   theme_minimal(17) +
  # geom_pointrange(size = 2, position = position_dodge(width = .8)) +
  # labs(title = "White blood cell count") +
@@ -658,7 +652,8 @@ Figure4 <- forestplot(
   facet = F,
   dodgewidth = .4,
   varnames = vnames, 
-  modelnames = mmnames) +
+  modelnames = mmnames,
+  ddf = Inf) +
   theme_minimal(17) +
   #geom_pointrange(size = 2, position = position_dodge(width = .8)) +
   #labs(title = "Dietary energy intake") + 
