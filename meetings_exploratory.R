@@ -1,4 +1,5 @@
 
+
 m_lifetime <- svyglm(
   sex_partners ~
     age_centered * sex +
@@ -93,7 +94,7 @@ library(corrplot)
 # cormat <- round(cor(cordat, use = "complete.obs"),2)
 
 
-cor_mat <- svycor(
+cor_mat_f <- svycor(
   ~ sex_partners +
     sex_partners_year +
     age_first_sex +
@@ -111,12 +112,43 @@ cor_mat <- svycor(
     moderate_rec +
     vigorous_work +
     moderate_work,
-  designsG$d.design.adults,
+  designsG$d.design.adult.female,
   na.rm = T
 )
 
-cor_mat_cors <- cor_mat$cors
-corrplot(cor_mat_cors, addCoef.col = "black", number.digits = 2, type = "lower", number.cex = 0.75)
+cor_mat_cors_f <- cor_mat_f$cors
+corr_f <- corrplot(cor_mat_cors_f, method = 'shade', addCoef.col = "black", number.digits = 2, type = "lower", number.cex = 0.75,
+         title = "Correlation matrix of coninuous study variables, Females 18-60")
+
+cor_mat_m <- svycor(
+  ~ sex_partners +
+    sex_partners_year +
+    age_first_sex +
+    age +
+    strength +
+    bmi +
+    edu +
+    hemoglobin +
+    whitebloodcell +
+    depression +
+    chronic_disease_score +
+    physical_disease_count +
+    testosterone +
+    vigorous_rec +
+    moderate_rec +
+    vigorous_work +
+    moderate_work,
+  designsG$d.design.adult.male,
+  na.rm = T
+)
+
+cor_mat_cors_m <- cor_mat_m$cors
+corrplot(cor_mat_cors_m, method = 'shade', addCoef.col = "black", number.digits = 2, type = "lower", number.cex = 0.75)
+
+corr_m <- corrplot(cor_mat_cors_m, method = 'shade', addCoef.col = "black", number.digits = 2, type = "lower", number.cex = 0.75,
+         title = "Correlation matrix of coninuous study variables, Males 18-60")
+
+
 
 # meltedcor_mat <- melt(cor_mat_cors)
 #
