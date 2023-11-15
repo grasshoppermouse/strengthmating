@@ -3,6 +3,7 @@ library(ggplot2)
 library(nhanesGH)
 library(hagenutils)
 library(ggpubr)
+library(tidyverse)
 
 
 # Anthropometric models ---------------------------------------------------------
