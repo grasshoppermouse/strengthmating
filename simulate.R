@@ -13,17 +13,6 @@ m6 <- glm(sex_partners ~ sex*strength + age, family = quasipoisson, d_adult)
 
 rqpois <- function(n, mu, theta) rnbinom(n=n, mu=mu, size=mu/(theta-1))
 
-
-simdata <- function(N, b0, b1, b2, b3){
-  tibble(
-    sex = rbinom(N, 1, 0.5),
-    strength = ifelse(sex == 1, rnorm(sum(sex), 58.5, 10.76), rnorm(N-sum(sex), 91.99, 17.37)),
-    strength_centered = c(scale(strength))/2,
-    sex_partners_year = rqpois(N, exp(b0 + b1*sex + b2*strength_centered + b3*sex*strength_centered), theta = 4.7)
-  )
-}
-
-
 simdata <- function(N, b0, b1, b2, b3){
   tibble(
     sex = rbinom(N, 1, 0.5),
