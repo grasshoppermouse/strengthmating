@@ -28,14 +28,14 @@ m3 <- glm(sex_partners_year ~ sex*strength, family = quasipoisson, d)
 
 #for past year partner models
 getstats <- function(N, b0, b1, b2, b3){
-  m <- glm(sex_partners_year ~ sex*strength, family = quasipoisson, simdata(N, 0.09, -0.76, 0.004, 0.009))
+  m <- glm(sex_partners_year ~ sex*strength, family = quasipoisson, simdata(N, b0, b1, b2, b3))
   m_sum <- summary(m)
   m_sum$coefficients[, 4]
 }
 
 #for lifetime partner models
 getstats2 <- function(N, b0, b1, b2, b3){
-  m <- glm(sex_partners ~ sex*strength, family = quasipoisson, simdata(N, 2.5, -0.76, 0.004, 0.009))
+  m <- glm(sex_partners ~ sex*strength, family = quasipoisson, simdata(N, b0, b1, b2, b3))
   m_sum <- summary(m)
   m_sum$coefficients[, 4]
 }
