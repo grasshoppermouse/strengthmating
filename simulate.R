@@ -2,6 +2,7 @@
 library(tidyverse)
 library(nhanesGH)
 library(survey)
+library(boot)
 
 d_adult <- d_G[d_G$age >= 18 & d_G$age < 60,]
 
@@ -28,7 +29,8 @@ simdata <- function(
     strength = ifelse(sex == 1, rnorm(sum(sex), 58.5, 10.76), rnorm(N-sum(sex), 91.99, 17.37)),
     strength_centered = c(scale(strength))/2,
     sex_partners_year = rqpois(N, exp(b0 + b_sex*sex + b_age*age_centered + b_partnered*partnered + b_strength*strength_centered + b_sex_strength*sex*strength_centered + b_sex_age*sex*age_centered + b_strength_partnered*partnered*strength_centered), theta_year),
-    sex_partners  = rqpois(N, exp(b0 + b_sex*sex + b_age*age_centered + b_strength*strength_centered + b_sex_strength*sex*strength_centered + b_sex_age*sex*age_centered), theta_life)
+    sex_partners = rqpois(N, exp(b0 + b_sex*sex + b_age*age_centered + b_strength*strength_centered + b_sex_strength*sex*strength_centered + b_sex_age*sex*age_centered), theta_life),
+    partnered2 = rbinom(N, 1, prob = inv.logit(b0 + b_sex*sex + b_age*age_centered + b_strength*strength_centered + b_sex_strength*sex*strength_centered + b_sex_age*sex*age_centered))
   )
 }
 
@@ -44,6 +46,14 @@ getstats_year <- function(params){
 getstats_life <- function(params){
   d <- do.call(simdata, params)
   m <- glm(sex_partners ~ sex*strength_centered + sex*age_centered, family = quasipoisson, d)
+  m_sum <- summary(m)
+  m_sum$coefficients[, 4]
+}
+
+#for partnered models
+getstats_partnered <- function(params){
+  d <- do.call(simdata, params)
+  m <- glm(partnered2 ~ sex*strength_centered + sex*age_centered, family = quasibinomial, d)
   m_sum <- summary(m)
   m_sum$coefficients[, 4]
 }
@@ -141,3 +151,31 @@ life_params <- list(
 pvalues_life <- map_df(1:1000, ~getstats_life(life_params))
 sum(pvalues_life$'strength_centered' < 0.05)/1000
 sum(pvalues_life$'sex:strength_centered' < 0.05)/1000
+
+
+# Partnered status --------------------------------------------------------
+
+m_partnered <-
+  svyglm(
+    partnered ~
+      age_centered * sex +
+      strength_centered * sex,
+    family = quasibinomial,
+    design = designsG$d.design.adults
+  )
+summary(m_partnered, df.resid = Inf)
+
+N_partnered <- length(na.omit(d_H$partnered))
+partnered_params <- list(
+  N = N_partnered,
+  b0 = -0.06,
+  b_sex = 0.69,
+  b_age = 1.2,
+  b_strength = 0.75, # About 3/4 of original value
+  b_sex_strength = -0.75, # We set this to half or full male value
+  b_sex_age = -0.68
+)
+pvalues_partnered <- map_df(1:1000, ~getstats_partnered(partnered_params))
+sum(pvalues_partnered$'strength_centered' < 0.05)/1000
+sum(pvalues_partnered$'sex:strength_centered' < 0.05)/1000
+
