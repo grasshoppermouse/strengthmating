@@ -1,58 +1,143 @@
+#+ message=F, warning=F
 library(tidyverse)
 library(nhanesGH)
+library(survey)
 
 d_adult <- d_G[d_G$age >= 18 & d_G$age < 60,]
 
-m <- glm(sex_partners_year ~ 1, family = quasipoisson, d_adult)
-m2 <- glm(sex_partners_year ~ sex*strength + partnered, family = quasipoisson, d_adult)
-m3 <- glm(sex_partners_year ~ sex*strength, family = quasipoisson, d_adult)
-m4 <- glm(sex_partners_year ~ sex*strength + partnered*strength, family = quasipoisson, d_adult)
-
-m5 <- glm(sex_partners ~ 1, family = quasipoisson, d_adult)
-m6 <- glm(sex_partners ~ sex*strength + age, family = quasipoisson, d_adult)
-
 rqpois <- function(n, mu, theta) rnbinom(n=n, mu=mu, size=mu/(theta-1))
 
-simdata <- function(N, b0, b1, b2, b3){
+simdata <- function(
+    N,
+    b0=0,
+    b_sex=0,
+    b_age=0,
+    b_partnered=0,
+    b_strength=0,
+    b_sex_strength=0,
+    b_sex_age=0,
+    b_strength_partnered=0,
+    theta_year = 2.5,
+    theta_life = 170
+){
   tibble(
     sex = rbinom(N, 1, 0.5),
+    age = rnorm(N, 39, 12.5),
+    age_centered = c(scale(age))/2,
+    partnered = rbinom(N, 1, prob = 0.56),
     strength = ifelse(sex == 1, rnorm(sum(sex), 58.5, 10.76), rnorm(N-sum(sex), 91.99, 17.37)),
     strength_centered = c(scale(strength))/2,
-    sex_partners_year = rqpois(N, exp(b0 + b1*sex + b2*strength_centered + b3*sex*strength_centered), theta = 4.7),
-    sex_partners  = rqpois(N, exp(b0 + b1*sex + b2*strength_centered + b3*sex*strength_centered), theta = 243.23)
+    sex_partners_year = rqpois(N, exp(b0 + b_sex*sex + b_age*age_centered + b_partnered*partnered + b_strength*strength_centered + b_sex_strength*sex*strength_centered + b_sex_age*sex*age_centered + b_strength_partnered*partnered*strength_centered), theta_year),
+    sex_partners  = rqpois(N, exp(b0 + b_sex*sex + b_age*age_centered + b_strength*strength_centered + b_sex_strength*sex*strength_centered + b_sex_age*sex*age_centered), theta_life)
   )
 }
 
-d <- simdata(3000, 0.09, -0.76, 0.004, 0.009)
-m3 <- glm(sex_partners_year ~ sex*strength, family = quasipoisson, d)
-
 #for past year partner models
-getstats <- function(N, b0, b1, b2, b3){
-  m <- glm(sex_partners_year ~ sex*strength, family = quasipoisson, simdata(N, b0, b1, b2, b3))
+getstats_year <- function(params){
+  d <- do.call(simdata, params)
+  m <- glm(sex_partners_year ~ sex*strength_centered + partnered*strength_centered + sex*age_centered, family = quasipoisson, d)
   m_sum <- summary(m)
   m_sum$coefficients[, 4]
 }
 
 #for lifetime partner models
-getstats2 <- function(N, b0, b1, b2, b3){
-  m <- glm(sex_partners ~ sex*strength, family = quasipoisson, simdata(N, b0, b1, b2, b3))
+getstats_life <- function(params){
+  d <- do.call(simdata, params)
+  m <- glm(sex_partners ~ sex*strength_centered + sex*age_centered, family = quasipoisson, d)
   m_sum <- summary(m)
   m_sum$coefficients[, 4]
 }
 
-getstats(3000, 0.09, -0.76, 0.004, 0.009)
+# past year
 
-#past year
-pvalues <- map_df(1:1000, ~getstats(5000, 0.09, -0.76, 0.004, -0.004)) #coefs from m2 above
-pvalues <- map_df(1:1000, ~getstats(5000, -0.1, -0.52, 0.008, 0.005))
+# Coefs from this model:
 
-#lifetime
-pvalues <- map_df(1:1000, ~getstats2(5000, 2.5, -1.2, 0.009, 0.01)) #coefs from m6 above
+m_year <- svyglm(
+  sex_partners_year ~
+    strength_centered * sex + age_centered*sex + partnered*strength_centered,
+  family = quasipoisson(),
+  design = designsG$d.design.adults
+)
+summary(m_year)
+
+# Sample size in H series
+N_year = length(na.omit(d_H$sex_partners_year))
+
+# With parameters equal to those in the G series data
+year_params <- list(
+  N = N_year, # Sample size in H series
+  b0 = 0.43,
+  b_sex = -0.23,
+  b_age = -0.33,
+  b_partnered = -0.27,
+  b_strength = 0.43, # 0.43 is value in G series
+  b_sex_strength = -0.43, # Set to the negative of the male value
+  b_sex_age = -0.09,
+  b_strength_partnered = -0.50,
+  theta_year = 2.5
+)
+
+pvalues_year <- map_df(1:1000, ~getstats_year(year_params))
+sum(pvalues_year$'strength_centered' < 0.05)/1000
+sum(pvalues_year$'sex:strength_centered' < 0.05)/1000
+
+# With strength parameter set to 3/4 of the G series
+year_params <- list(
+  N = N_year, # Sample size in H series
+  b0 = 0.43,
+  b_sex = -0.23,
+  b_age = -0.33,
+  b_partnered = -0.27,
+  b_strength = 0.3, # 0.43 is value in G series
+  b_sex_strength = -0.3, # Set to the negative of the male value
+  b_sex_age = -0.09,
+  b_strength_partnered = -0.50,
+  theta_year = 2.5
+)
+
+pvalues_year <- map_df(1:1000, ~getstats_year(year_params))
+sum(pvalues_year$'strength_centered' < 0.05)/1000
+sum(pvalues_year$'sex:strength_centered' < 0.05)/1000
 
 
+# lifetime
 
-sum(pvalues$sex < 0.05)/1000
-sum(pvalues$strength < 0.05)/1000
-sum(pvalues$'sex:strength' < 0.05)/1000
+m_life <- svyglm(
+  sex_partners ~
+    strength_centered * sex +
+    age_centered*sex,
+  family = quasipoisson(),
+  design = designsG$d.design.adults
+)
+summary(m_life)
 
+w <- subset(designsG$d.design.adults, sex_partners <= 100)
+# w2 <- subset(designsG$d.design.adults, sex_partners_year <= 10)
 
+m_life_w <- svyglm(
+  sex_partners ~
+    strength_centered * sex +
+    age_centered*sex,
+  family = quasipoisson(),
+  design = w
+)
+summary(m_life_w)
+
+# Sample size lifetime
+N_life <- length(na.omit(d_H$sex_partners[d_H$sex_partners<=100]))
+
+# With strength params set to 0.4 compared to 0.56 in G series
+life_params <- list(
+  N = N_life,
+  b0 = 2.4,
+  b_sex = -0.25,
+  b_age = 0.55,
+  b_strength = 0.4,
+  b_sex_strength = -0.4, # We set this to half or full male value
+  b_sex_age = -0.4,
+  theta_life = 18
+)
+
+pvalues_life <- map_df(1:1000, ~getstats_life(life_params))
+sum(pvalues_life$'strength_centered' < 0.05)/1000
+sum(pvalues_life$'sex:strength_centered' < 0.05)/1000
