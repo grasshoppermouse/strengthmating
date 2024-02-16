@@ -1181,6 +1181,8 @@ compare_partnered
 
 # strength centered sex ---------------------------------------------------
 
+# Very little difference in coefficients compared to models without sex-specific strength standarization
+
 mean_strength_sex <- svyby(~strength, by =~sex, design = designsG$d.design.adults, FUN = svymean, na.rm = T)
 var_strength_sex <- svyby(~strength, by =~sex, design = designsG$d.design.adults, FUN = svyvar, na.rm = T)
 
@@ -1223,7 +1225,7 @@ m_lifetime_d <- svyglm(
     partnered +
     bmi_centered * sex,
   family = quasipoisson(),
-  design = w
+  design = designsG$d.design.adults
 )
 
 w <- subset(designsG$d.design.adults, sex_partners <= 100)
