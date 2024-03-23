@@ -13,11 +13,11 @@ output:
 csl: apa.csl
 bibliography: regrep.bib
 crossref:
-  custom: 
-    - kind: float # crossreferenceable elements with captions are `float`
-      prefix: Supplementary Figure # used as the prefix for reference in output ("In Figure 1, ..")
-      name: Supplementary Figure # used as the prefix for captions ("Figure 1: ..")
-      ref-type: sfig # used as the prefix for the reference identifier ("In @fig-1, ...")
+  custom:
+    - kind: float
+      reference-prefix: Figure S
+      key: sfig
+      space-before-numbering: false
 ---
 
 ```{r setup, include=FALSE}
