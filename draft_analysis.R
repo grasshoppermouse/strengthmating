@@ -6,6 +6,10 @@ library(ggpubr)
 library(tidyverse)
 
 
+# Removing those with >100 lifetime sex partners -----------------------------------
+
+designsG$d.design.adults <- subset(designsG$d.design.adults, sex_partners <= 100)
+
 # Anthropometric models ---------------------------------------------------------
 
 m_lifetime <- svyglm(
