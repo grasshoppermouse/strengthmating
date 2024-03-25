@@ -124,7 +124,7 @@ The socioeconomic control model included education and race as categorical varia
 An umbrella review found the grip strength is a useful indicator of general health status, early all-cause mortality, cardiovascular mortality, and disability (Soysal et al., 2021). Furthermore, health status is associated with higher likelihood of sexual activity, frequency of sexual activity, and reported quality of sex in men and women (Lindau & Gavrilova, 2010). Another study of men aged 45-59 found that lower sexual activity was associated with increased mortality (Smith et al., 1997). The health model, therefore, included a number of variables related to health. White blood cell count (1000 cells/ µL) and hemoglobin (g/dL) were included to control for acute infection. Depression, which is negatively related to strength (Smith et al., 2022), was measured using the Patient Health Questionnaire-9 (PHQ-9; Kroenke et al., 2001), a validated nine-item screening instrument. Each item represents a symptom of depression, and for each one participants were asked to consider how frequently they had been bothered by that symptom over the past two weeks, rated on a scale from 0 (not at all) to 3 (nearly everyday). These ratings were summed to produce a depression score ranging from 0-27. Chronic illness was included using Chronic Disease Score (0-6) a count of chronic diseases participants reported having been diagnosed with including diabetes, cancer, stroke, arthritis, heart disease and respiratory disease. A point was added for each disease a participant reported being diagnosed with, regardless of any impairment due to the disease. We then controlled for impairment resulting from chronic illness (Disease Impairment Score; 0-5) calculated from a different NHANES question, which asked participants to list up to five health conditions that specifically cause them to have difficulties with physical activities. We also controlled for physical disability and using the item "special equipment" which referred to participants' report that they needed special equipment to walk. Finally the 'perceived abnormal weight' variable was coded as true or false depending on whether a participant reported that they perceived their weight to be abnormal.  
 
 #### Hormone control model
-There is evidence that testosterone is associated with higher numbers of partners, but mixed evidence that it is related to sexual desire (van Anders, 2013). Likewise, evidence of a relationship between circulating testosterone and handgrip strength is also mixed (Nowak-Kornicka et al., 2020). The hormone control model included serum total testosterone (ng/dL). Since male mean testosterone is an order of magnitude higher than the female mean, testosterone was highly confounded with sex. We therefore computed a sex-specific testosterone value as follows: for each sex we centered testosterone at the sex-specific mean and divided by two times the sex-specific standard deviation. This differed from other centered and standardized variables which we centered and standardized across all male and female values. 
+There is evidence that testosterone is positively associated higher numbers of partners men and less robustly so for women (Pollet et al., 2011; van Anders et al., 2007), but mixed evidence that it is related to sexual desire (van Anders, 2013). For review of mixed evidence of the often complex relationships between testosterone and sexual desire, sexual behavior, partnered status, and parenting for men and women see van Anders, 2013. Likewise, although some studies have found a positive correlation between circulating testosterone and handgrip strength (Chiu et al., 2020; Gurlek et al., 2018) other studies have found no association (Gettler et al., 2010; Ribeiro et al., 2016). There is evidence that testosterone-related single nucleotide polymorphisms (SNPs) are associated with greater strength performance (Guilherme et al., 2022). The hormone control model included serum total testosterone (ng/dL). Since male mean testosterone is an order of magnitude higher than the female mean, testosterone was highly confounded with sex. We therefore computed a sex-specific testosterone value as follows: for each sex we centered testosterone at the sex-specific mean and divided by two times the sex-specific standard deviation. This differed from other centered and standardized variables which we centered and standardized across all male and female values. 
 
 #### Physical activity control model
 Physical activity is related to sexual behavior and function in adults (Morris et al., 2022). Therefore, the physical activity control model included four dichotomous variables of vigorous and moderate work and recreational activity coded as 1 if participants reported that their work and/or recreation caused large increases in heart rate or breathing for at least 10 minutes continuously (vigorous work and/or rec), or small increases in breathing or heart rate for 10 minutes continuously (moderate work and/or rec), and zero if they reported their work and/or recreation did not. 
@@ -239,6 +239,7 @@ getncon <- designsG$d.design.adults %>%
                 physical_disease_count,
                 depression,
                 avgcalories, 
+                avgprotein, 
                 foodinsecurity_adult, 
                 tot_MET),
     statistic = list(
@@ -272,6 +273,7 @@ getratio <- designsG$d.design.adults %>%
                 physical_disease_count,
                 depression,
                 avgcalories, 
+                avgprotein,
                 foodinsecurity_adult, 
                 tot_MET),
     statistic = list(
@@ -314,6 +316,7 @@ con <- designsG$d.design.adults %>%
       physical_disease_count,
       depression,
       avgcalories, 
+      avgprotein,
       foodinsecurity_adult, 
       tot_MET
     ),
@@ -333,6 +336,7 @@ con <- designsG$d.design.adults %>%
       physical_disease_count = "Disease Impairment Score (0-5)",
       depression = "Depression Score (0-27)",
       avgcalories = "Dietary energy intake (kcals)", 
+      avgprotein = "Dietary protein intake (grams)",
       foodinsecurity_adult = "Food Insecurity Rating (1-4)", 
       tot_MET = "Total MET"
     ),
@@ -646,9 +650,9 @@ Figure3
 
 ```
 
-#### 2.2.4 Model of energy intake 
+#### 2.2.4 Models of energy and protein intake 
 
-Finally, we tested whether strength was related to increased energy intake (Figure \@ref(fig:dietary)). We found that strength was a significant, positive predictor of energy intake controlling for sex. In the expanded control model we found the same pattern while controlling for additional variables. 
+Finally, we tested whether strength was related to increased energy (Figure \@ref(fig:dietary)) or protein intake (Figure \@ref(fig:protein)). We found that strength was a significant, positive predictor of both energy and protein intake controlling for sex. In the expanded control model we found the same pattern while controlling for additional variables. 
 
 ```{r dietary, fig.width = 12, fig.height = 8, fig.cap = "Coefficient plot of predictors of dietary energy intake (kcals) from generalized linear models (Pilot). Variables labelled (S) have been centered at the mean and standardized by 2 SD."}
 Figure4 <- forestplot(
@@ -673,6 +677,22 @@ ggsave("Figures/Figure4.pdf", Figure4, width = 14, height = 7)
 Figure4 
 ```
 
+```{r protein}
+Figure5 <- forestplot(
+  m_protein,
+  m_protein_alt,
+  intercept = F,
+  facet = F,
+  dodgewidth = .4,
+  varnames = vnames, 
+  modelnames = mmnames) +
+  theme_minimal(17) +
+  guides(colour = guide_legend(reverse = T), shape = guide_legend(reverse = T))
+  
+ggsave("Figures/Figure5.pdf", Figure4, width = 14, height = 7)
+
+Figure5 
+```
 
 ### 2.3 Pilot Results Discussion
 
@@ -684,6 +704,11 @@ We extended these findings to include women in order to test the hypothesis that
 
 The lack of a sex difference in the significant positive effect of strength on short term mating success is puzzling. Because men have greater strength than women their partner numbers are higher. Still, women with higher grip strength report more partners than women with lower grip strength even after controlling for a host of potential confounds. It could be that there was selection for more formidable men to prefer more partner variety, and stronger women have a similar preference as a byproduct of selection on men. It could be that there is assortative mating on strength; thus if stronger men are motivated to switch partners more frequently their (stronger) mates would also necessarily have more mates. It may be that stronger women require less male investment and so instead benefit from greater partner numbers through e.g. genetic bet-hedging, forging relationships with multiple males, ability to conduct a more extensive search for high quality long term mate, or through avoiding costly long term partnerships.  It might also be the case that there are some sex-specific confounds that we failed to control for. Finally, greater partner numbers might indicate mating failures rather than mating successes for males or females, although why strength would be associated with mating failures is not clear. 
 
+We now argue that these results emphasize the importance of biparental care in human reproduction (Gettler et al., 2020; Bribiescas et al., 2012). Across evolutionary time, fitness for both men and women was heavily dependent on obtaining successful long term partners, thereby reaping the efficiency benefits of a sexual division of labor (Quinlan, 2008; Quinlan & Quinlan, 2007). More specifically, humans require provisioning assistance for an extended period (Insert figure?) (Davison & Gurven, 2022; Davison & Gurven, 2021) and paternal care is an important predictor of child outcomes (Starkweather et al., 2021; Winking et al., 2011). Thus, our pilot study refines the sexual selection hypothesis for the relationship between strength and mating success to emphasize that mating success is best operationalized as long-term mating, rather than numbers of sexual partners. Moreover, because strength indexes productivity in addition to formidability, our results could demonstrate female choice for productivity and therefore the ability of stronger men to provision offspring through big-game hunting (Kaplan et al., 2000). 
+
+### Limitations
+Our registered report has one aim: to test the prediction from the sexual selection hypothesis that the effect of upper body strength on reproductive success is greater for males than females. Our aim was not to test all possible byproduct hypotheses, nor is it possible to do so. Therefore, we are unable to control for in-utero testosterone exposure, or other conditions such as Polycystic Ovarian Syndrome (PCOS). Likewise, NHANES does not collect data on sociosexuality. Likewise, as described in our measures, in industrialized populations like the U.S., widespread access to contraceptives uncouples reproductive success from sexual behavior for both men and women. Measures of mating success, including number of sexual partners and age at first sexual intercourse, are used as proxies as they are assumed to have been strongly correlated with reproductive success under ancestral conditions (Pérusse, 1993). 
+
 ## 3. Confirmatory Analysis [not yet conducted]
 
 We indicate our predictions for the results of the confirmatory tests, specifically, our predictions for significant coefficients of strength and of the interaction between sex and strength, in Table X. We indicate for each outcome whether we predict a significant positive, negative, or no effect of these variables across our control models. If the effect of strength on the outcome variable is not significant in any single model, especially if the size of the coefficient is markedly reduced, then we will consider that evidence against the sexual selection hypothesis. 
@@ -694,11 +719,32 @@ Our methods and models will remain identical to those reported in the pilot stud
 
 ### Supplementary Information
 
-```{r, vaginalsex}
+```{r vaginalsex}
 
 
 
 ```
+
+```{r corrmatf}
+corr_f <- corrplot(cor_mat_cors_f, method = 'shade', addCoef.col = "black", number.digits = 2, type = "lower", number.cex = 0.75,
+                   title = "Correlation matrix of coninuous study variables, Females 18-60")
+
+```
+
+
+```{r corrmatm}
+
+corr_m <- corrplot(cor_mat_cors_m, method = 'shade', addCoef.col = "black", number.digits = 2, type = "lower", number.cex = 0.75,
+                   title = "Correlation matrix of coninuous study variables, Males 18-60")
+
+```
+
+```{r corrmatcom}
+
+corr_com <- corrplot(cor_mat_cors, addCoef.col = "black", number.digits = 2, type = "lower", number.cex = 0.75, 
+title = "Correlation matrix of coninuous study variables, Males and Females 18-60")
+```
+
 
 #### References
 

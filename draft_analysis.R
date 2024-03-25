@@ -439,7 +439,8 @@ mwbc_alt <- svyglm(whitebloodcell ~
                  testosterone_sex_centered * sex +
                 foodinsecurity_adult  +
                   avgcalories_centered +
-                   tot_MET_centered,
+                   tot_MET_centered +
+                  depression,
                family= quasipoisson(),
                design=designsG$d.design.adults)
 
@@ -474,7 +475,37 @@ m_energy_alt <- svyglm( #use this
 summary(m_energy_alt, df.resid = Inf)
 
 
+# Protein -----------------------------------------------------------------
+
+m_protein <- svyglm( #use this
+  avgprotein ~
+    age_centered +
+    tot_MET_centered  +
+    strength_centered +
+    bmi_centered  +
+    sex,
+  family = gaussian(),
+  design = designsG$d.design.dietary.adults
+)
+summary(m_protein, df.resid = Inf)
+
+m_protein_alt <- svyglm( #use this
+  avgprotein ~
+    age_centered +
+    tot_MET_centered +
+    strength_centered +
+    sex +
+    bmi_centered +
+    whitebloodcell_centered +
+    foodinsecurity_adult,
+  family = gaussian(),
+  design = designsG$d.design.dietary.adults
+)
+summary(m_protein_alt, df.resid = Inf)
+
+
 # coef plots --------------------------------------------------------------
+
 
 mnames <- c(
  # "Anthropometric", baseline model has bmi
@@ -735,3 +766,89 @@ plot_coefs
 #   theme(legend.position = "none")
 #
 
+# SI ----------------------------------------------------------------------
+library(jtools)
+library(qgraph)
+library(corrplot)
+
+# cordat <- d_G[, c("age", "sex1", "strength", "bmi")]
+# cordat <- cordat[cordat$age>=18 & cordat$age<60,]
+# cormat <- round(cor(cordat, use = "complete.obs"),2)
+
+
+cor_mat_f <- svycor(
+  ~ sex_partners +
+    sex_partners_year +
+    age_first_sex +
+    age +
+    strength +
+    bmi +
+    edu +
+    hemoglobin +
+    whitebloodcell +
+    depression +
+    chronic_disease_score +
+    physical_disease_count +
+    testosterone +
+    vigorous_rec +
+    moderate_rec +
+    vigorous_work +
+    moderate_work,
+  designsG$d.design.adult.female,
+  na.rm = T
+)
+
+cor_mat_cors_f <- cor_mat_f$cors
+
+cor_mat_m <- svycor(
+  ~ sex_partners +
+    sex_partners_year +
+    age_first_sex +
+    age +
+    strength +
+    bmi +
+    edu +
+    hemoglobin +
+    whitebloodcell +
+    depression +
+    chronic_disease_score +
+    physical_disease_count +
+    testosterone +
+    vigorous_rec +
+    moderate_rec +
+    vigorous_work +
+    moderate_work,
+  designsG$d.design.adult.male,
+  na.rm = T
+)
+
+cor_mat_cors_m <- cor_mat_m$cors
+corrplot(cor_mat_cors_m, method = 'shade', addCoef.col = "black", number.digits = 2, type = "lower", number.cex = 0.75)
+
+
+design_new <- update(designsG$d.design.adults, sex2 = ifelse(sex == "male", 1, 0))
+
+cor_mat <- svycor(
+  ~ sex2 +
+    sex_partners +
+    sex_partners_year +
+    age_first_sex +
+    age +
+    strength +
+    bmi +
+    edu +
+    hemoglobin +
+    whitebloodcell +
+    depression +
+    chronic_disease_score +
+    physical_disease_count +
+    testosterone +
+    vigorous_rec +
+    moderate_rec +
+    vigorous_work +
+    moderate_work,
+  design_new,
+  na.rm = T
+)
+
+cor_mat_cors <- cor_mat$cors
