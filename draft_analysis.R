@@ -4,11 +4,12 @@ library(nhanesGH)
 library(hagenutils)
 library(ggpubr)
 library(tidyverse)
+library(broom)
 
+# Removing those with >=100 lifetime sex partners -----------------------------------
 
-# Removing those with >100 lifetime sex partners -----------------------------------
-
-designsG$d.design.adults <- subset(designsG$d.design.adults, sex_partners <= 100)
+designsG$d.design.adults <- subset(designsG$d.design.adults, sex_partners < 100)
+# designsG$d.design.adults <- update(designsG$d.design.adults, partnered = maritalstatus == 1)
 
 # Anthropometric models ---------------------------------------------------------
 
@@ -57,6 +58,18 @@ m_partnered <-
   )
 summary(m_partnered, df.resid = Inf)
 
+
+m_partnered_lifetime <-
+  svyglm(
+    partnered ~
+      age_centered * sex +
+      strength_centered * sex +
+      bmi_centered * sex +
+      sex_partners*sex,
+    family = quasibinomial(),
+    design = designsG$d.design.adults
+  )
+summary(m_partnered_lifetime, df.resid = Inf)
 
 
 mnames1 <- c(
@@ -517,6 +530,68 @@ vnames <- c(
   "avgcalories_centered" = "Average calories per day (S)"
 )
 
+
+# Extract model stats -----------------------------------------------------
+
+extract_stats <- function(obj, terms = c('strength_centered', 'sexfemale:strength_centered')){
+  obj$df.residual <- Inf
+  tidy(obj, conf.int = T) |>
+    dplyr::filter(term %in% terms) |>
+    dplyr::select(term, estimate, conf.low, conf.high)
+}
+
+# Plot strength and sex:strength coefficients -----------------------------
+
+d_strength_stats <-
+  tribble(
+    ~Theme,               ~Outcome,             ~Model,
+    "Anthropometric",     "Age of first sex",   m_agefirst,
+    "Anthropometric",     "Lifetime partners",  m_lifetime,
+    "Anthropometric",     "Partnered",          m_partnered,
+    "Anthropometric",     "Past year partners", m_pastyear,
+
+    "Health",             "Lifetime partners",  mheal1,
+    "Health",             "Past year partners", mheal2,
+    "Health",             "Age of first sex",   mheal3,
+    "Health",             "Partnered",          mheal4,
+
+    "Hormone",            "Lifetime partners",  mhor1,
+    "Hormone",            "Past year partners", mhor2,
+    "Hormone",            "Age of first sex",   mhor3,
+    "Hormone",            "Partnered",          mhor4,
+
+    "Activity",           "Lifetime partners",  mphys1,
+    "Activity",           "Past year partners", mphys2,
+    "Activity",           "Age of first sex",   mphys3,
+    "Activity",           "Partnered",          mphys4,
+
+    "Socioeconomic",      "Lifetime partners",  msoc1,
+    "Socioeconomic",      "Past year partners", msoc2,
+    "Socioeconomic",      "Age of first sex",   msoc3,
+    "Socioeconomic",      "Partnered",          msoc4
+  ) |>
+  mutate(
+    Stats = map(Model, extract_stats)
+  ) |>
+  unnest(Stats) |>
+  mutate(
+    term = ifelse(term == 'strength_centered', 'Strength (S)', 'Strength (S) X Sex (female)'),
+    term = factor(term, levels = c('Strength (S)', 'Strength (S) X Sex (female)')),
+    Outcome = factor(Outcome, levels = rev(c('Partnered', 'Lifetime partners', 'Past year partners', 'Age of first sex'))),
+    Significant = sign(conf.low) == sign(conf.high)
+  )
+
+plot_coefs <-
+  ggplot(d_strength_stats, aes(estimate, Outcome, xmin = conf.low, xmax = conf.high, colour = Significant)) +
+  geom_pointrange() +
+  geom_vline(xintercept = 0, linetype = 'dotted') +
+  scale_color_binary() +
+  guides(colour = guide_legend(reverse = T)) +
+  labs(x = 'Coefficient', y = '') +
+  facet_grid(Theme ~ term) +
+  theme_bw() +
+  theme(strip.text.y = element_text(angle = 0))
+plot_coefs
 
 # vnames <- c(
 #   "strength_centered" = "Strength (S)",
