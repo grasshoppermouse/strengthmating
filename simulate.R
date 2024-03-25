@@ -3,6 +3,9 @@ library(tidyverse)
 library(nhanesGH)
 library(survey)
 library(boot)
+library(furrr)
+
+plan("multisession")
 
 d_adult <- d_G[d_G$age >= 18 & d_G$age < 60,]
 
@@ -87,7 +90,7 @@ year_params <- list(
   theta_year = 2.5
 )
 
-pvalues_year <- map_df(1:1000, ~getstats_year(year_params))
+pvalues_year <- future_map_dfr(1:1000, ~getstats_year(year_params))
 sum(pvalues_year$'strength_centered' < 0.05)/1000
 sum(pvalues_year$'sex:strength_centered' < 0.05)/1000
 
@@ -105,7 +108,7 @@ year_params <- list(
   theta_year = 2.5
 )
 
-pvalues_year <- map_df(1:1000, ~getstats_year(year_params))
+pvalues_year <- future_map_dfr(1:1000, ~getstats_year(year_params))
 sum(pvalues_year$'strength_centered' < 0.05)/1000
 sum(pvalues_year$'sex:strength_centered' < 0.05)/1000
 
@@ -148,7 +151,7 @@ life_params <- list(
   theta_life = 18
 )
 
-pvalues_life <- map_df(1:1000, ~getstats_life(life_params))
+pvalues_life <- future_map_dfr(1:1000, ~getstats_life(life_params))
 sum(pvalues_life$'strength_centered' < 0.05)/1000
 sum(pvalues_life$'sex:strength_centered' < 0.05)/1000
 
@@ -175,7 +178,7 @@ partnered_params <- list(
   b_sex_strength = -0.75, # We set this to half or full male value
   b_sex_age = -0.68
 )
-pvalues_partnered <- map_df(1:1000, ~getstats_partnered(partnered_params))
+pvalues_partnered <- future_map_dfr(1:1000, ~getstats_partnered(partnered_params))
 sum(pvalues_partnered$'strength_centered' < 0.05)/1000
 sum(pvalues_partnered$'sex:strength_centered' < 0.05)/1000
 
