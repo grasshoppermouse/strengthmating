@@ -496,7 +496,17 @@ m_partnered_1 <-
       strength_centered * sex +
       bmi_centered * sex,
     family = quasibinomial(),
-    design = designsG$d.design.adult.heterosexual
+    design = designsG$d.design.adults
+  )
+
+m_partnered_2 <-
+  svyglm(
+    (maritalstatus == 6) ~
+      age_centered * sex +
+      strength_centered * sex +
+      bmi_centered * sex,
+    family = quasibinomial(),
+    design = designsG$d.design.adults
   )
 
 
@@ -1240,3 +1250,31 @@ m_pastyear_d <- svyglm(
   family = quasipoisson(),
   design = w2
 )
+
+# dietary protein ---------------------------------------------------------
+
+m_protein <- svyglm( #use this
+  avgprotein ~
+    age_centered +
+    tot_MET_centered  +
+    strength_centered +
+    bmi_centered  +
+    sex,
+  family = gaussian(),
+  design = designsG$d.design.dietary.adults
+)
+summary(m_protein, df.resid = Inf)
+
+m_protein_alt <- svyglm( #use this
+  avgprotein ~
+    age_centered +
+    tot_MET_centered +
+    strength_centered +
+    sex +
+    bmi_centered +
+    whitebloodcell_centered +
+    foodinsecurity_adult,
+  family = gaussian(),
+  design = designsG$d.design.dietary.adults
+)
+summary(m_protein_alt, df.resid = Inf)
