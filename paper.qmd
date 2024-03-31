@@ -38,7 +38,7 @@ crossref:
 ```{r}
 library(ggcorrplot)
 library(modelsummary)
-source('analysis.R1.R')
+source('analysis.R')
 ```
 
 Abstract
