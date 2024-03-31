@@ -30,8 +30,7 @@ plot_sexpartners_year <-
   labs(x = "\nNumber of last year sex partners + 1", y = 'ECDF\n') +
   theme_minimal(15)
 plot_sexpartners_year
-ggsave("Figures/plot_sexpartners_year.pdf", plot_sexpartners, width = 9, height = 6)
-
+# ggsave("Figures/plot_sexpartners_year.pdf", plot_sexpartners_year, width = 9, height = 6)
 
 # Update design objects -----------------------------------
 
@@ -517,7 +516,7 @@ extract_stats <- function(obj, terms = c('strength_centered', 'sexfemale:strengt
     dplyr::select(term, estimate, conf.low, conf.high)
 }
 
-# Plot strength and sex:strength coefficients -----------------------------
+# Plot model coefficients -----------------------------
 
 models <- tribble(
   ~Theme,               ~Outcome,             ~Model,
@@ -547,6 +546,30 @@ models <- tribble(
   "Socioeconomic",      "Partnered",          msoc4
 )
 
+d_allstats <-
+  models |>
+  mutate(
+    Stats = map(Model, \(m) {m$df.residual <- Inf; tidy(m, conf.int = T)})
+  ) |>
+  unnest(Stats) |>
+  dplyr::select(-Model) |>  # Remove due to RStudio bug
+  dplyr::filter(term != "(Intercept)") |>
+  mutate(
+    Outcome = factor(Outcome, levels = c('Partnered', 'Lifetime partners', 'Past year partners', 'Age of first sex')),
+    term = factor(term, levels=rev(names(vnames)), labels=rev(vnames))
+  )
+
+plot_allcoefs <-
+  ggplot(d_allstats, aes(estimate, term, xmin = conf.low, xmax = conf.high, colour = Theme)) +
+  geom_pointrange(size = 0.4, linewidth = 0.7, position = position_dodge(width = 0.8)) +
+  geom_vline(xintercept=0, linetype='longdash') +
+  labs(title="Figure S1: Model coefficients", x='\nEstimate (95% CI)', y='') +
+  facet_wrap(~ Outcome, ncol = 4, scales = "free_x") +
+  theme_minimal() +
+  theme(legend.position = 'bottom', legend.title = element_blank())
+plot_allcoefs
+ggsave("Figures/plot_allcoefs.pdf", plot_allcoefs, width = 14, height = 8)
+
 d_strength_stats <-
   models |>
   mutate(
@@ -571,6 +594,7 @@ plot_coefs <-
   theme_bw(15) +
   theme(strip.text.y = element_text(angle = 0))
 plot_coefs
+ggsave("Figures/plot_coefs.pdf", plot_coefs, width = 10, height = 10)
 
 d_lifetime_stats <-
   models |>
@@ -591,30 +615,7 @@ plot_lifetime_coefs <-
   theme_bw(15) +
   theme(strip.text.y = element_text(angle = 0))
 plot_lifetime_coefs
-
-# Forestplots -------------------------------------------------------------
-
-forestplot2 <- function(..., title=""){
-  models <- list(...)
-  models <- map(models, \(m) {m$df.residual = Inf; return(m)})
-  models <- c(models, list(
-    intercept = F,
-    facet = F,
-    dodgewidth = .8,
-    modelnames = mnames,
-    varnames = vnames,
-    size = 0.7,
-    linewidth = 0.7
-  ))
-
-  p <- do.call(forestplot, models)
-
-  p +
-    guides(colour = guide_legend(reverse = T), shape = guide_legend(reverse = T)) +
-    labs(title = title) +
-    theme_minimal() +
-    theme(axis.text.y = element_text(size = 9), plot.title = element_text(size = 11))
-}
+ggsave("Figures/plot_lifetime_coefs.pdf", plot_lifetime_coefs)
 
 # SI ----------------------------------------------------------------------
 
