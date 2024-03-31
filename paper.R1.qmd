@@ -11,10 +11,11 @@ author:
      - ref: wsu
 date: today
 format:
-  docx:
-    number-sections: true
   html:
+    toc: true
     embed-resources: true
+  # docx:
+  #   number-sections: true
 execute:
   echo: false
   warning: false
@@ -32,20 +33,10 @@ crossref:
       space-before-numbering: false
 ---
 
-```{r setup, include=FALSE}
-library(ggplot2)
-library(dplyr)
-library(psych)
-library(xtable)
-library(knitr)
-library(kableExtra)
-library(weights)
-library(jtools)
-library(reshape2)
+```{r}
 library(ggcorrplot)
-library(patchwork)
 library(modelsummary)
-source('analysis.v2.R')
+source('analysis.R1.R')
 ```
 
 Abstract
@@ -218,7 +209,7 @@ There were also clear sex differences in the effects of sex-specific strength on
 #| label: fig-coefs
 #| fig-width: 10
 #| fig-height: 8
-#| fig-cap: Coefficients of sex-specific strength, and strength X sex interaction for our four mating success outcomes and our five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Bars are 95% CIs. For the full models, see the SI.
+#| fig-cap: Coefficients of sex-specific strength, and strength X sex interaction for our four mating success outcomes and our five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Bars are 95\% CIs. For the full models, see the SI.
 
 plot_coefs
 ```
@@ -335,7 +326,7 @@ We indicate our predictions for the results of the confirmatory tests, specifica
 
 ## Power
 
-We used simulations to estimate our power to detect strength effects that were 75% as large as the ones observed in our pilot study, and sex interaction effects that were equal in magnitude but opposite in sign to the strength effects (i.e., no effect of strength on mating success in women), with a sample size equal to that in our unobserved data. We are confident that we have sufficient power to detect true strength effects somewhat less than the ones observed in our pilot study (@tbl-power). We are less confident in our power to detect true sex interaction effects because, all else equal, power to detect interaction effects is generally lower than main effects, and in our simulations we used large interaction effects equal in magnitude to the main effects, which is probably unrealistic.
+We used simulations to estimate our power to detect strength effects that were 75% as large as the ones observed in our pilot study, and sex interaction effects that were equal in magnitude but opposite in sign to the strength effects (i.e., no effect of strength on mating success in women), with a sample size equal to that in our unobserved data. We are confident that we have sufficient power to detect true strength effects somewhat less than the ones observed in our pilot study (@tbl-power). We are less confident in our power to detect true sex interaction effects because, all else equal, power to detect interaction effects is generally lower than main effects.
 
 | Outcome            | Strength coefficient | Strength X Sex coefficient |
 |--------------------|:--------------------:|:--------------------------:|
