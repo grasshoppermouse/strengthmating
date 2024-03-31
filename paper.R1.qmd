@@ -10,12 +10,14 @@ author:
     affiliation:
      - ref: wsu
 date: today
+lightbox: auto
 format:
   html:
     toc: true
     embed-resources: true
   # docx:
   #   number-sections: true
+  #   fig-format: pdf
 execute:
   echo: false
   warning: false
@@ -225,7 +227,7 @@ Previous research found that higher musculature was associated with decreased in
 #| fig.height: 8
 #| fig.cap: Coefficient plot of predictors of immune investment (WBCC) from generalized linear models (Pilot). Variables labeled (S) have been centered at the mean and standardized by 2 SD.
 
-Figure3 <- forestplot(
+plot_immune <- forestplot(
   mwbc,
   mwbc_alt,
   intercept = F,
@@ -237,10 +239,9 @@ Figure3 <- forestplot(
   theme_minimal(17) +
   guides(colour = guide_legend(reverse = T), shape = guide_legend(reverse = T))
 
-ggsave("Figures/Figure3.pdf", Figure3, width = 14, height = 7)
+ggsave("Figures/plot_immune.pdf", plot_immune, width = 14, height = 7)
 
-Figure3
-
+plot_immune
 ```
 
 ### Models of energy and protein intake
@@ -253,7 +254,7 @@ Finally, we tested whether strength was related to increased energy (@fig-energy
 #| fig.height: 8
 #| fig.cap: Coefficient plot of predictors of dietary energy intake (kcals) from generalized linear models (Pilot). Variables labelled (S) have been centered at the mean and standardized by 2 SD.
 
-Figure4 <- forestplot(
+plot_energy <- forestplot(
   m_energy,
   m_energy_alt,
   intercept = F,
@@ -265,9 +266,9 @@ Figure4 <- forestplot(
   theme_minimal(17) +
   guides(colour = guide_legend(reverse = T), shape = guide_legend(reverse = T))
 
-ggsave("Figures/Figure4.pdf", Figure4, width = 14, height = 7)
+ggsave("Figures/plot_energy.pdf", plot_energy, width = 14, height = 7)
 
-Figure4 
+plot_energy 
 ```
 
 ```{r}
@@ -276,7 +277,7 @@ Figure4
 #| fig.height: 8
 #| fig.cap: Coefficient plot of predictors of dietary protein intake from generalized linear models (Pilot). Variables labelled (S) have been centered at the mean and standardized by 2 SD.
 
-Figure5 <- forestplot(
+plot_protein <- forestplot(
   m_protein,
   m_protein_alt,
   intercept = F,
@@ -288,9 +289,9 @@ Figure5 <- forestplot(
   theme_minimal(17) +
   guides(colour = guide_legend(reverse = T), shape = guide_legend(reverse = T))
   
-ggsave("Figures/Figure5.pdf", Figure4, width = 14, height = 7)
+ggsave("Figures/plot_protein.pdf", plot_protein, width = 14, height = 7)
 
-Figure5 
+plot_protein 
 ```
 
 ## Pilot Results Discussion
@@ -358,50 +359,21 @@ All data and code are available here: <https://github.com/grasshoppermouse/stren
 Descriptive statistics of pilot study sample.
 :::
 
-### Models of mating success with socioeconomic, health, hormone, and physical activity controls
+### Models of mating success with anthropometric, socioeconomic, health, hormone, and physical activity controls
 
-::: {#sfig-lifetime}
+::: {#sfig-allcoefs}
 ```{r}
-#| fig-height: 10
-forestplot2(m_lifetime, msoc1, mheal1, mphys1, mhor1, title = "Lifetime Number of Sexual Partners")
+plot_allcoefs
 ```
 
-Models of lifetime number of sex partners.
-:::
-
-
-::: {#sfig-year}
-```{r}
-#| fig-height: 10
-forestplot2(m_pastyear, msoc2,mheal2, mphys2, mhor2, title = "Past Year Number of Sexual Partners")
-```
-
-Models past year sex partners.
-:::
-
-
-::: {#sfig-agefirstsex}
-```{r}
-#| fig-height: 10
-forestplot2(m_agefirst, msoc3, mheal3, mphys3, mhor3, title = "Age at First Sex")
-```
-
-Models of age at first sex
-:::
-
-::: {#sfig-partnered}
-```{r}
-#| fig-height: 10
-forestplot2(m_partnered, msoc4, mheal4, mphys4, mhor4, title = "Currently Partnered")
-```
-
-Models of partnered status
+Coefficients from all models.
 :::
 
 ### The negative association of numbers of lifetime sexual partners on partnered status
 
 ::: {#sfig-tradeoff}
 ```{r}
+#| fig-width: 11
 plot_lifetime_coefs
 ```
 
@@ -413,7 +385,9 @@ The adjusted odds ratios of numbers of lifetime partners on partnered status. In
 
 ::: {#sfig-cor}
 ```{r}
-ggcorrplot(cor_mat_cors, hc.order = T, hc.method = 'ward.D', title = 'Both sexes')
+cor_bothsexes <- ggcorrplot(cor_mat_cors, hc.order = T, hc.method = 'ward.D', title = 'Both sexes')
+ggsave("Figures/cor_bothsexes.pdf", cor_bothsexes)
+cor_bothsexes
 ```
 
 Correlation matrix of study variables (both sexes). Rows and columns ordered by hierarchical clustering.
@@ -422,7 +396,9 @@ Correlation matrix of study variables (both sexes). Rows and columns ordered by 
 
 ::: {#sfig-fcor}
 ```{r}
-ggcorrplot(cor_mat_cors_f, hc.order = T, hc.method = 'ward.D', title = 'Females')
+cor_females <- ggcorrplot(cor_mat_cors_f, hc.order = T, hc.method = 'ward.D', title = 'Females')
+ggsave("Figures/cor_females.pdf", cor_females)
+cor_females
 ```
 
 Correlation matrix of study variables for females only. Rows and columns ordered by hierarchical clustering.
@@ -431,7 +407,9 @@ Correlation matrix of study variables for females only. Rows and columns ordered
 
 ::: {#sfig-mcor}
 ```{r}
-ggcorrplot(cor_mat_cors_m, hc.order = T, hc.method = 'ward.D', title = 'Males')
+cor_males <- ggcorrplot(cor_mat_cors_m, hc.order = T, hc.method = 'ward.D', title = 'Males')
+ggsave("Figures/cor_males.pdf", cor_males)
+cor_males
 ```
 
 Correlation matrix of study variables for males only. Rows and columns ordered by hierarchical clustering.
