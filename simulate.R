@@ -5,6 +5,8 @@ library(survey)
 library(boot)
 library(furrr)
 
+source("analysis.R")
+
 plan("multisession")
 
 d_adult <- d_G[d_G$age >= 18 & d_G$age <= 60,]
@@ -14,34 +16,66 @@ rqpois <- function(n, mu, theta) rnbinom(n=n, mu=mu, size=mu/(theta-1))
 
 simdata <- function(
     N,
-    b0=0,
-    b_sex=0,
-    b_age=0,
-    b_partnered=0,
-    b_strength=0,
-    b_sex_strength=0,
-    b_sex_age=0,
-    b_strength_partnered=0,
-    theta_year = 2.5,
-    theta_life = 170
+    `(Intercept)`=0,
+    sexfemale=0,
+    age_centered=0,
+    partneredTRUE=0,
+    strength_centered=0,
+    sex_partners_scaled=0,
+    `sexfemale:strength_centered`=0,
+    `age_centered:sexfemale`=0,
+    `strength_centered:partneredTRUE`=0,
+    theta = 0,
+    ...
 ){
   tibble(
+
+    # Explanatory variables
     sex = rbinom(N, 1, 0.5),
     age = rnorm(N, 39, 12.5),
-    age_centered = c(scale(age))/2,
-    partnered = rbinom(N, 1, prob = 0.56),
+    agecentered = c(scale(age))/2,
+    partnered2 = rbinom(N, 1, prob = 0.56),
     strength = ifelse(sex == 1, rnorm(sum(sex), 58.5, 10.76), rnorm(N-sum(sex), 91.99, 17.37)),
-    strength_centered = c(scale(strength))/2,
-    sex_partners_year = rqpois(N, exp(b0 + b_sex*sex + b_age*age_centered + b_partnered*partnered + b_strength*strength_centered + b_sex_strength*sex*strength_centered + b_sex_age*sex*age_centered + b_strength_partnered*partnered*strength_centered), theta_year),
-    sex_partners = rqpois(N, exp(b0 + b_sex*sex + b_age*age_centered + b_strength*strength_centered + b_sex_strength*sex*strength_centered + b_sex_age*sex*age_centered), theta_life),
-    partnered2 = rbinom(N, 1, prob = inv.logit(b0 + b_sex*sex + b_age*age_centered + b_strength*strength_centered + b_sex_strength*sex*strength_centered + b_sex_age*sex*age_centered))
+    strengthcentered = ifelse(sex ==1, c(scale(strength[sex==1]))/2,c(scale(strength[sex==0]))/2),
+
+    # Models of outcome variables
+    sexpartnersyear = rqpois(N, exp(
+      `(Intercept)` +
+        sexfemale*sex +
+        age_centered*agecentered +
+        partneredTRUE*partnered2 +
+        strength_centered*strengthcentered +
+        `sexfemale:strength_centered`*sex*strengthcentered +
+        `age_centered:sexfemale`*sex*agecentered +
+        `strength_centered:partneredTRUE`*partnered2*strengthcentered),
+      theta
+    ),
+    sexpartners = rqpois(N, exp(
+      `(Intercept)` +
+        sexfemale*sex +
+        age_centered*agecentered +
+        strength_centered*strengthcentered +
+        `sexfemale:strength_centered`*sex*strengthcentered +
+        `age_centered:sexfemale`*agecentered*sex
+    ),
+    theta
+    ),
+    partnered = rbinom(N, 1, prob = inv.logit(
+      `(Intercept)` +
+        sexfemale*sex +
+        age_centered*agecentered +
+        strength_centered*strengthcentered +
+        `sexfemale:strength_centered`*sex*strengthcentered +
+        `age_centered:sexfemale`*sex*agecentered
+    )
+    )
   )
 }
 
 #for past year partner models
 getstats_year <- function(params){
   d <- do.call(simdata, params)
-  m <- glm(sex_partners_year ~ sex*strength_centered + partnered*strength_centered + sex*age_centered, family = quasipoisson, d)
+  m <- glm(sexpartnersyear ~ sex*strengthcentered + partnered2*strengthcentered + sex*agecentered, family = quasipoisson, d)
   m_sum <- summary(m)
   m_sum$coefficients[, 4]
 }
@@ -49,7 +83,7 @@ getstats_year <- function(params){
 #for lifetime partner models
 getstats_life <- function(params){
   d <- do.call(simdata, params)
-  m <- glm(sex_partners ~ sex*strength_centered + sex*age_centered, family = quasipoisson, d)
+  m <- glm(sexpartners ~ sex*strengthcentered + sex*agecentered, family = quasipoisson, d)
   m_sum <- summary(m)
   m_sum$coefficients[, 4]
 }
@@ -57,96 +91,31 @@ getstats_life <- function(params){
 #for partnered models
 getstats_partnered <- function(params){
   d <- do.call(simdata, params)
-  m <- glm(partnered2 ~ sex*strength_centered + sex*age_centered, family = quasibinomial, d)
+  m <- glm(partnered ~ sex*strengthcentered + sex*agecentered, family = quasibinomial, d)
   m_sum <- summary(m)
   m_sum$coefficients[, 4]
 }
 
-# past year
+pwr <- function(N, model, getstatsfunction, outcome, scale_effect = 1){
+  params <- as.list(coef(model))
+  params$N <- N
+  params$strength_centered <- scale_effect * params$strength_centered
+  params$`sexfemale:strength_centered` <- scale_effect * params$`sexfemale:strength_centered`
+  params$theta <- summary(model)$dispersion[1]
+  pvalues <- future_map_dfr(1:1000, ~getstatsfunction(params), .options = furrr_options(seed = T))
+  data.frame(
+    Outcome = outcome,
+    scale = scale_effect,
+    strength = sum(pvalues$strengthcentered < 0.05)/1000,
+    strengthXsex = sum(pvalues$`sex:strengthcentered` < 0.05)/1000
+  )
+}
 
-# Coefs from this model:
+# Sample size
+N <- sum(d_H$sex_partners <= 100, na.rm = T)
 
-summary(m_pastyear, df.resid = Inf)
-
-# Sample size in H series
-N_year = length(na.omit(d_H$sex_partners_year[d_H$sex_partners<=100]))
-
-# With parameters equal to those in the G series data
-year_params <- list(
-  N = N_year, # Sample size in H series
-  b0 = 0.40,
-  b_sex = -0.29,
-  b_age = -0.39,
-  b_partnered = -0.21,
-  b_strength = 0.30,
-  b_sex_strength = -0.225, # Set to the negative 3/4 of the male value
-  b_sex_age = 0.01,
-  b_strength_partnered = -0.23,
-  theta_year = 2
+df_pwr <- bind_rows(
+  pwr_partnered <- map(seq(0.25, 1, 0.25), \(x) pwr(N, m_partnered, getstats_partnered, 'Partnered', scale_effect = x)) |> list_rbind(),
+  pwr_lifetime  <- map(seq(0.25, 1, 0.25), \(x) pwr(N, m_lifetime, getstats_life, 'Lifetime partners', scale_effect = x)) |> list_rbind(),
+  pwr_pastyear  <- map(seq(0.25, 1, 0.25), \(x) pwr(N, m_pastyear, getstats_year, 'Last year partners', scale_effect = x)) |> list_rbind()
 )
-
-pvalues_year <- future_map_dfr(1:1000, ~getstats_year(year_params), .options = furrr_options(seed = T))
-sum(pvalues_year$'strength_centered' < 0.05)/1000
-sum(pvalues_year$'sex:strength_centered' < 0.05)/1000
-
-# With strength parameter set to 3/4 of the G series
-year_params <- list(
-  N = N_year, # Sample size in H series
-  b0 = 0.40,
-  b_sex = -0.29,
-  b_age = -0.39,
-  b_partnered = -0.21,
-  b_strength = 0.225,
-  b_sex_strength = -0.17, # Set to the negative of the male value
-  b_sex_age = 0.01,
-  b_strength_partnered = -0.23,
-  theta_year = 2
-)
-
-pvalues_year <- future_map_dfr(1:1000, ~getstats_year(year_params), .options = furrr_options(seed = T))
-sum(pvalues_year$'strength_centered' < 0.05)/1000
-sum(pvalues_year$'sex:strength_centered' < 0.05)/1000
-
-
-# lifetime
-
-summary(m_lifetime, df.resid = Inf)
-
-# Sample size lifetime
-N_life <- length(na.omit(d_H$sex_partners[d_H$sex_partners<=100]))
-
-# With strength params set to 3/4 of that in G series
-life_params <- list(
-  N = N_life,
-  b0 = 2.7,
-  b_sex = -0.44,
-  b_age = 0.54,
-  b_strength = 0.375,
-  b_sex_strength = -0.28,
-  b_sex_age = -0.37,
-  theta_life = 14
-)
-
-pvalues_life <- future_map_dfr(1:1000, ~getstats_life(life_params), .options = furrr_options(seed = T))
-sum(pvalues_life$'strength_centered' < 0.05)/1000
-sum(pvalues_life$'sex:strength_centered' < 0.05)/1000
-
-
-# Partnered status --------------------------------------------------------
-
-summary(m_partnered, df.resid = Inf)
-
-N_partnered <- length(na.omit(d_H$partnered[d_H$sex_partners<=100]))
-partnered_params <- list(
-  N = N_partnered,
-  b0 = 0.77,
-  b_sex = -0.1,
-  b_age = 1.5,
-  b_strength = 0.75, # About 3/4 of original value
-  b_sex_strength = -0.56, # We set this to half or full male value
-  b_sex_age = -0.9
-)
-pvalues_partnered <- future_map_dfr(1:1000, ~getstats_partnered(partnered_params), .options = furrr_options(seed = T))
-sum(pvalues_partnered$'strength_centered' < 0.05)/1000
-sum(pvalues_partnered$'sex:strength_centered' < 0.05)/1000
-
