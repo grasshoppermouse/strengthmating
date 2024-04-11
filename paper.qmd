@@ -336,7 +336,7 @@ Effects in replication studies are often smaller than in the original studies [@
 
 :::{#tbl-power}
 ```{r}
-v <- ifelse(as.matrix(df_pwr[-1])>0.8, 'red', 'black')
+v <- ifelse(as.matrix(df_pwr[-1])>0.8, T, F)
 tt(df_pwr) |>
   group_tt(j = list("Partnered" = 2:3, "Lifetime partners" = 4:5, "Last year partners" = 6:7)) |>
   format_tt(j = 1:7, digits = 2, num_zero = T) |>
@@ -344,7 +344,7 @@ tt(df_pwr) |>
   style_tt(i=1:4, j=2:7, color = v)
 ```
 
-Power to detect strength and sex X strength coefficients that range from 25% to 100% of the size seen in the pilot study. **Scale**: the proportion of the effect seen in the pilot study. All other values are power (1-B). Values rounded to two significant digits. Red: power > 0.80.
+Power to detect strength and sex X strength coefficients that range from 25% to 100% of the size seen in the pilot study. **Scale**: the proportion of the effect seen in the pilot study. All other values are power (1-B). Values rounded to two significant digits. Bold: power > 0.80.
 :::
 
 ## Method
