@@ -38,7 +38,9 @@ crossref:
 ```{r}
 library(ggcorrplot)
 library(modelsummary)
+library(tinytable)
 source('analysis.R')
+source('simulate.R')
 ```
 
 Abstract
@@ -312,7 +314,7 @@ Our registered report has one aim: to test the prediction from the sexual select
 
 # Confirmatory Study (Not yet conducted)
 
-In a large, nationally representative US sample, we predict that formidability will be significantly positively associated with mating success as indexed by partnered status and lifetime number of sexual partners, but not last year number of partners, nor age at first sex after controlling for ethnicity. We also predict a significant interaction with sex such that strength will be a stronger predictor of male than female partnered status and number of lifetime partners, but not number of last year partners nor age at first sex. We also predict that there will be a negative association between formidability and immune function. Finally, we predict that formidability will be positively associated with dietary energy intake for both males and females.
+In a large, nationally representative US sample, we predict that formidability will be significantly positively associated with mating success as indexed by partnered status and lifetime number of sexual partners, but not last year number of partners, nor age at first sex after controlling for ethnicity. We also predict a significant interaction with sex such that strength will be a stronger predictor of male than female partnered status and number of lifetime partners, but not number of last year partners nor age at first sex. We also predict that there will be a significant negative association between formidability and immune function. Finally, we predict that formidability will be positively associated with dietary protein intake for both males and females.
 
 We indicate our predictions for the results of the confirmatory tests, specifically, our predictions for significant coefficients of strength and of the interaction between sex and strength, in @tbl-predictions. We indicate for each outcome whether we predict a significant positive, negative, or no effect of these variables across our control models.
 
@@ -322,20 +324,28 @@ We indicate our predictions for the results of the confirmatory tests, specifica
 | Lifetime partners  |           +          |              -             |
 | Past year partners |           0          |              0             |
 | Age at first sex   |           0          |              0             |
+| Immunity           |           -          |              0             |
+| Energy             |           0          |                            |
+| Protein            |           +          |                            |
 
-: Predictions. A plus sign (+) indicates a predicted significantly positive coefficient in all models, a negative sign (-) indicates a predicted significantly negative coefficient in all models, and zero (0) indicates a predicted non-significant coefficient in any model. {#tbl-predictions}
+: Predictions. A plus sign (+) indicates a predicted significantly positive coefficient in all models, a negative sign (-) indicates a predicted significantly negative coefficient in all models, and zero (0) indicates a predicted non-significant coefficient in any model. A blank indicates not relevant. {#tbl-predictions}
 
 ## Power
 
-We used simulations to estimate our power to detect strength effects that were 75% as large as the ones observed in our pilot study, and sex interaction effects that were equal in magnitude but opposite in sign to the strength effects (i.e., no effect of strength on mating success in women), with a sample size equal to that in our unobserved data. We are confident that we have sufficient power to detect true strength effects somewhat less than the ones observed in our pilot study (@tbl-power). We are less confident in our power to detect true sex interaction effects because, all else equal, power to detect interaction effects is generally lower than main effects.
+Effects in replication studies are often smaller than in the original studies [@klein2018]. We therefore used simulations to estimate our power to detect strength and sex X strength coefficients that are 25-100% as large as the ones observed in our pilot study, with a sample size equal to that in our unobserved data. We have high power to detect true effects at least 75% as large as the ones observed in our pilot study, and reasonable power to detect those that are at least 50% as large (@tbl-power)
 
-| Outcome            | Strength coefficient | Strength X Sex coefficient |
-|--------------------|:--------------------:|:--------------------------:|
-| Partnered status   |         0.99         |            0.90 (0.67)            |
-| Lifetime partners  |         0.99         |            0.90 (0.66)            |
-| Past year partners |         0.80         |            0.30 (0.21)            |
+:::{#tbl-power}
+```{r}
+v <- ifelse(as.matrix(df_pwr[-1])>0.8, 'red', 'black')
+tt(df_pwr) |>
+  group_tt(j = list("Partnered" = 2:3, "Lifetime partners" = 4:5, "Last year partners" = 6:7)) |>
+  format_tt(j = 1:7, digits = 2, num_zero = T) |>
+  style_tt(j = 1:7, align = c("ccccccc")) |> 
+  style_tt(i=1:4, j=2:7, color = v)
+```
 
-: Power to detect our predicted effects. Strength coefficients (effect sizes) were set to 3/4 of those we found in our pilot study, interaction coefficients were set to the same magnitude (but opposite sign) of the strength coefficients (value in parentheses is power to detect 3/4 of that effect), sample size was set to that of our unobserved data, and $\alpha = 0.05$. {#tbl-power}
+Power to detect strength and sex X strength coefficients that range from 25% to 100% of the size seen in the pilot study. **Scale**: the proportion of the effect seen in the pilot study. All other values are power (1-B). Values rounded to two significant digits. Red: power > 0.80.
+:::
 
 ## Method
 
