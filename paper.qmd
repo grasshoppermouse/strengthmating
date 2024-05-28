@@ -37,15 +37,17 @@ crossref:
 
 ```{r}
 library(ggcorrplot)
-library(modelsummary)
 library(tinytable)
-source('analysis.R')
+library(patchwork)
+source('functions.R')
+source('pilot_analysis.R')
 source('simulate.R')
+source('sexspecificmodels.R')
 ```
 
 Abstract
 
-Theory and evidence suggest that the mating benefits of muscle mass in human males trade off with costs of increased energy intake and decreased measures of native immunity, likely due to an evolutionary history of sexual selection. It is unknown if females experience a similar tradeoff. Using data from the 2013-2014 phase of the National Health and Nutrition Examination Survey (NHANES), a large nationally representative sample of the US (N = 4384), we will test whether grip strength, a proxy for upper body strength and physical formidability, is a positive predictor of self-reported measures of adult mating success (lifetime number of sexual partners, past year number of sexual partners, age at first intercourse, and current partnership status) in both males and females, controlling for numerous anthropometric, socioeconomic, hormone, health, and physical activity related potential confounds. We will also test if there is a positive relationship between grip strength and dietary energy intake, and a negative relationship between grip strength and native immune function. This study replicates an earlier study of US males [@lassek2009] with numerous additional control variables, and it additionally tests these relationships in females.
+Theory and evidence suggest that the mating benefits of muscle mass in human males trade off with costs of increased energy intake and decreased measures of native immunity, likely due to an evolutionary history of sexual selection. It is unknown if females experience a similar tradeoff. Using data from the 2013-2014 phase of the National Health and Nutrition Examination Survey (NHANES), a large nationally representative sample of the US (N = 4384), we will test whether grip strength, a proxy for upper body strength and physical formidability, is a positive predictor of self-reported measures of adult mating success (lifetime number of sexual partners, past year number of sexual partners, age at first intercourse, and current partnership status) in both males and females, controlling for numerous anthropometric, socioeconomic, hormone, health, and physical activity related potential confounds. We will also test if there is a positive relationship between grip strength and dietary energy and protein intake, and a negative relationship between grip strength and native immune function. This study replicates an earlier study of US males [@lassek2009] with numerous additional control variables, and it additionally tests these relationships in females.
 
 # Sexual dimorphism in modern humans
 
@@ -71,15 +73,7 @@ Although there is evidence in Western young adult populations that male mating s
 
 Similar arguments have therefore been proposed that masculine traits could be more general cues of quality and condition, or an ability to bear other costs [@kokko2003; @frederick2007]. Cues of upper body strength indeed account for most of the variation in female-rated male body attractiveness [@sell2017]. Yet masculine trait expression is not consistently related to retrospective or prospective health [@boothroyd2013].
 
-Females might therefore be choosing males who could provide more resources, or men who could better protect them from attacks by other men or by predators, which in ancestral hunter-gatherer populations would have been physically stronger men [@apicella2014; @willems2017b]. There is substantial cross-cultural evidence of a female-biased preference for mates who can provide resources [@walter2020; @buss2019]. Importantly, studies of contemporary hunter-gatherers and game-theoretic models find that a mutually beneficial sexual division of labor within long-term pair bonds, in which women engage in lower risk, lower return foraging of plants and small game compatible with the cognitively demanding task of childrearing [@hagen2019], and men engage in higher risk, higher return big game hunting [@kelly2013], is critical to provisioning offspring who remain dependent on caregivers for 20 years or more [@davison2021; @davison2022; @alger2020; @kaplan2000]. See @fig-provisioning. This suggests that sex differences in body composition could be due, at least in part, to a sexual division of labor.
-
-:::{#fig-provisioning}
-![](Figures/plot_productivity.png)
-
-Net energy production in chimpanzees and human foragers over the lifespan. Solid lines are females. Dashed line is Hadza males. Data from @davison2021 and @davison2022.
-:::
-
-More generally, multiple forms of sexual selection could have played a role in the evolution of human sexual dimorphism [see @hill2017 for a brief review of alternative hypotheses for sexual strength dimorphism].
+Females might therefore be choosing males who could provide more resources, or men who could better protect them from attacks by other men or by predators, which in ancestral hunter-gatherer populations would have been physically stronger men [@apicella2014; @willems2017b]. There is substantial cross-cultural evidence of a female-biased preference for mates who can provide resources [@walter2020; @buss2019]. Importantly, studies of contemporary hunter-gatherers and game-theoretic models find that a mutually beneficial sexual division of labor within long-term pair bonds, in which women engage in lower risk, lower return foraging of plants and small game compatible with the cognitively demanding task of childrearing [@hagen2019], and men engage in higher risk, higher return big game hunting [@kelly2013], is critical to provisioning offspring who remain dependent on caregivers for 20 years or more [@davison2021; @davison2022; @alger2020; @kaplan2000]. This suggests that sex differences in body composition could be due, at least in part, to a sexual division of labor. More generally, multiple forms of sexual selection could have played a role in the evolution of human sexual dimorphism [see @hill2017 for a brief review of alternative hypotheses for sexual strength dimorphism].
 
 ## Strength and reproductive success
 
@@ -91,7 +85,7 @@ Previous research has shown that physical formidability in males (operationalize
 
 ## Experimental aims and hypotheses
 
-According to the sexual selection hypothesis, males evolved greater physical formidability than females because physical formidability increased male reproductive success more than females. The aim of this study is to replicate the costs and benefits of formidability reported by @lassek2009 using similar nationally representative data, controlling for a wider range of possible confounds, and precisely prespecifying the statistical models in a registered report format. It also aims to investigate if these costs and benefits are also experienced by women, and specifically if the effect of physical strength on mating success, a proxy for reproductive success, is greater for men than women, as the sexual selection hypothesis predicts.
+According to the sexual selection hypothesis, males evolved greater physical formidability than females because physical formidability increased the mating success of males more than females. The aim of this study is to replicate the costs and benefits of formidability reported by @lassek2009 using similar nationally representative data, controlling for a wider range of possible confounds, and precisely prespecifying the statistical models in a registered report format. It also aims to investigate if these costs and benefits are also experienced by women, and specifically if the effect of physical strength on mating success, a proxy for reproductive success, is greater for men than women, as the sexual selection hypothesis predicts.
 
 # Pilot study
 
@@ -101,7 +95,7 @@ In order to refine our hypotheses and statistical models for our confirmatory st
 
 To assess the relationship between formidability and mating benefits, and immune and energy costs, we used data from the Centers for Disease Control (CDC) National Health and Nutrition Examination Survey (NHANES). NHANES utilizes a complex, multi-stage sampling strategy in order to collect data representative of the civilian, non-institutionalized U.S. population. NHANES combines interview, examination, and laboratory data to assess health status and identify health risks for adults and children in the United States. Data collection occurs in new cycles every two years.
 
-The pilot study uses the 2011-2012 dataset, whereas the 2013-2014 dataset has been held out for confirmatory analysis pending in principle acceptance of this registered report. Grip strength, our proxy for physical formidability and our key predictor variable, was only collected in these years. We include data from US adults between the ages of 18 and 60, the years when grip strength is the most stable [@hogrel2015]. For each model, participants will be included if they have complete data for each predictor and outcome variable.
+The pilot study uses the 2011-2012 dataset, whereas the 2013-2014 dataset has been held out for confirmatory analysis pending in principle acceptance of this registered report. Grip strength, our proxy for physical formidability and our key predictor variable, was only collected in these years [@smith2022 investigated the association of grip strength with depression in the 2013-14 data, but did not investigate or observe the relationship between grip strength and any of the mating success outcomes described below]. We include data from US adults between the ages of 18 and 60, the years when grip strength is the most stable [@hogrel2015]. For each model, participants will be included if they have complete data for each predictor and outcome variable.
 
 ### Outcome variables
 
@@ -213,11 +207,19 @@ There were also clear sex differences in the effects of sex-specific strength on
 #| label: fig-coefs
 #| fig-width: 10
 #| fig-height: 8
-#| fig-cap: Coefficients of sex-specific strength, and strength X sex interaction for our four mating success outcomes and our five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Bars are 95\% CIs. For the full models, see the SI.
+#| fig-cap: Coefficients of sex-specific strength, and strength X sex interaction for our four mating success outcomes and our five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Bars are 95\% CIs. For the full regression tables, see the SI.
 
 plot_coefs
 ```
 
+For a plot of all coefficients, see @fig-allcoefs.
+
+```{r}
+#| label: fig-allcoefs
+#| fig-cap: Coefficients from all models of our four mating success outcomes and our five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Bars are 95\% CIs. For the full regression tables, see the SI.
+
+plot_allcoefs
+```
 
 ### Immune costs of strength
 
@@ -227,11 +229,11 @@ Previous research found that higher musculature was associated with decreased in
 #| label: fig-immune
 #| fig.width: 12
 #| fig.height: 8
-#| fig.cap: Coefficient plot of predictors of immune investment (WBCC) from generalized linear models (Pilot). Variables labeled (S) have been centered at the mean and standardized by 2 SD.
+#| fig.cap: Coefficient plot of predictors of immune investment (WBCC) from generalized linear models (Pilot). Variables labeled (S) have been centered at the mean and standardized by 2 SD. Bars are 95% CIs.
 
 plot_immune <- forestplot(
-  mwbc,
-  mwbc_alt,
+  immune_models$mwbc,
+  immune_models$mwbc_alt,
   intercept = F,
   facet = F,
   dodgewidth = .4,
@@ -248,65 +250,59 @@ plot_immune
 
 ### Models of energy and protein intake
 
-Finally, we tested whether strength was related to increased energy (@fig-energy) or protein intake (@fig-protein). We found that strength was a significant, positive predictor of both energy and protein intake controlling for sex. In the expanded models with additional controls, strength was no longer a significant predictor of energy intake but remained a significant predictor of protein intake.
+Finally, we tested whether strength was related to increased energy or protein intake (@fig-energy). We found that strength was a significant, positive predictor of both energy and protein intake controlling for sex. In the expanded models with additional controls, strength was no longer a significant predictor of energy intake but remained a significant predictor of protein intake.
 
 ```{r}
 #| label: fig-energy
 #| fig.width: 12
 #| fig.height: 8
-#| fig.cap: Coefficient plot of predictors of dietary energy intake (kcals) from generalized linear models (Pilot). Variables labelled (S) have been centered at the mean and standardized by 2 SD.
+#| fig.cap: Coefficient plot of predictors of dietary energy intake (kcals) and dietary protein (g) from generalized linear models (Pilot). Variables labelled (S) have been centered at the mean and standardized by 2 SD. Bars are 95% CIs.
 
 plot_energy <- forestplot(
-  m_energy,
-  m_energy_alt,
+  intake_models$m_energy,
+  intake_models$m_energy_alt,
   intercept = F,
   facet = F,
   dodgewidth = .4,
   varnames = vnames, 
   modelnames = mmnames) +
   scale_color_binary() +
-  theme_minimal(17) +
-  guides(colour = guide_legend(reverse = T), shape = guide_legend(reverse = T))
-
-ggsave("Figures/plot_energy.pdf", plot_energy, width = 14, height = 7)
-
-plot_energy 
-```
-
-```{r}
-#| label: fig-protein
-#| fig.width: 12
-#| fig.height: 8
-#| fig.cap: Coefficient plot of predictors of dietary protein intake from generalized linear models (Pilot). Variables labelled (S) have been centered at the mean and standardized by 2 SD.
+  ggtitle('Energy') +
+  theme_bw(17) +
+  guides(colour = guide_none(), shape = guide_none())
 
 plot_protein <- forestplot(
-  m_protein,
-  m_protein_alt,
+  intake_models$m_protein,
+  intake_models$m_protein_alt,
   intercept = F,
   facet = F,
   dodgewidth = .4,
   varnames = vnames, 
   modelnames = mmnames) +
   scale_color_binary() +
-  theme_minimal(17) +
-  guides(colour = guide_legend(reverse = T), shape = guide_legend(reverse = T))
+  guides(colour = guide_legend(reverse = T), shape = guide_legend(reverse = T)) +
+  ggtitle('Protein') +
+  theme_bw(17) +
+  theme(axis.text.y = element_blank())
   
-ggsave("Figures/plot_protein.pdf", plot_protein, width = 14, height = 7)
-
-plot_protein 
+p <- plot_energy + plot_protein + plot_layout(axes = 'collect') 
+ggsave("Figures/plot_energy_protein.pdf", p, width = 12, height = 6)
+p
 ```
 
 ## Pilot Results Discussion
 
-Using grip strength as a proxy for muscularity, this pilot study replicated findings from @lassek2009 that muscularity is significantly positively associated with three of the four indices of mating success, including our additional index of mating success---partnered status---even after controlling for a wider range of potential confounds including socioeconomic, health, hormone, and physical activity variables. The only exceptions were that strength was not a significant predictor of past year partners, nor of age at first sex in the socioeconomic control model; the coefficient of the latter, however, was similar in sign and magnitude to the significant strength coefficients in the other models. Strength was also associated with immune, and energy, and protein costs in the replication models, but not in the expanded control models of immune or energy costs; it remained a significant predictor of protein intake, however. The expanded control models included height, which might be a proxy for aspects of strength, such as lower body strength, that are not accounted for by grip strength.
-
-The effect of strength on age at first sex was not significant in our socioeconomic model probably because it is confounded with ethnicity. Specifically, Asian Americans had a markedly lower grip strength compared to the other ethnic groups, and a later age at first sex. In addition, participants, whose grip strength was measured at the time of the study when they were adults, are reporting on an event that happened an average of 22 years in the past when most were adolescents and their grip strength had not yet reached its adult value. For these reasons, we do not predict an effect of strength on age at first sex after controlling for ethnicity.
+Using grip strength as a proxy for muscularity, this pilot study replicated findings from @lassek2009 that muscularity is significantly positively associated with two of the four indices of mating success, including our additional index of mating success---partnered status---even after controlling for a wider range of potential confounds including socioeconomic, health, hormone, and physical activity variables. The exceptions were that strength was not a significant predictor of past year partners, nor of age at first sex in the socioeconomic control model; the coefficient of the latter, however, was similar in sign and magnitude to the significant strength coefficients in the other models. Strength was also associated with immune, energy, and protein costs in the replication models, but not in the expanded control models of immune or energy costs; it remained a significant predictor of protein intake, however. The expanded control models included height, which might be a proxy for aspects of strength, such as lower body strength, that are not accounted for by grip strength.
 
 The sexual selection hypothesis predicts that the effect of strength on mating success will be greater for men than for women, and this prediction was exceptionally well-supported for partnered status and numbers of lifetime partners. In humans, biological fitness depends critically on extensive investment in offspring which typically takes place in long-term partnerships. We therefore propose that the sexual selection hypothesis for the sexual dimorphism in physical formidability applies to long-term partnerships (proxied by our partnered variable), as well as short-term matings (proxied by partner numbers). Thus, our pilot study supports the hypothesis that muscularity increases both short- and long-term mating success for men more than it does for women. Number of lifetime partners was also a negative predictor of partnered status (@sfig-tradeoff), suggesting a tradeoff in pursuing these two reproductive strategies. 
 
-The lack of a sex difference in the significant positive effect of sex-specific strength on short term mating success (proxied by number of partners in the last year) is puzzling. Because men have greater strength than women their self-reported partner numbers are higher, on average, although the median number of partners in the last year for both sexes is 1. Still, women with higher grip strength report more partners in the past year than women with lower grip strength even after controlling for a host of potential confounds. It could be that there was selection for more formidable men to prefer more partner variety, and stronger women have a similar preference as a byproduct of selection on men. It could be that there is assortative mating on strength; thus if stronger men are motivated to switch partners more frequently, their (stronger) mates would also likely have more mates. It might be that stronger women require less male investment and so instead benefit from greater partner numbers through, e.g. genetic bet-hedging, forging relationships with multiple males, ability to conduct a more extensive search for a high quality long term mate, or through avoiding costly long term partnerships. It might also be the case that there are some sex-specific confounds that we failed to control for. Greater partner numbers might indicate mating failures rather than mating successes for males or females, although why strength would be associated with mating failures is not clear. Finally, our simulations revealed that we had relatively lower power to detect a significant interaction between strength and sex for this outcome (see Power section below).
+The effect of strength on age at first sex was not significant in our socioeconomic model probably because it is confounded with ethnicity. Specifically, Asian Americans had a markedly lower grip strength compared to the other ethnic groups, and a later age at first sex. In addition, participants, whose grip strength was measured at the time of the study when they were adults, are reporting on an event that happened an average of 22 years in the past when most were adolescents and their grip strength had not yet reached its adult value. For these reasons, we do not predict an effect of strength on age at first sex after controlling for ethnicity.
 
-Our pilot results support the importance of strength to male short-term mating success as well as to the long-term partnerships that are the basis of biparental care in human reproduction [@Gettler_2020; @Bribiescas_2012]. Across evolutionary time, fitness for both men and women was heavily dependent on successfully obtaining long term partners, thereby reaping the efficiency benefits of a sexual division of labor [@Quinlan_2007; @Quinlan_2008]. More specifically, humans require provisioning for an extended period [@davison2021; @davison2022] (@fig-provisioning), and paternal care is an important predictor of child outcomes [@Winking_2011; @Starkweather_2021]. Thus, our pilot study underscores that the sexual selection hypothesis for the relationship between strength and mating success should include long-term mating in addition to numbers of sexual partners. Moreover, because strength indexes productivity in addition to formidability, our results could demonstrate female choice for productivity, i.e., the greater ability over human evolution of stronger men to provision offspring through big-game hunting [@kaplan2000; @apicella2014].
+Strength was also not significantly associated with the number of partners in the last year, despite controlling for partnered status, which was a significant negative predictor. Approximately 60% of the sample was partnered (@stbl-stats), however, and stronger individuals, especially men, were more likely to be partnered. The pool of unpartnered individuals who might pursue multiple mating opportunities was therefore smaller and skewed toward lower strength individuals, and variation in this outcome over the relatively short time period (1 year) was low. Nevertheless, the non-significant strength coefficients were all positive, raising the possibility that a higher powered study might successfully detect a positive effect of strength on number of partners in the last year.
+
+<!-- The lack of a sex difference in the significant positive effect of sex-specific strength on short term mating success (proxied by number of partners in the last year) is puzzling. Because men have greater strength than women their self-reported partner numbers are higher, on average, although the median number of partners in the last year for both sexes is 1. Still, women with higher grip strength report more partners in the past year than women with lower grip strength even after controlling for a host of potential confounds. It could be that there was selection for more formidable men to prefer more partner variety, and stronger women have a similar preference as a byproduct of selection on men. It could be that there is assortative mating on strength; thus if stronger men are motivated to switch partners more frequently, their (stronger) mates would also likely have more mates. It might be that stronger women require less male investment and so instead benefit from greater partner numbers through, e.g. genetic bet-hedging, forging relationships with multiple males, ability to conduct a more extensive search for a high quality long term mate, or through avoiding costly long term partnerships. It might also be the case that there are some sex-specific confounds that we failed to control for. Greater partner numbers might indicate mating failures rather than mating successes for males or females, although why strength would be associated with mating failures is not clear. Finally, our simulations revealed that we had relatively lower power to detect a significant interaction between strength and sex for this outcome (see Power section below). -->
+
+Our pilot results support the importance of strength to male short-term mating success as well as to the long-term partnerships that are the basis of biparental care in human reproduction [@Gettler_2020; @Bribiescas_2012]. Across evolutionary time, fitness for both men and women was heavily dependent on successfully obtaining long term partners, thereby reaping the efficiency benefits of a sexual division of labor [@Quinlan_2007; @Quinlan_2008]. More specifically, humans require provisioning for an extended period [@kaplan2000; @davison2021; @davison2022], and paternal care is an important predictor of child outcomes [@Winking_2011; @Starkweather_2021]. Thus, our pilot study underscores that the sexual selection hypothesis for the relationship between strength and mating success should include long-term mating in addition to numbers of sexual partners. Moreover, because strength indexes productivity in addition to formidability, our results could demonstrate an evolved female preference for productivity, i.e., the greater ability over human evolution of stronger men to provision offspring through big-game hunting [@kaplan2000; @apicella2014], although an evolved preference for protection from predators or other men in long-term relationships is possible too [@willems2017b; @kelly2005].
 
 ## Limitations
 
@@ -332,24 +328,11 @@ We indicate our predictions for the results of the confirmatory tests, specifica
 
 ## Power
 
-Effects in replication studies are often smaller than in the original studies [@klein2018]. We therefore used simulations to estimate our power to detect strength and sex X strength coefficients that are 25-100% as large as the ones observed in our pilot study, with a sample size equal to that in our unobserved data. We have high power to detect true effects at least 75% as large as the ones observed in our pilot study, and reasonable power to detect those that are at least 50% as large (@tbl-power)
-
-:::{#tbl-power}
-```{r}
-v <- ifelse(as.matrix(df_pwr[-1])>0.8, T, F)
-tt(df_pwr) |>
-  group_tt(j = list("Partnered" = 2:3, "Lifetime partners" = 4:5, "Last year partners" = 6:7)) |>
-  format_tt(j = 1:7, digits = 2, num_zero = T) |>
-  style_tt(j = 1:7, align = c("ccccccc")) |> 
-  style_tt(i=1:4, j=2:7, color = v)
-```
-
-Power to detect strength and sex X strength coefficients that range from 25% to 100% of the size seen in the pilot study. **Scale**: the proportion of the effect seen in the pilot study. All other values are power (1-B). Values rounded to two significant digits. Bold: power > 0.80.
-:::
+Effects in replication studies are often smaller than in the original studies [@klein2018]. We therefore used simulations to estimate our power to detect strength and sex X strength coefficients that are 25-100% as large as the ones observed in our pilot study for partnered and lifetime partners, with a sample size equal to that in our unobserved data. We have high power to detect effects at least 75% as large as the ones observed in our pilot study, and reasonable power to detect those that are at least 50% as large (@stbl-power).
 
 ## Method
 
-Our methods and models will remain identical to those reported in the pilot study, using unobserved data from the 2013-2014 NHANES collection cycle.
+Our methods and models will remain identical to those reported in the pilot study, using unobserved data from the 2013-2014 NHANES collection cycle. After testing and reporting our predictions using the unobserved data, we will fit our models on the combined data (2011-2014), and conduct other post hoc analyses.
 
 # Acknowledgements
 
@@ -361,7 +344,25 @@ All data and code are available here: <https://github.com/grasshoppermouse/stren
 
 # Supplementary Information
 
+## Power
+
+:::{#stbl-power}
+```{r}
+v <- ifelse(as.matrix(df_pwr[-1])>0.8, T, F)
+tt(df_pwr) |>
+  group_tt(j = list("Partnered" = 2:3, "Lifetime partners" = 4:5, "Last year partners" = 6:7)) |>
+  format_tt(j = 1:7, digits = 2, num_zero = T) |>
+  style_tt(j = 1:7, align = c("ccccccc")) |> 
+  style_tt(i=1:4, j=2:7, bold = v)
+```
+
+Power to detect strength and sex X strength coefficients that range from 25% to 100% of the size seen in the pilot study, based on models with anthropometric controls. **Scale**: the proportion of the effect seen in the pilot study. All other values are power (1-B). Values rounded to two significant digits. Bold: power > 0.80.
+:::
+
+
 ## Pilot study
+
+Descriptive statistics.
 
 ::: {#stbl-stats}
 `{r} tbl_stack(list(con, cat))`
@@ -369,17 +370,10 @@ All data and code are available here: <https://github.com/grasshoppermouse/stren
 Descriptive statistics of pilot study sample.
 :::
 
-### Models of mating success with anthropometric, socioeconomic, health, hormone, and physical activity controls
+<!-- ### Models of mating success with anthropometric, socioeconomic, health, hormone, and physical activity controls -->
 
-::: {#sfig-allcoefs}
-```{r}
-plot_allcoefs
-```
 
-Coefficients from all models.
-:::
-
-### The negative association of numbers of lifetime sexual partners on partnered status
+### The negative association of numbers of lifetime sexual partners with partnered status
 
 ::: {#sfig-tradeoff}
 ```{r}
@@ -390,13 +384,26 @@ plot_lifetime_coefs
 The adjusted odds ratios of numbers of lifetime partners on partnered status. In these models, lifetime partners was divided by 10, the interquartile range.
 :::
 
+### Marginal effects
+
+::: {#stab-marginal}
+```{r}
+marginal |>
+  tt() |>
+  format_tt(fn = hagenutils::signif2) |>
+  group_tt(i = list("ΔPartnered probability" = 1, "ΔLifetime partners" = 3, "ΔPast year partners" = 7, "ΔAge first sex (years)" = 11), indent = 2)
+```
+
+The average marginal effect of a 2 standard deviation increase in strength on each mating outcome, by sex and partnered status, for the models with anthropometric controls.
+:::
 
 ### Correlation matrices of study variables
 
 ::: {#sfig-cor}
 ```{r}
-cor_bothsexes <- ggcorrplot(cor_mat_cors, hc.order = T, hc.method = 'ward.D', title = 'Both sexes')
-ggsave("Figures/cor_bothsexes.pdf", cor_bothsexes)
+
+cor_bothsexes <- ggcorrplot(cor_mat_cors, lab = T, hc.order = T, hc.method = 'ward.D', title = 'Both sexes')
+ggsave("Figures/cor_bothsexes.pdf", cor_bothsexes, width = 12, height = 12)
 cor_bothsexes
 ```
 
@@ -406,8 +413,9 @@ Correlation matrix of study variables (both sexes). Rows and columns ordered by 
 
 ::: {#sfig-fcor}
 ```{r}
-cor_females <- ggcorrplot(cor_mat_cors_f, hc.order = T, hc.method = 'ward.D', title = 'Females')
-ggsave("Figures/cor_females.pdf", cor_females)
+
+cor_females <- ggcorrplot(cor_mat_cors_f, lab = T, hc.order = T, hc.method = 'ward.D', title = 'Females')
+ggsave("Figures/cor_females.pdf", cor_females, width = 12, height = 12)
 cor_females
 ```
 
@@ -417,8 +425,9 @@ Correlation matrix of study variables for females only. Rows and columns ordered
 
 ::: {#sfig-mcor}
 ```{r}
-cor_males <- ggcorrplot(cor_mat_cors_m, hc.order = T, hc.method = 'ward.D', title = 'Males')
-ggsave("Figures/cor_males.pdf", cor_males)
+
+cor_males <- ggcorrplot(cor_mat_cors_m, lab = T, hc.order = T, hc.method = 'ward.D', title = 'Males')
+ggsave("Figures/cor_males.pdf", cor_males, width = 12, height = 12)
 cor_males
 ```
 
@@ -427,80 +436,37 @@ Correlation matrix of study variables for males only. Rows and columns ordered b
 
 ### Regression tables
 
-**Lifetime number of partners**
-
-:::{#stbl-lifetime}
 ```{r}
-modelsummary(
-  list(
-    "Anthropometric" = m_lifetime, 
-    "Socioeconomic" = msoc1, 
-    "Health" = mheal1, 
-    "Activity" = mphys1,
-    "Hormone" = mhor1
-    ), 
-  gof_map = "nobs"
-  )
+#| results: asis
+for (i in 1:nrow(modelsummaries)){
+  cat(paste('####', modelsummaries$title[i]))
+  print(modelsummaries$summary[[i]])
+}
 ```
 
-Quasi-Poisson Regression Models of Lifetime Number of Sexual Partners
-:::
+### Sex-specific models
 
-**Past year number of partners**
+At the suggestion of an anonymous reviewer, we fit all our regression models separately by sex. We plotted the strength coefficients for each model for each sex. 
 
-:::{#stbl-pastyear}
+:::{#sfig-sexspecific}
 ```{r}
-modelsummary(
-  list(
-    "Anthropometric" = m_pastyear, 
-    "Socioeconomic" = msoc2, 
-    "Health" = mheal2, 
-    "Activity" = mphys2,
-    "Hormone" = mhor2
-    ), 
-  gof_map = "nobs"
-  )
+#| fig-width: 7
+#| fig-height: 9
+plot_sexspecific_strength_coefs
 ```
 
-Quasi-Poisson Regression Models of Past Year Number of Sexual Partners
+
+Strength coefficients in each regression model fit separately by sex. Control variables are the same as for models fit with a sex X strength interaction term. Note that these models test if each strength coefficient is significantly different from 0, not if the male and female coefficients are significantly different from each other.
 :::
 
-**Age at first sex**
+Regression tables for sex-specific models of the effect of strength on mating success.
 
-:::{#stbl-agefirstsex}
 ```{r}
-modelsummary(
-  list(
-    "Anthropometric" = m_agefirst, 
-    "Socioeconomic" = msoc3, 
-    "Health" = mheal3, 
-    "Activity" = mphys3,
-    "Hormone" = mhor3
-    ), 
-  gof_map = "nobs"
-  )
+#| results: asis
+for (i in 1:nrow(dfmodelsummaries)){
+  cat(paste('####', dfmodelsummaries$title[i]))
+  print(dfmodelsummaries$summary[[i]])
+}
 ```
-
-Gaussian Regression Models of Age at First Sex
-:::
-
-**Partnered status**
-
-:::{#stbl-partnered}
-```{r}
-modelsummary(
-  list(
-    "Anthropometric" = m_partnered, 
-    "Socioeconomic" = msoc4, 
-    "Health" = mheal4, 
-    "Activity" = mphys4,
-    "Hormone" = mhor4
-    ), 
-  gof_map = "nobs"
-  )
-```
-
-Logistic Regression Models of Partnered Status
-:::
 
 # References
