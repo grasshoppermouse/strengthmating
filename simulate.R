@@ -1,7 +1,7 @@
 #+ message=F, warning=F
-library(tidyverse)
-library(nhanesGH)
-library(survey)
+# library(tidyverse)
+# library(nhanesGH)
+# library(survey)
 library(boot)
 library(furrr)
 
@@ -113,9 +113,9 @@ pwr <- function(N, model, getstatsfunction, outcome, scale_effect = 1){
 # Sample size
 N <- sum(d_H$sex_partners <= 100, na.rm = T)
 
-pwr_partnered <- map(seq(0.25, 1, 0.25), \(x) pwr(N, m_partnered, getstats_partnered, 'Partnered', scale_effect = x)) |> list_rbind()
-pwr_lifetime <- map(seq(0.25, 1, 0.25), \(x) pwr(N, m_lifetime, getstats_life, 'Lifetime partners', scale_effect = x)) |> list_rbind()
-pwr_pastyear <- map(seq(0.25, 1, 0.25), \(x) pwr(N, m_pastyear, getstats_year, 'Last year partners', scale_effect = x)) |> list_rbind()
+pwr_partnered <- map(seq(0.25, 1, 0.25), \(x) pwr(N, models$Model$manth4, getstats_partnered, 'Partnered', scale_effect = x)) |> list_rbind()
+pwr_lifetime <- map(seq(0.25, 1, 0.25), \(x) pwr(N, models$Model$manth1, getstats_life, 'Lifetime partners', scale_effect = x)) |> list_rbind()
+pwr_pastyear <- map(seq(0.25, 1, 0.25), \(x) pwr(N, models$Model$manth2, getstats_year, 'Last year partners', scale_effect = x)) |> list_rbind()
 
 df_pwr <- bind_cols(
   Scale = seq(0.25, 1, 0.25),
