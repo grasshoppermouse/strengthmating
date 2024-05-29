@@ -533,7 +533,7 @@ lifetime_stats <-function(models){
     )
 }
 
-marginals <- funtion(models){
+marginals <- function(models){
   bind_rows(
     avg_comparisons(models$Model$manth4, variables = list(strength_centered = 1), by = 'sex', wts = "(weights)") |> mutate(Model = 'Partnered'),
     avg_comparisons(models$Model$manth1, variables = list(strength_centered = 1), by = c('sex', 'partnered'), wts = "(weights)") |> mutate(Model = 'Lifetime'),
