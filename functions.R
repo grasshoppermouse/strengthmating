@@ -5,7 +5,7 @@ library(broom)
 library(modelsummary)
 
 name_dict <- c(
-  manth = 'Anthropomentric',
+  manth = 'Anthropometric',
   mheal = 'Health',
   mhor = 'Hormone',
   mphys = 'Activity',
@@ -541,4 +541,24 @@ marginals <- function(models){
     avg_comparisons(models$Model$manth3, variables = list(strength_centered = 1), by = 'sex', wts = "(weights)") |> mutate(Model = 'Age first sex')
   ) |>
     dplyr::select(sex, partnered, estimate)
+}
+
+
+# Effects plots -----------------------------------------------------------
+
+effects_plots <- function(models, controls = "Anthropometric"){
+  out <-
+    models |>
+    dplyr::filter(Controls == controls) |>
+    rowwise() |>
+    mutate(
+      Plot = list(
+        plot_predictions(Model, condition = c("strength_centered", "sex")) +
+          scale_color_binary() +
+          xlab("Strength (S by sex)") +
+          ylab(Outcome) +
+          theme_minimal()
+      )
+    )
+  wrap_plots(out$Plot, ncol = 2) + plot_layout(axes = 'collect', guides = 'collect')
 }

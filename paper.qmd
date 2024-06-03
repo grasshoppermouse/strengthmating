@@ -397,6 +397,17 @@ marginal |>
 The average marginal effect of a 2 standard deviation increase in strength on each mating outcome, by sex and partnered status, for the models with anthropometric controls.
 :::
 
+### Effects plots
+
+:::{#sfig-effects}
+```{r}
+effects_plots(models)
+```
+
+Effects of sex-specific standardized strength on mating outcomes, by sex. Strength is centered and scaled by 2 SD, separately for each sex. Plots are based on the anthropometric control models, with control variables held at their mean values.
+:::
+
+
 ### Correlation matrices of study variables
 
 ::: {#sfig-cor}
