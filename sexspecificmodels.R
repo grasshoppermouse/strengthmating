@@ -13,13 +13,17 @@ designsG$d.design.adult.male <- subset(designsG$d.design.adult.male, sex_partner
 designsG$d.design.adult.female <- update(designsG$d.design.adult.female, sex_partners_scaled = sex_partners/10)
 designsG$d.design.adult.male <- update(designsG$d.design.adult.male, sex_partners_scaled = sex_partners/10)
 
+# Sexually mature
+designsG$d.design.adult.female <- update(designsG$d.design.adult.female, years_sexually_mature = age - 12)
+designsG$d.design.adult.male <- update(designsG$d.design.adult.male, years_sexually_mature = age - 12)
+
 sexspecificmodels <- list(
   # Lifetime partners models -------------------------------------------------
 
   # Anthropometric
   manth_1_f = svyglm(
     sex_partners ~
-      age +
+      offset(log(years_sexually_mature)) +
       strength +
       partnered +
       bmi,
@@ -29,7 +33,7 @@ sexspecificmodels <- list(
 
   manth_1_m = svyglm(
     sex_partners ~
-      age +
+      offset(log(years_sexually_mature)) +
       strength +
       partnered +
       bmi,
@@ -40,7 +44,7 @@ sexspecificmodels <- list(
   # Socioeconomic model
   msoc_1_f = svyglm(
       sex_partners ~
-        age +
+        offset(log(years_sexually_mature)) +
         strength +
         partnered +
         edu +
@@ -51,7 +55,7 @@ sexspecificmodels <- list(
 
   msoc_1_m = svyglm(
       sex_partners ~
-        age +
+        offset(log(years_sexually_mature)) +
         strength +
         partnered +
         edu +
@@ -63,7 +67,7 @@ sexspecificmodels <- list(
   # Health model
   mheal_1_f = svyglm(
       sex_partners ~
-        age +
+        offset(log(years_sexually_mature)) +
         strength +
         partnered +
         perceived_abnormal_weight +
@@ -79,7 +83,7 @@ sexspecificmodels <- list(
 
   mheal_1_m = svyglm(
       sex_partners ~
-        age +
+        offset(log(years_sexually_mature)) +
         strength +
         partnered +
         perceived_abnormal_weight +
@@ -95,7 +99,7 @@ sexspecificmodels <- list(
 
   mhor_1_f = svyglm(
       sex_partners ~
-        age +
+        offset(log(years_sexually_mature)) +
         strength +
         partnered +
         testosterone,
@@ -105,7 +109,7 @@ sexspecificmodels <- list(
 
   mhor_1_m = svyglm(
       sex_partners ~
-        age +
+        offset(log(years_sexually_mature)) +
         strength +
         partnered +
         testosterone,
@@ -116,7 +120,7 @@ sexspecificmodels <- list(
   # Physical activity
   mphys_1_f = svyglm(
       sex_partners ~
-        age +
+        offset(log(years_sexually_mature)) +
         strength +
         partnered +
         vigorous_rec +
@@ -129,7 +133,7 @@ sexspecificmodels <- list(
 
   mphys_1_m = svyglm(
       sex_partners ~
-        age +
+        offset(log(years_sexually_mature)) +
         strength +
         partnered +
         vigorous_rec +
@@ -145,7 +149,7 @@ sexspecificmodels <- list(
   # Anthropometric model
   manth_2_f = svyglm(
       sex_partners_year ~
-        age +
+        age_centered +
         strength +
         partnered * strength +
         bmi,
@@ -155,7 +159,7 @@ sexspecificmodels <- list(
 
   manth_2_m = svyglm(
       sex_partners_year ~
-        age +
+        age_centered +
         strength +
         partnered * strength +
         bmi,
@@ -166,7 +170,7 @@ sexspecificmodels <- list(
   # Socioeconomic model
   msoc_2_f = svyglm(
       sex_partners_year ~
-        age +
+        age_centered +
         strength +
         partnered * strength +
         edu +
@@ -177,7 +181,7 @@ sexspecificmodels <- list(
 
   msoc_2_m = svyglm(
       sex_partners_year ~
-        age +
+        age_centered +
         strength +
         partnered * strength +
         edu +
@@ -189,7 +193,7 @@ sexspecificmodels <- list(
   # Health model
   mheal_2_f = svyglm(
       sex_partners_year ~
-        age +
+        age_centered +
         strength +
         partnered * strength +
         perceived_abnormal_weight +
@@ -205,7 +209,7 @@ sexspecificmodels <- list(
 
   mheal_2_m = svyglm(
       sex_partners_year ~
-        age +
+        age_centered +
         strength +
         partnered * strength +
         perceived_abnormal_weight +
@@ -221,7 +225,7 @@ sexspecificmodels <- list(
 
   mhor_2_f = svyglm(
       sex_partners_year ~
-        age  +
+        age_centered +
         strength +
         partnered * strength +
         testosterone,
@@ -231,7 +235,7 @@ sexspecificmodels <- list(
 
   mhor_2_m = svyglm(
       sex_partners_year ~
-        age  +
+        age_centered +
         strength +
         partnered * strength +
         testosterone,
@@ -242,7 +246,7 @@ sexspecificmodels <- list(
   # Physical activity
   mphys_2_f = svyglm(
       sex_partners_year ~
-        age +
+        age_centered +
         strength +
         partnered * strength +
         vigorous_rec +
@@ -255,7 +259,7 @@ sexspecificmodels <- list(
 
   mphys_2_m = svyglm(
       sex_partners_year ~
-        age +
+        age_centered +
         strength +
         partnered * strength +
         vigorous_rec +

@@ -1,11 +1,5 @@
-#+ message=F, warning=F
-# library(tidyverse)
-# library(nhanesGH)
-# library(survey)
 library(boot)
 library(furrr)
-
-# source("analysis.R")
 
 plan("multisession")
 
@@ -23,17 +17,22 @@ simdata <- function(
     strength_centered = 0,
     sex_partners_scaled = 0,
     `sexfemale:strength_centered` = 0,
+    `strength_centered:sexfemale` = 0,
     `age_centered:sexfemale` = 0,
     `strength_centered:partneredTRUE` = 0,
     theta = 0,
     ...
 ){
+
+  SEXSTRENGTH <- ifelse(length(`sexfemale:strength_centered`) > 0, `sexfemale:strength_centered`, `strength_centered:sexfemale`)
+
   tibble(
 
     # Explanatory variables
     sex = rbinom(N, 1, 0.5),
-    age = rnorm(N, 39, 12.5),
+    age = sample(d_adult$age, N, replace = T),
     agecentered = c(scale(age))/2,
+    years_sexually_mature = age - 12,
     strength = ifelse(sex == 1, rnorm(sum(sex), 58.5, 10.76), rnorm(N-sum(sex), 91.99, 17.37)),
     strengthcentered = ifelse(sex == 1, c(scale(strength[sex==1]))/2,c(scale(strength[sex==0]))/2),
     strengthcentered2 = c(scale(strength))/2,
@@ -44,7 +43,7 @@ simdata <- function(
         sexfemale*sex +
         age_centered*agecentered +
         strength_centered*strengthcentered +
-        `sexfemale:strength_centered`*sex*strengthcentered +
+        SEXSTRENGTH*sex*strengthcentered +
         `age_centered:sexfemale`*sex*agecentered
     )
     ),
@@ -54,7 +53,7 @@ simdata <- function(
         age_centered*agecentered +
         partneredTRUE*partnered +
         strength_centered*strengthcentered +
-        `sexfemale:strength_centered`*sex*strengthcentered +
+        SEXSTRENGTH*sex*strengthcentered +
         `age_centered:sexfemale`*sex*agecentered +
         `strength_centered:partneredTRUE`*partnered*strengthcentered),
       theta
@@ -62,9 +61,9 @@ simdata <- function(
     sexpartners = rqpois(N, exp(
       `(Intercept)` +
         sexfemale*sex +
-        age_centered*agecentered +
+        log(years_sexually_mature) +
         strength_centered*strengthcentered +
-        `sexfemale:strength_centered`*sex*strengthcentered +
+        SEXSTRENGTH*sex*strengthcentered +
         `age_centered:sexfemale`*agecentered*sex
     ),
     theta
@@ -83,7 +82,7 @@ getstats_year <- function(params){
 #for lifetime partner models
 getstats_life <- function(params){
   d <- do.call(simdata, params)
-  m <- glm(sexpartners ~ sex*strengthcentered + sex*agecentered, family = quasipoisson, d)
+  m <- glm(sexpartners ~ sex*strengthcentered + offset(log(years_sexually_mature)), family = quasipoisson, d)
   m_sum <- summary(m)
   m_sum$coefficients[, 4]
 }

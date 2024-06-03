@@ -3,9 +3,16 @@ library(survey)
 library(nhanesGH)
 library(broom)
 library(modelsummary)
+library(hagenutils)
+library(gtsummary)
+library(jtools)
+library(marginaleffects)
+library(tinytable)
+library(patchwork)
+library(ggcorrplot)
 
 name_dict <- c(
-  manth = 'Anthropomentric',
+  manth = 'Anthropometric',
   mheal = 'Health',
   mhor = 'Hormone',
   mphys = 'Activity',
@@ -47,6 +54,7 @@ vnames <- c(
   "strength" = "Strength",
   "sexfemale" = "Sex (Female)",
   "sexfemale:strength_centered" = "Sex (Female) x Strength",
+  "strength_centered:sexfemale" = "Sex (Female) x Strength",
   "sexfemale:strength_centered2" = "Sex (Female) x Strength",
   "age_centered" = "Age (S)",
   "age" = "Age",
@@ -91,6 +99,37 @@ vnames <- c(
   "avgcalories_centered" = "Average calories per day (S)"
 )
 
+# Update design objects -----------------------------------
+
+
+update_designs <- function(designs, cutoff = 100){
+
+  # Removing those with >=100 lifetime sex partners
+  designs$d.design.adults <- subset(designs$d.design.adults, sex_partners < cutoff)
+
+  # Scale sex_partners by the interquartile range
+  designs$d.design.adults <- update(designs$d.design.adults, sex_partners_scaled = sex_partners/10)
+
+  # Difference between current age and age at first sex
+  designs$d.design.adults <- update(designs$d.design.adults, age_diff = age - age_first_sex)
+
+  # Create numeric version of sex for correlation matrix
+  designs$d.design.adults <- update(designs$d.design.adults, sex2 = ifelse(sex == "male", 1, 0))
+
+  # set strength_centered2 to the values standardized across both sexes
+  designs$d.design.dietary.adults <- update(designs$d.design.dietary.adults, strength_centered2 = strength_centered)
+  designs$d.design.adults <- update(designs$d.design.adults, strength_centered2 = strength_centered)
+
+  # Set strength_centered to the sex-specific values
+  designs$d.design.adults <- update(designs$d.design.adults, strength_centered = strength_sex_centered)
+
+  designs$d.design.adults <- update(designs$d.design.adults, years_sexually_mature = age - 12)
+
+  return(designs)
+}
+
+
+
 # Mating regression models -------------------------------------------------------
 
 fitmodels <- function(design){
@@ -102,7 +141,7 @@ fitmodels <- function(design){
     # Anthropometric
     manth1 = svyglm(
       sex_partners ~
-        age_centered * sex +
+        offset(log(years_sexually_mature)) +
         strength_centered * sex +
         partnered +
         bmi_centered * sex,
@@ -113,7 +152,7 @@ fitmodels <- function(design){
     # Socioeconomic model
     msoc1 = svyglm(
       sex_partners ~
-        age_centered * sex +
+        offset(log(years_sexually_mature)) +
         strength_centered * sex +
         partnered +
         edu +
@@ -125,7 +164,7 @@ fitmodels <- function(design){
     # Health model
     mheal1 = svyglm(
       sex_partners ~
-        age_centered * sex +
+        offset(log(years_sexually_mature)) +
         strength_centered * sex +
         partnered +
         perceived_abnormal_weight +
@@ -141,7 +180,7 @@ fitmodels <- function(design){
 
     mhor1 = svyglm(
       sex_partners ~
-        age_centered * sex +
+        offset(log(years_sexually_mature)) +
         strength_centered * sex +
         partnered +
         testosterone_sex_centered * sex,
@@ -152,7 +191,7 @@ fitmodels <- function(design){
     # Physical activity
     mphys1 = svyglm(
       sex_partners ~
-        age_centered * sex +
+        offset(log(years_sexually_mature)) +
         strength_centered * sex +
         partnered +
         vigorous_rec +
@@ -472,7 +511,7 @@ fit_intake_models <- function(design){
 
 # Extract model stats -----------------------------------------------------
 
-extract_stats <- function(obj, terms = c('strength_centered', 'sexfemale:strength_centered')){
+extract_stats <- function(obj, terms = c('strength_centered', 'sexfemale:strength_centered', 'strength_centered:sexfemale')){
   obj$df.residual <- Inf
   tidy(obj, conf.int = T) |>
     dplyr::filter(term %in% terms) |>
@@ -541,4 +580,24 @@ marginals <- function(models){
     avg_comparisons(models$Model$manth3, variables = list(strength_centered = 1), by = 'sex', wts = "(weights)") |> mutate(Model = 'Age first sex')
   ) |>
     dplyr::select(sex, partnered, estimate)
+}
+
+
+# Effects plots -----------------------------------------------------------
+
+effects_plots <- function(models, controls = "Anthropometric"){
+  out <-
+    models |>
+    dplyr::filter(Controls == controls) |>
+    rowwise() |>
+    mutate(
+      Plot = list(
+        plot_predictions(Model, condition = c("strength_centered", "sex")) +
+          scale_color_binary() +
+          xlab("Strength (S by sex)") +
+          ylab(Outcome) +
+          theme_minimal()
+      )
+    )
+  wrap_plots(out$Plot, ncol = 2) + plot_layout(axes = 'collect', guides = 'collect')
 }

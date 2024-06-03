@@ -1,9 +1,4 @@
 
-library(hagenutils)
-library(gtsummary)
-library(jtools)
-library(marginaleffects)
-library(tinytable)
 
 # Cumulative distributions of sex partners ------------------------
 
@@ -33,27 +28,7 @@ plot_sexpartners_year
 
 # Update pilot design objects -----------------------------------
 
-design_all <- designsG$d.design.adults # Entire sample
-
-# Removing those with >=100 lifetime sex partners
-designsG$d.design.adults <- subset(designsG$d.design.adults, sex_partners < 100)
-
-# Scale sex_partners by the interquartile range
-designsG$d.design.adults <- update(designsG$d.design.adults, sex_partners_scaled = sex_partners/10)
-
-# Difference between current age and age at first sex
-designsG$d.design.adults <- update(designsG$d.design.adults, age_diff = age - age_first_sex)
-
-# Create numeric version of sex for correlation matrix
-designsG$d.design.adults <- update(designsG$d.design.adults, sex2 = ifelse(sex == "male", 1, 0))
-
-# set strength_centered2 to the values standardized across both sexes
-designsG$d.design.dietary.adults <- update(designsG$d.design.dietary.adults, strength_centered2 = strength_centered)
-designsG$d.design.adults <- update(designsG$d.design.adults, strength_centered2 = strength_centered)
-
-# Set strength_centered to the sex-specific values
-designsG$d.design.adults <- update(designsG$d.design.adults, strength_centered = strength_sex_centered)
-
+designsG <- update_designs(designsG)
 
 # Fit models --------------------------------------------------------------
 
