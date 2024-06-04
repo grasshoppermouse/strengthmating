@@ -49,19 +49,19 @@ mmnames <- c(
 )
 
 vnames <- c(
-  "strength_centered" = "Strength (S by sex)",
-  "strength_centered2" = "Strength (S)",
+  "strength_sex_centered" = "Strength (S by sex)",
+  "strength_centered" = "Strength (S)",
   "strength" = "Strength",
   "sexfemale" = "Sex (Female)",
+  "sexfemale:strength_sex_centered" = "Sex (Female) x Strength",
+  "strength_sex_centered:sexfemale" = "Sex (Female) x Strength",
   "sexfemale:strength_centered" = "Sex (Female) x Strength",
-  "strength_centered:sexfemale" = "Sex (Female) x Strength",
-  "sexfemale:strength_centered2" = "Sex (Female) x Strength",
   "age_centered" = "Age (S)",
   "age" = "Age",
   "partneredTRUE" = "Partnered",
   "sex_partners" = "Lifetime sex partners",
   "sex_partners_scaled" = "Lifetime sex partners (S)",
-  "strength_centered:partneredTRUE" = "Partnered x Strength (S)",
+  "strength_sex_centered:partneredTRUE" = "Partnered x Strength (S)",
   "age_centered:sexfemale" = "Age (S) x Sex (Female)",
   "height_centered" = "Height (S)",
   "weight_centered" = "Weight (S)",
@@ -116,13 +116,7 @@ update_designs <- function(designs, cutoff = 100){
   # Create numeric version of sex for correlation matrix
   designs$d.design.adults <- update(designs$d.design.adults, sex2 = ifelse(sex == "male", 1, 0))
 
-  # set strength_centered2 to the values standardized across both sexes
-  designs$d.design.dietary.adults <- update(designs$d.design.dietary.adults, strength_centered2 = strength_centered)
-  designs$d.design.adults <- update(designs$d.design.adults, strength_centered2 = strength_centered)
-
-  # Set strength_centered to the sex-specific values
-  designs$d.design.adults <- update(designs$d.design.adults, strength_centered = strength_sex_centered)
-
+  # Compute years since sexually maturity, defined as age 12
   designs$d.design.adults <- update(designs$d.design.adults, years_sexually_mature = age - 12)
 
   return(designs)
@@ -142,7 +136,7 @@ fitmodels <- function(design){
     manth1 = svyglm(
       sex_partners ~
         offset(log(years_sexually_mature)) +
-        strength_centered * sex +
+        strength_sex_centered * sex +
         partnered +
         bmi_centered * sex,
       family = quasipoisson(),
@@ -153,7 +147,7 @@ fitmodels <- function(design){
     msoc1 = svyglm(
       sex_partners ~
         offset(log(years_sexually_mature)) +
-        strength_centered * sex +
+        strength_sex_centered * sex +
         partnered +
         edu +
         race,
@@ -165,7 +159,7 @@ fitmodels <- function(design){
     mheal1 = svyglm(
       sex_partners ~
         offset(log(years_sexually_mature)) +
-        strength_centered * sex +
+        strength_sex_centered * sex +
         partnered +
         perceived_abnormal_weight +
         whitebloodcell_centered +
@@ -181,7 +175,7 @@ fitmodels <- function(design){
     mhor1 = svyglm(
       sex_partners ~
         offset(log(years_sexually_mature)) +
-        strength_centered * sex +
+        strength_sex_centered * sex +
         partnered +
         testosterone_sex_centered * sex,
       family = quasipoisson(),
@@ -192,7 +186,7 @@ fitmodels <- function(design){
     mphys1 = svyglm(
       sex_partners ~
         offset(log(years_sexually_mature)) +
-        strength_centered * sex +
+        strength_sex_centered * sex +
         partnered +
         vigorous_rec +
         moderate_rec +
@@ -208,8 +202,8 @@ fitmodels <- function(design){
     manth2 = svyglm(
       sex_partners_year ~
         age_centered * sex +
-        strength_centered * sex +
-        partnered * strength_centered + #keeping partnered x strength interaction only for this model
+        strength_sex_centered * sex +
+        partnered * strength_sex_centered + #keeping partnered x strength interaction only for this model
         bmi_centered * sex,
       family = quasipoisson(),
       design = design
@@ -219,8 +213,8 @@ fitmodels <- function(design){
     msoc2 = svyglm(
       sex_partners_year ~
         age_centered * sex +
-        strength_centered * sex +
-        partnered * strength_centered +
+        strength_sex_centered * sex +
+        partnered * strength_sex_centered +
         edu +
         race,
       family = quasipoisson(),
@@ -231,8 +225,8 @@ fitmodels <- function(design){
     mheal2 = svyglm(
       sex_partners_year ~
         age_centered * sex +
-        strength_centered * sex +
-        partnered * strength_centered +
+        strength_sex_centered * sex +
+        partnered * strength_sex_centered +
         perceived_abnormal_weight +
         whitebloodcell_centered +
         hemoglobin_centered +
@@ -247,8 +241,8 @@ fitmodels <- function(design){
     mhor2 = svyglm(
       sex_partners_year ~
         age_centered * sex +
-        strength_centered * sex +
-        partnered * strength_centered +
+        strength_sex_centered * sex +
+        partnered * strength_sex_centered +
         testosterone_sex_centered * sex,
       family = quasipoisson(),
       design = design
@@ -258,8 +252,8 @@ fitmodels <- function(design){
     mphys2 = svyglm(
       sex_partners_year ~
         age_centered * sex +
-        strength_centered * sex +
-        partnered * strength_centered +
+        strength_sex_centered * sex +
+        partnered * strength_sex_centered +
         vigorous_rec +
         moderate_rec +
         vigorous_work +
@@ -274,7 +268,7 @@ fitmodels <- function(design){
     manth3 = svyglm(
       age_first_sex ~
         age_centered * sex +
-        strength_centered * sex +
+        strength_sex_centered * sex +
         partnered  +
         bmi_centered * sex,
       family = gaussian(),
@@ -285,7 +279,7 @@ fitmodels <- function(design){
     msoc3 = svyglm(
       age_first_sex ~
         age_centered * sex +
-        strength_centered * sex +
+        strength_sex_centered * sex +
         partnered +
         race +
         edu,
@@ -297,7 +291,7 @@ fitmodels <- function(design){
     mheal3 = svyglm(
       age_first_sex ~
         age_centered * sex +
-        strength_centered * sex +
+        strength_sex_centered * sex +
         partnered +
         perceived_abnormal_weight +
         whitebloodcell_centered +
@@ -313,7 +307,7 @@ fitmodels <- function(design){
     mhor3 = svyglm(
       age_first_sex ~
         age_centered * sex +
-        strength_centered * sex +
+        strength_sex_centered * sex +
         partnered +
         testosterone_sex_centered * sex,
       family = gaussian(),
@@ -324,7 +318,7 @@ fitmodels <- function(design){
     mphys3 = svyglm(
       age_first_sex ~
         age_centered * sex +
-        strength_centered * sex +
+        strength_sex_centered * sex +
         partnered +
         vigorous_rec +
         moderate_rec +
@@ -341,7 +335,7 @@ fitmodels <- function(design){
       partnered ~
         sex_partners_scaled +
         age_centered * sex +
-        strength_centered * sex +
+        strength_sex_centered * sex +
         bmi_centered * sex,
       family = quasibinomial(),
       design = design
@@ -352,7 +346,7 @@ fitmodels <- function(design){
       partnered ~
         sex_partners_scaled +
         age_centered * sex +
-        strength_centered * sex +
+        strength_sex_centered * sex +
         edu +
         race,
       family = quasibinomial(),
@@ -364,7 +358,7 @@ fitmodels <- function(design){
       partnered ~
         sex_partners_scaled +
         age_centered * sex +
-        strength_centered * sex +
+        strength_sex_centered * sex +
         perceived_abnormal_weight +
         whitebloodcell_centered +
         hemoglobin_centered +
@@ -381,7 +375,7 @@ fitmodels <- function(design){
       partnered ~
         sex_partners_scaled +
         age_centered * sex +
-        strength_centered * sex +
+        strength_sex_centered * sex +
         testosterone_sex_centered * sex,
       family = quasibinomial(),
       design = design
@@ -392,7 +386,7 @@ fitmodels <- function(design){
       partnered ~
         sex_partners_scaled +
         age_centered * sex +
-        strength_centered * sex +
+        strength_sex_centered * sex +
         vigorous_rec +
         moderate_rec +
         vigorous_work +
@@ -423,7 +417,7 @@ fit_immune_models <- function(design){
     mwbc = svyglm(
       whitebloodcell ~
         age_centered * sex +
-        strength_centered2 * sex +
+        strength_centered * sex +
         bmi_centered,
       family= quasipoisson(),
       design=design
@@ -432,7 +426,7 @@ fit_immune_models <- function(design){
     mwbc_alt = svyglm(
       whitebloodcell ~
         age_centered * sex +
-        strength_centered2 * sex +
+        strength_centered * sex +
         weight_centered +
         height_centered +
         testosterone_sex_centered * sex +
@@ -459,7 +453,7 @@ fit_intake_models <- function(design){
       avgcalories ~
         age_centered +
         tot_MET_centered  +
-        strength_centered2 +
+        strength_centered +
         bmi_centered  +
         sex,
       family = gaussian(),
@@ -470,7 +464,7 @@ fit_intake_models <- function(design){
       avgcalories ~
         age_centered +
         tot_MET_centered +
-        strength_centered2 +
+        strength_centered +
         sex +
         weight_centered +
         height_centered +
@@ -486,7 +480,7 @@ fit_intake_models <- function(design){
       avgprotein ~
         age_centered +
         tot_MET_centered  +
-        strength_centered2 +
+        strength_centered +
         bmi_centered  +
         sex,
       family = gaussian(),
@@ -497,7 +491,7 @@ fit_intake_models <- function(design){
       avgprotein ~
         age_centered +
         tot_MET_centered +
-        strength_centered2 +
+        strength_centered +
         sex +
         weight_centered +
         height_centered +
@@ -511,7 +505,7 @@ fit_intake_models <- function(design){
 
 # Extract model stats -----------------------------------------------------
 
-extract_stats <- function(obj, terms = c('strength_centered', 'sexfemale:strength_centered', 'strength_centered:sexfemale')){
+extract_stats <- function(obj, terms = c('strength_sex_centered', 'sexfemale:strength_sex_centered', 'strength_sex_centered:sexfemale')){
   obj$df.residual <- Inf
   tidy(obj, conf.int = T) |>
     dplyr::filter(term %in% terms) |>
@@ -554,7 +548,7 @@ strength_stats <- function(models){
     ) |>
     unnest(Stats) |>
     mutate(
-      term = ifelse(term == 'strength_centered', 'Strength (S)', 'Strength (S) X Sex (female)'),
+      term = ifelse(term == 'strength_sex_centered', 'Strength (S)', 'Strength (S) X Sex (female)'),
       term = factor(term, levels = c('Strength (S)', 'Strength (S) X Sex (female)')),
       Outcome = factor(Outcome, levels = rev(c('Partnered', 'Lifetime partners', 'Past year partners', 'Age of first sex'))),
       Significant = sign(conf.low) == sign(conf.high)
@@ -574,10 +568,10 @@ lifetime_stats <-function(models){
 
 marginals <- function(models){
   bind_rows(
-    avg_comparisons(models$Model$manth4, variables = list(strength_centered = 1), by = 'sex', wts = "(weights)") |> mutate(Model = 'Partnered'),
-    avg_comparisons(models$Model$manth1, variables = list(strength_centered = 1), by = c('sex', 'partnered'), wts = "(weights)") |> mutate(Model = 'Lifetime'),
-    avg_comparisons(models$Model$manth2, variables = list(strength_centered = 1), by = c('sex', 'partnered'), wts = "(weights)") |> mutate(Model = 'Past year'),
-    avg_comparisons(models$Model$manth3, variables = list(strength_centered = 1), by = 'sex', wts = "(weights)") |> mutate(Model = 'Age first sex')
+    avg_comparisons(models$Model$manth4, variables = list(strength_sex_centered = 1), by = 'sex', wts = "(weights)") |> mutate(Model = 'Partnered'),
+    avg_comparisons(models$Model$manth1, variables = list(strength_sex_centered = 1), by = c('sex', 'partnered'), wts = "(weights)") |> mutate(Model = 'Lifetime'),
+    avg_comparisons(models$Model$manth2, variables = list(strength_sex_centered = 1), by = c('sex', 'partnered'), wts = "(weights)") |> mutate(Model = 'Past year'),
+    avg_comparisons(models$Model$manth3, variables = list(strength_sex_centered = 1), by = 'sex', wts = "(weights)") |> mutate(Model = 'Age first sex')
   ) |>
     dplyr::select(sex, partnered, estimate)
 }
@@ -592,7 +586,7 @@ effects_plots <- function(models, controls = "Anthropometric"){
     rowwise() |>
     mutate(
       Plot = list(
-        plot_predictions(Model, condition = c("strength_centered", "sex")) +
+        plot_predictions(Model, condition = c("strength_sex_centered", "sex")) +
           scale_color_binary() +
           xlab("Strength (S by sex)") +
           ylab(Outcome) +

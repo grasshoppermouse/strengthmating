@@ -14,17 +14,17 @@ simdata <- function(
     sexfemale = 0,
     age_centered = 0,
     partneredTRUE = 0,
-    strength_centered = 0,
+    strength_sex_centered = 0,
     sex_partners_scaled = 0,
-    `sexfemale:strength_centered` = 0,
-    `strength_centered:sexfemale` = 0,
+    `sexfemale:strength_sex_centered` = 0,
+    `strength_sex_centered:sexfemale` = 0,
     `age_centered:sexfemale` = 0,
-    `strength_centered:partneredTRUE` = 0,
+    `strength_sex_centered:partneredTRUE` = 0,
     theta = 0,
     ...
 ){
 
-  SEXSTRENGTH <- ifelse(length(`sexfemale:strength_centered`) > 0, `sexfemale:strength_centered`, `strength_centered:sexfemale`)
+  SEXSTRENGTH <- ifelse(length(`sexfemale:strength_sex_centered`) > 0, `sexfemale:strength_sex_centered`, `strength_sex_centered:sexfemale`)
 
   tibble(
 
@@ -42,7 +42,7 @@ simdata <- function(
       `(Intercept)` +
         sexfemale*sex +
         age_centered*agecentered +
-        strength_centered*strengthcentered +
+        strength_sex_centered*strengthcentered +
         SEXSTRENGTH*sex*strengthcentered +
         `age_centered:sexfemale`*sex*agecentered
     )
@@ -52,17 +52,17 @@ simdata <- function(
         sexfemale*sex +
         age_centered*agecentered +
         partneredTRUE*partnered +
-        strength_centered*strengthcentered +
+        strength_sex_centered*strengthcentered +
         SEXSTRENGTH*sex*strengthcentered +
         `age_centered:sexfemale`*sex*agecentered +
-        `strength_centered:partneredTRUE`*partnered*strengthcentered),
+        `strength_sex_centered:partneredTRUE`*partnered*strengthcentered),
       theta
     ),
     sexpartners = rqpois(N, exp(
       `(Intercept)` +
         sexfemale*sex +
         log(years_sexually_mature) +
-        strength_centered*strengthcentered +
+        strength_sex_centered*strengthcentered +
         SEXSTRENGTH*sex*strengthcentered +
         `age_centered:sexfemale`*agecentered*sex
     ),
@@ -98,8 +98,8 @@ getstats_partnered <- function(params){
 pwr <- function(N, model, getstatsfunction, outcome, scale_effect = 1){
   params <- as.list(coef(model))
   params$N <- N
-  params$strength_centered <- scale_effect * params$strength_centered
-  params$`sexfemale:strength_centered` <- scale_effect * params$`sexfemale:strength_centered`
+  params$strength_sex_centered <- scale_effect * params$strength_sex_centered
+  params$`sexfemale:strength_sex_centered` <- scale_effect * params$`sexfemale:strength_sex_centered`
   params$theta <- summary(model)$dispersion[1]
   pvalues <- future_map_dfr(1:1000, ~getstatsfunction(params), .options = furrr_options(seed = T))
   data.frame(
