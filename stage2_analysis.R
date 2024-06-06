@@ -27,12 +27,34 @@ plot_coefs_stage2 <-
   geom_vline(xintercept = 0, linetype = 'dotted') +
   scale_color_binary() +
   guides(colour = guide_legend(reverse = T)) +
-  labs(x = 'Estimate (95% CI)', y = '') +
+  labs(title='Stage 2: Confirmatory study', x = 'Estimate (95% CI)', y = '') +
   facet_grid(Controls ~ term) +
   theme_bw(15) +
   theme(strip.text.y = element_text(angle = 0))
 plot_coefs_stage2
 ggsave("Figures/plot_coefs_stage2.pdf", plot_coefs_stage2, width = 10, height = 10)
+
+d_strength_stats_combined <-
+bind_rows(
+  list(
+    Pilot = d_strength_stats,
+    Confirmatory = d_strength_stats_stage2
+  ),
+  .id = 'Stage'
+)
+
+plot_coefs_combined <-
+  ggplot(d_strength_stats_combined, aes(estimate, Outcome, xmin = conf.low, xmax = conf.high, shape = Significant, colour = Stage)) +
+  geom_pointrange(position = position_dodge(width=0.3)) +
+  geom_vline(xintercept = 0, linetype = 'dotted') +
+  scale_color_binary() +
+  guides(colour = guide_legend(reverse = T)) +
+  labs(x = 'Estimate (95% CI)', y = '') +
+  facet_grid(Controls ~ term) +
+  theme_bw(15) +
+  theme(strip.text.y = element_text(angle = 0))
+plot_coefs_combined
+
 
 plot_lifetime_coefs_stage2 <-
   ggplot(d_lifetime_stats_stage2, aes(estimate, Controls, xmin = conf.low, xmax = conf.high)) +
@@ -44,7 +66,7 @@ plot_lifetime_coefs_stage2 <-
   theme(strip.text.y = element_text(angle = 0))
 plot_lifetime_coefs_stage2
 
-effects_plots(models_stage2)
+# effects_plots(models_stage2)
 
 # Exploratory
 

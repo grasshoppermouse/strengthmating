@@ -5,44 +5,46 @@
 
 # These models were fit at the request of an anonymous reviewer
 
-# Removing those with >=100 lifetime sex partners
-designsG$d.design.adult.female <- subset(designsG$d.design.adult.female, sex_partners < 100)
-designsG$d.design.adult.male <- subset(designsG$d.design.adult.male, sex_partners < 100)
+sex_specific_models <- function(design){
 
-# Scale sex_partners by the interquartile range of all adults
-designsG$d.design.adult.female <- update(designsG$d.design.adult.female, sex_partners_scaled = sex_partners/10)
-designsG$d.design.adult.male <- update(designsG$d.design.adult.male, sex_partners_scaled = sex_partners/10)
+  # Removing those with >=100 lifetime sex partners
+  design$d.design.adult.female <- subset(design$d.design.adult.female, sex_partners < 100)
+  design$d.design.adult.male <- subset(design$d.design.adult.male, sex_partners < 100)
 
-# Sexually mature
-designsG$d.design.adult.female <- update(designsG$d.design.adult.female, years_sexually_mature = age - 12)
-designsG$d.design.adult.male <- update(designsG$d.design.adult.male, years_sexually_mature = age - 12)
+  # Scale sex_partners by the interquartile range of all adults
+  design$d.design.adult.female <- update(design$d.design.adult.female, sex_partners_scaled = sex_partners/10)
+  design$d.design.adult.male <- update(design$d.design.adult.male, sex_partners_scaled = sex_partners/10)
 
-sexspecificmodels <- list(
-  # Lifetime partners models -------------------------------------------------
+  # Sexually mature
+  design$d.design.adult.female <- update(design$d.design.adult.female, years_sexually_mature = age - 12)
+  design$d.design.adult.male <- update(design$d.design.adult.male, years_sexually_mature = age - 12)
 
-  # Anthropometric
-  manth_1_f = svyglm(
-    sex_partners ~
-      offset(log(years_sexually_mature)) +
-      strength +
-      partnered +
-      bmi,
-    family = quasipoisson(),
-    design = designsG$d.design.adult.female
-  ),
+  sexspecificmodels <- list(
+    # Lifetime partners models -------------------------------------------------
 
-  manth_1_m = svyglm(
-    sex_partners ~
-      offset(log(years_sexually_mature)) +
-      strength +
-      partnered +
-      bmi,
-    family = quasipoisson(),
-    design = designsG$d.design.adult.male
-  ),
+    # Anthropometric
+    manth_1_f = svyglm(
+      sex_partners ~
+        offset(log(years_sexually_mature)) +
+        strength +
+        partnered +
+        bmi,
+      family = quasipoisson(),
+      design = design$d.design.adult.female
+    ),
 
-  # Socioeconomic model
-  msoc_1_f = svyglm(
+    manth_1_m = svyglm(
+      sex_partners ~
+        offset(log(years_sexually_mature)) +
+        strength +
+        partnered +
+        bmi,
+      family = quasipoisson(),
+      design = design$d.design.adult.male
+    ),
+
+    # Socioeconomic model
+    msoc_1_f = svyglm(
       sex_partners ~
         offset(log(years_sexually_mature)) +
         strength +
@@ -50,10 +52,10 @@ sexspecificmodels <- list(
         edu +
         race,
       family = quasipoisson(),
-      design = designsG$d.design.adult.female
+      design = design$d.design.adult.female
     ),
 
-  msoc_1_m = svyglm(
+    msoc_1_m = svyglm(
       sex_partners ~
         offset(log(years_sexually_mature)) +
         strength +
@@ -61,11 +63,11 @@ sexspecificmodels <- list(
         edu +
         race,
       family = quasipoisson(),
-      design = designsG$d.design.adult.male
+      design = design$d.design.adult.male
     ),
 
-  # Health model
-  mheal_1_f = svyglm(
+    # Health model
+    mheal_1_f = svyglm(
       sex_partners ~
         offset(log(years_sexually_mature)) +
         strength +
@@ -78,10 +80,10 @@ sexspecificmodels <- list(
         physical_disease_count +
         depression,
       family = quasipoisson(),
-      design = designsG$d.design.adult.female
+      design = design$d.design.adult.female
     ),
 
-  mheal_1_m = svyglm(
+    mheal_1_m = svyglm(
       sex_partners ~
         offset(log(years_sexually_mature)) +
         strength +
@@ -94,31 +96,31 @@ sexspecificmodels <- list(
         physical_disease_count +
         depression,
       family = quasipoisson(),
-      design = designsG$d.design.adult.male
+      design = design$d.design.adult.male
     ),
 
-  mhor_1_f = svyglm(
+    mhor_1_f = svyglm(
       sex_partners ~
         offset(log(years_sexually_mature)) +
         strength +
         partnered +
         testosterone,
       family = quasipoisson(),
-      design = designsG$d.design.adult.female
+      design = design$d.design.adult.female
     ),
 
-  mhor_1_m = svyglm(
+    mhor_1_m = svyglm(
       sex_partners ~
         offset(log(years_sexually_mature)) +
         strength +
         partnered +
         testosterone,
       family = quasipoisson(),
-      design = designsG$d.design.adult.male
+      design = design$d.design.adult.male
     ),
 
-  # Physical activity
-  mphys_1_f = svyglm(
+    # Physical activity
+    mphys_1_f = svyglm(
       sex_partners ~
         offset(log(years_sexually_mature)) +
         strength +
@@ -128,10 +130,10 @@ sexspecificmodels <- list(
         vigorous_work +
         moderate_work,
       family = quasipoisson(),
-      design = designsG$d.design.adult.female
+      design = design$d.design.adult.female
     ),
 
-  mphys_1_m = svyglm(
+    mphys_1_m = svyglm(
       sex_partners ~
         offset(log(years_sexually_mature)) +
         strength +
@@ -141,34 +143,34 @@ sexspecificmodels <- list(
         vigorous_work +
         moderate_work,
       family = quasipoisson(),
-      design = designsG$d.design.adult.male
+      design = design$d.design.adult.male
     ),
 
-  # Past year partners models ------------------------------------------------
+    # Past year partners models ------------------------------------------------
 
-  # Anthropometric model
-  manth_2_f = svyglm(
+    # Anthropometric model
+    manth_2_f = svyglm(
       sex_partners_year ~
         age_centered +
         strength +
         partnered * strength +
         bmi,
       family = quasipoisson(),
-      design = designsG$d.design.adult.female
+      design = design$d.design.adult.female
     ),
 
-  manth_2_m = svyglm(
+    manth_2_m = svyglm(
       sex_partners_year ~
         age_centered +
         strength +
         partnered * strength +
         bmi,
       family = quasipoisson(),
-      design = designsG$d.design.adult.male
+      design = design$d.design.adult.male
     ),
 
-  # Socioeconomic model
-  msoc_2_f = svyglm(
+    # Socioeconomic model
+    msoc_2_f = svyglm(
       sex_partners_year ~
         age_centered +
         strength +
@@ -176,10 +178,10 @@ sexspecificmodels <- list(
         edu +
         race,
       family = quasipoisson(),
-      design = designsG$d.design.adult.female
+      design = design$d.design.adult.female
     ),
 
-  msoc_2_m = svyglm(
+    msoc_2_m = svyglm(
       sex_partners_year ~
         age_centered +
         strength +
@@ -187,11 +189,11 @@ sexspecificmodels <- list(
         edu +
         race,
       family = quasipoisson(),
-      design = designsG$d.design.adult.male
+      design = design$d.design.adult.male
     ),
 
-  # Health model
-  mheal_2_f = svyglm(
+    # Health model
+    mheal_2_f = svyglm(
       sex_partners_year ~
         age_centered +
         strength +
@@ -204,10 +206,10 @@ sexspecificmodels <- list(
         physical_disease_count +
         depression,
       family = quasipoisson(),
-      design = designsG$d.design.adult.female
+      design = design$d.design.adult.female
     ),
 
-  mheal_2_m = svyglm(
+    mheal_2_m = svyglm(
       sex_partners_year ~
         age_centered +
         strength +
@@ -220,31 +222,31 @@ sexspecificmodels <- list(
         physical_disease_count +
         depression,
       family = quasipoisson(),
-      design = designsG$d.design.adult.male
+      design = design$d.design.adult.male
     ),
 
-  mhor_2_f = svyglm(
+    mhor_2_f = svyglm(
       sex_partners_year ~
         age_centered +
         strength +
         partnered * strength +
         testosterone,
       family = quasipoisson(),
-      design = designsG$d.design.adult.female
+      design = design$d.design.adult.female
     ),
 
-  mhor_2_m = svyglm(
+    mhor_2_m = svyglm(
       sex_partners_year ~
         age_centered +
         strength +
         partnered * strength +
         testosterone,
       family = quasipoisson(),
-      design = designsG$d.design.adult.male
+      design = design$d.design.adult.male
     ),
 
-  # Physical activity
-  mphys_2_f = svyglm(
+    # Physical activity
+    mphys_2_f = svyglm(
       sex_partners_year ~
         age_centered +
         strength +
@@ -254,10 +256,10 @@ sexspecificmodels <- list(
         vigorous_work +
         moderate_work,
       family = quasipoisson(),
-      design = designsG$d.design.adult.female
+      design = design$d.design.adult.female
     ),
 
-  mphys_2_m = svyglm(
+    mphys_2_m = svyglm(
       sex_partners_year ~
         age_centered +
         strength +
@@ -267,34 +269,34 @@ sexspecificmodels <- list(
         vigorous_work +
         moderate_work,
       family = quasipoisson(),
-      design = designsG$d.design.adult.male
+      design = design$d.design.adult.male
     ),
 
-  # Age at first sex models -------------------------------------------------
+    # Age at first sex models -------------------------------------------------
 
-  # Anthropometric
-  manth_3_f = svyglm(
+    # Anthropometric
+    manth_3_f = svyglm(
       age_first_sex ~
         age +
         strength +
         partnered +
         bmi,
       family = gaussian(),
-      design = designsG$d.design.adult.female
+      design = design$d.design.adult.female
     ),
 
-  manth_3_m = svyglm(
+    manth_3_m = svyglm(
       age_first_sex ~
         age +
         strength +
         partnered +
         bmi,
       family = gaussian(),
-      design = designsG$d.design.adult.male
+      design = design$d.design.adult.male
     ),
 
-  # Socioeconomic
-  msoc_3_f = svyglm(
+    # Socioeconomic
+    msoc_3_f = svyglm(
       age_first_sex ~
         age +
         strength +
@@ -302,10 +304,10 @@ sexspecificmodels <- list(
         race +
         edu,
       family = gaussian(),
-      design = designsG$d.design.adult.female
+      design = design$d.design.adult.female
     ),
 
-  msoc_3_m = svyglm(
+    msoc_3_m = svyglm(
       age_first_sex ~
         age +
         strength +
@@ -313,11 +315,11 @@ sexspecificmodels <- list(
         race +
         edu,
       family = gaussian(),
-      design = designsG$d.design.adult.male
+      design = design$d.design.adult.male
     ),
 
-  # Health
-  mheal_3_f = svyglm(
+    # Health
+    mheal_3_f = svyglm(
       age_first_sex ~
         age +
         strength +
@@ -330,10 +332,10 @@ sexspecificmodels <- list(
         physical_disease_count +
         depression,
       family = gaussian(),
-      design = designsG$d.design.adult.female
+      design = design$d.design.adult.female
     ),
 
-  mheal_3_m = svyglm(
+    mheal_3_m = svyglm(
       age_first_sex ~
         age +
         strength +
@@ -346,31 +348,31 @@ sexspecificmodels <- list(
         physical_disease_count +
         depression,
       family = gaussian(),
-      design = designsG$d.design.adult.male
+      design = design$d.design.adult.male
     ),
 
-  mhor_3_f = svyglm(
+    mhor_3_f = svyglm(
       age_first_sex ~
         age +
         strength +
         partnered +
         testosterone,
       family = gaussian(),
-      design = designsG$d.design.adult.female
+      design = design$d.design.adult.female
     ),
 
-  mhor_3_m = svyglm(
+    mhor_3_m = svyglm(
       age_first_sex ~
         age +
         strength +
         partnered +
         testosterone,
       family = gaussian(),
-      design = designsG$d.design.adult.male
+      design = design$d.design.adult.male
     ),
 
-  # Physical activity
-  mphys_3_f = svyglm(
+    # Physical activity
+    mphys_3_f = svyglm(
       age_first_sex ~
         age +
         strength +
@@ -380,10 +382,10 @@ sexspecificmodels <- list(
         vigorous_work +
         moderate_work,
       family = gaussian(),
-      design = designsG$d.design.adult.female
+      design = design$d.design.adult.female
     ),
 
-  mphys_3_m = svyglm(
+    mphys_3_m = svyglm(
       age_first_sex ~
         age +
         strength +
@@ -393,34 +395,34 @@ sexspecificmodels <- list(
         vigorous_work +
         moderate_work,
       family = gaussian(),
-      design = designsG$d.design.adult.male
+      design = design$d.design.adult.male
     ),
 
-  # Partnered models --------------------------------------------------------
+    # Partnered models --------------------------------------------------------
 
-  # Anthropometric model
-  manth_4_f = svyglm(
+    # Anthropometric model
+    manth_4_f = svyglm(
       partnered ~
         sex_partners_scaled +
         age +
         strength +
         bmi,
       family = quasibinomial(),
-      design = designsG$d.design.adult.female
+      design = design$d.design.adult.female
     ),
 
-  manth_4_m = svyglm(
+    manth_4_m = svyglm(
       partnered ~
         sex_partners_scaled +
         age +
         strength +
         bmi,
       family = quasibinomial(),
-      design = designsG$d.design.adult.male
+      design = design$d.design.adult.male
     ),
 
-  # Socioeconomic model
-  msoc_4_f = svyglm(
+    # Socioeconomic model
+    msoc_4_f = svyglm(
       partnered ~
         sex_partners_scaled +
         age +
@@ -428,10 +430,10 @@ sexspecificmodels <- list(
         edu +
         race,
       family = quasibinomial(),
-      design = designsG$d.design.adult.female
+      design = design$d.design.adult.female
     ),
 
-  msoc_4_m = svyglm(
+    msoc_4_m = svyglm(
       partnered ~
         sex_partners_scaled +
         age +
@@ -439,11 +441,11 @@ sexspecificmodels <- list(
         edu +
         race,
       family = quasibinomial(),
-      design = designsG$d.design.adult.male
+      design = design$d.design.adult.male
     ),
 
-  # Health
-  mheal_4_f = svyglm(
+    # Health
+    mheal_4_f = svyglm(
       partnered ~
         sex_partners_scaled +
         age +
@@ -456,10 +458,10 @@ sexspecificmodels <- list(
         physical_disease_count +
         depression,
       family = quasibinomial(),
-      design = designsG$d.design.adult.female
+      design = design$d.design.adult.female
     ),
 
-  mheal_4_m = svyglm(
+    mheal_4_m = svyglm(
       partnered ~
         sex_partners_scaled +
         age +
@@ -472,32 +474,32 @@ sexspecificmodels <- list(
         physical_disease_count +
         depression,
       family = quasibinomial(),
-      design = designsG$d.design.adult.male
+      design = design$d.design.adult.male
     ),
 
-  # Hormone
-  mhor_4_f = svyglm(
+    # Hormone
+    mhor_4_f = svyglm(
       partnered ~
         sex_partners_scaled +
         age +
         strength +
         testosterone,
       family = quasibinomial(),
-      design = designsG$d.design.adult.female
+      design = design$d.design.adult.female
     ),
 
-  mhor_4_m = svyglm(
+    mhor_4_m = svyglm(
       partnered ~
         sex_partners_scaled +
         age +
         strength +
         testosterone,
       family = quasibinomial(),
-      design = designsG$d.design.adult.male
+      design = design$d.design.adult.male
     ),
 
-  # Physical activity
-  mphys_4_f = svyglm(
+    # Physical activity
+    mphys_4_f = svyglm(
       partnered ~
         sex_partners_scaled +
         age +
@@ -507,10 +509,10 @@ sexspecificmodels <- list(
         vigorous_work +
         moderate_work,
       family = quasibinomial(),
-      design = designsG$d.design.adult.female
+      design = design$d.design.adult.female
     ),
 
-  mphys_4_m = svyglm(
+    mphys_4_m = svyglm(
       partnered ~
         sex_partners_scaled +
         age +
@@ -520,53 +522,55 @@ sexspecificmodels <- list(
         vigorous_work +
         moderate_work,
       family = quasibinomial(),
-      design = designsG$d.design.adult.male
+      design = design$d.design.adult.male
     )
-)
-
-modelnames <- names(sexspecificmodels)
-
-dfmodels0 <- tibble(
-  Controls = name_dict[str_split_i(modelnames, "_", 1)],
-  Outcome = outcome_dict[str_split_i(modelnames, "_", 2)],
-  Sex = str_split_i(modelnames, "_", 3),
-  Model = sexspecificmodels,
-  Stats = map(Model, \(x) {x$df.residual <- Inf; tidy(x, conf.int = T)})
   )
 
-dfmodelsummaries <-
-  dfmodels0 |>
-  group_by(Outcome, Sex) |>
-  summarise(
-    summary = custommodelsummary(Controls, Model),
-    title = paste(ifelse(unique(Sex) == 'f', 'Female', 'Male'), unique(Outcome), '(', toupper(Model[[1]]$family$family), ')')
+  modelnames <- names(sexspecificmodels)
+
+  dfmodels0 <- tibble(
+    Controls = name_dict[str_split_i(modelnames, "_", 1)],
+    Outcome = outcome_dict[str_split_i(modelnames, "_", 2)],
+    Sex = str_split_i(modelnames, "_", 3),
+    Model = sexspecificmodels,
+    Stats = map(Model, \(x) {x$df.residual <- Inf; tidy(x, conf.int = T)})
   )
 
-dfmodels <-
-  dfmodels0 |>
-  unnest(Stats) |>
-  dplyr::select(-Model) |>  # Remove due to RStudio bug
-  dplyr::filter(term != "(Intercept)") |>
-  mutate(
-    Outcome = factor(Outcome, levels = c('Partnered', 'Lifetime partners', 'Past year partners', 'Age of first sex')),
-    Significant = p.value < 0.05
-  )
+  dfmodelsummaries <-
+    dfmodels0 |>
+    group_by(Outcome, Sex) |>
+    summarise(
+      summary = custommodelsummary(Controls, Model),
+      title = paste(ifelse(unique(Sex) == 'f', 'Female', 'Male'), unique(Outcome), '(', toupper(Model[[1]]$family$family), ')'),
+      .groups = "drop"
+    )
 
-strengthstats <-
-  dfmodels |>
-  dplyr::filter(term == 'strength')
+  dfmodels <-
+    dfmodels0 |>
+    unnest(Stats) |>
+    dplyr::select(-Model) |>  # Remove due to RStudio bug
+    dplyr::filter(term != "(Intercept)") |>
+    mutate(
+      Outcome = factor(Outcome, levels = c('Partnered', 'Lifetime partners', 'Past year partners', 'Age of first sex')),
+      Significant = p.value < 0.05
+    )
 
-plot_sexspecific_strength_coefs <-
-  ggplot(strengthstats, aes(estimate, Outcome, xmin = conf.low, xmax = conf.high, colour = Sex, shape = Sex, alpha = Significant)) +
-  geom_pointrange(position = position_dodge(width = 0.5), linewidth = 1) +
-  geom_vline(xintercept = 0, linetype = 'dotted') +
-  scale_alpha_ordinal(range = c(0.35, 1)) +
-  hagenutils::scale_color_binary() +
-  guides(colour = guide_legend(reverse = T)) +
-  labs(x = 'Estimate (95% CI)', y = '') +
-  facet_wrap(~Controls, ncol = 1) +
-  theme_bw(15) +
-  theme(strip.text.y = element_text(angle = 0))
-plot_sexspecific_strength_coefs
+  strengthstats <-
+    dfmodels |>
+    dplyr::filter(term == 'strength')
+
+  plot_sexspecific_strength_coefs <-
+    ggplot(strengthstats, aes(estimate, Outcome, xmin = conf.low, xmax = conf.high, colour = Sex, shape = Sex, alpha = Significant)) +
+    geom_pointrange(position = position_dodge(width = 0.5), linewidth = 1) +
+    geom_vline(xintercept = 0, linetype = 'dotted') +
+    scale_alpha_ordinal(range = c(0.35, 1)) +
+    hagenutils::scale_color_binary() +
+    guides(colour = guide_legend(reverse = T), shape = 'none', alpha = 'none') +
+    labs(x = '\nStrength coefficient (95% CI)', y = '') +
+    facet_wrap(~Controls, ncol = 1) +
+    theme_bw(15)
+
+  return(list(summaries = dfmodelsummaries, stats = strengthstats, plot = plot_sexspecific_strength_coefs))
+}
 
 

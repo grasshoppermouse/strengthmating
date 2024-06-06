@@ -57,11 +57,14 @@ plot_coefs <-
   geom_pointrange() +
   geom_vline(xintercept = 0, linetype = 'dotted') +
   scale_color_binary() +
-  guides(colour = guide_legend(reverse = T)) +
-  labs(x = 'Estimate (95% CI)', y = '') +
+  guides(colour = 'none') + # guide_legend(reverse = T)
+  labs(title='Stage 1: Pilot study', x = 'Estimate (95% CI)', y = '') +
   facet_grid(Controls ~ term) +
   theme_bw(15) +
-  theme(strip.text.y = element_text(angle = 0))
+  theme(
+    strip.text.y = element_blank()
+  )
+  # theme(strip.text.y = element_text(angle = 0))
 plot_coefs
 ggsave("Figures/plot_coefs.pdf", plot_coefs, width = 10, height = 10)
 

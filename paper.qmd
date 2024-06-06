@@ -41,6 +41,7 @@ source('pilot_analysis.R')
 source('simulate.R')
 source('sexspecificmodels.R')
 source('stage2_analysis.R')
+source('compare.R')
 ```
 
 Abstract
@@ -205,9 +206,9 @@ There were also clear sex differences in the effects of sex-specific strength on
 #| label: fig-coefs
 #| fig-width: 10
 #| fig-height: 8
-#| fig-cap: Coefficients of sex-specific strength, and strength X sex interaction for our four mating success outcomes and our five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Bars are 95\% CIs. For the full regression tables, see the SI.
+#| fig-cap: Coefficients of sex-specific strength, and strength X sex interaction for our four mating success outcomes and our five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Bars are 95\% CIs. Left: Pilot study results. Right: Confirmatory study results. For the full regression tables, see the SI.
 
-plot_coefs
+plot_coefs + plot_coefs_stage2 + plot_layout(axes = 'collect_y', axis_titles = 'collect')
 ```
 
 For a plot of all coefficients, see @fig-allcoefs.
@@ -306,7 +307,7 @@ Our pilot results support the importance of strength to male short-term mating s
 
 Our registered report has one aim: to test the prediction from the sexual selection hypothesis that the effect of upper body strength on reproductive success is significantly positive for males and significantly less so for females. Our aim is not to test all possible byproduct hypotheses, nor is it possible to do so. Therefore, we are unable to control for in-utero testosterone exposure, or other conditions such as Polycystic Ovarian Syndrome (PCOS) that might influence the relationship between grip strength and our measures of mating success. Likewise, NHANES does not collect data on sociosexuality. As described in our methods, in industrialized populations like the U.S., widespread access to contraceptives uncouples reproductive success from mating behavior for both men and women. Measures of mating success, including partnered status, number of sexual partners, and age at first sexual intercourse, are used as proxies as they are assumed to have been strongly correlated with reproductive success under ancestral conditions [@perusse1993]. Finally, all pilot results were obtained after considerable exploratory analysis, and must be replicated in a confirmatory study.
 
-# Confirmatory Study (Not yet conducted)
+# Stage 2 Confirmatory Study
 
 In a large, nationally representative US sample, we predict that formidability will be significantly positively associated with mating success as indexed by partnered status and lifetime number of sexual partners, but not last year number of partners, nor age at first sex after controlling for ethnicity. We also predict a significant interaction with sex such that strength will be a stronger predictor of male than female partnered status and number of lifetime partners, but not number of last year partners nor age at first sex. We also predict that there will be a significant negative association between formidability and immune function. Finally, we predict that formidability will be positively associated with dietary protein intake for both males and females.
 
@@ -331,6 +332,30 @@ Effects in replication studies are often smaller than in the original studies [@
 ## Method
 
 Our methods and models will remain identical to those reported in the pilot study, using unobserved data from the 2013-2014 NHANES collection cycle. After testing and reporting our predictions using the unobserved data, we will fit our models on the combined data (2011-2014), and conduct other post hoc analyses.
+
+## Deviation from Stage 1 method
+
+Models and R code for three of our four mating success outcome variables remain identical to those used in the Stage 1 pilot study. However, although the Poisson regression model of lifetime sexual partners in the pilot study included age as a control, it is more appropriate to instead include it as an exposure variable (an offset) in the model, which we now do. We also treat this exposure as years since sexual maturity (age - 12 years). The change in the strength and strength:sex coefficients from this change in model specification is minimal (see @sfig-comparison).
+
+## Results
+
+```{r}
+#| label: fig-stage2coef
+#| fig-width: 10
+#| fig-height: 8
+#| fig-cap: Coefficients of sex-specific strength, and strength X sex interaction for our four mating success outcomes and our five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Bars are 95\% CIs. For the full regression tables, see the SI.
+
+plot_coefs_stage2
+```
+
+
+:::{#fig-stage2effects}
+```{r}
+effects_plots(models_stage2)
+```
+
+Effects of sex-specific standardized strength on mating outcomes, by sex. Strength is centered and scaled by 2 SD, separately for each sex (almost all participants therefore fall between -1 and 1). Plots are based on the anthropometric control models, with control variables held at their mean values. Lifetime partners is modeled as the rate of new partners per year since reaching sexual maturity (age 12).
+:::
 
 # Acknowledgements
 
@@ -395,14 +420,14 @@ marginal |>
 The average marginal effect of a 2 standard deviation increase in strength on each mating outcome, by sex and partnered status, for the models with anthropometric controls.
 :::
 
-### Effects plots
+### Effects plots (Pilot)
 
 :::{#sfig-effects}
 ```{r}
 effects_plots(models)
 ```
 
-Effects of sex-specific standardized strength on mating outcomes, by sex. Strength is centered and scaled by 2 SD, separately for each sex. Plots are based on the anthropometric control models, with control variables held at their mean values.
+Effects of sex-specific standardized strength on mating outcomes, by sex. Strength is centered and scaled by 2 SD, separately for each sex (almost all participants therefore fall between -1 and 1). Plots are based on the anthropometric control models, with control variables held at their mean values. Lifetime partners is modeled as the rate of new partners per year since reaching sexual maturity (age 12).
 :::
 
 
@@ -455,6 +480,13 @@ for (i in 1:nrow(modelsummaries)){
 
 ### Sex-specific models
 
+```{r}
+out_sexspecific_pilot <- sex_specific_models(designsG)
+plot_sexspecific_strength_coefs <- out_sexspecific_pilot$plot
+dfmodelsummaries <- out_sexspecific_pilot$summaries
+```
+
+
 At the suggestion of an anonymous reviewer, we fit all our regression models separately by sex. We plotted the strength coefficients for each model for each sex. 
 
 :::{#sfig-sexspecific}
@@ -463,7 +495,6 @@ At the suggestion of an anonymous reviewer, we fit all our regression models sep
 #| fig-height: 9
 plot_sexspecific_strength_coefs
 ```
-
 
 Strength coefficients in each regression model fit separately by sex. Control variables are the same as for models fit with a sex X strength interaction term. Note that these models test if each strength coefficient is significantly different from 0, not if the male and female coefficients are significantly different from each other.
 :::
@@ -477,5 +508,15 @@ for (i in 1:nrow(dfmodelsummaries)){
   print(dfmodelsummaries$summary[[i]])
 }
 ```
+
+## Stage 2 confirmatory study
+
+:::{#sfig-comparison}
+```{r}
+plot_compare
+```
+
+A comparison of strength and strength:sex cofficients with the original model specification for the lifetime sex partners (anthropometric controls) that included age as a control variable (orignal), and the specification that now instead includes years since sexual maturity (age-12) as an exposure variable (offset) (new). Both models are quasi-Poisson models.
+:::
 
 # References

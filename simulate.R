@@ -1,10 +1,11 @@
 library(boot)
 library(furrr)
 
+set.seed(765456)
+
 plan("multisession")
 
 d_adult <- d_G[d_G$age >= 18 & d_G$age <= 60,]
-designsG$d.design.adults <- subset(designsG$d.design.adults, sex_partners < 100)
 
 rqpois <- function(n, mu, theta) rnbinom(n=n, mu=mu, size=mu/(theta-1))
 

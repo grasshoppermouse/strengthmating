@@ -20,7 +20,7 @@ name_dict <- c(
 )
 
 outcome_dict <- c(
-  "1" = "Lifetime partners",
+  "1" = "Lifetime partners (partners per year)",
   "2" = "Past year partners",
   "3" = "Age of first sex",
   "4" = "Partnered"
@@ -536,7 +536,7 @@ allstats <- function(models){
     dplyr::select(-Model) |>  # Remove due to RStudio bug
     dplyr::filter(term != "(Intercept)") |>
     mutate(
-      Outcome = factor(Outcome, levels = c('Partnered', 'Lifetime partners', 'Past year partners', 'Age of first sex')),
+      Outcome = factor(Outcome, levels = c('Partnered', ' (partners per year) partners', 'Past year partners', 'Age of first sex')),
       term = factor(term, levels=rev(names(vnames)), labels=rev(vnames))
     )
 }
@@ -550,7 +550,7 @@ strength_stats <- function(models){
     mutate(
       term = ifelse(term == 'strength_sex_centered', 'Strength (S)', 'Strength (S) X Sex (female)'),
       term = factor(term, levels = c('Strength (S)', 'Strength (S) X Sex (female)')),
-      Outcome = factor(Outcome, levels = rev(c('Partnered', 'Lifetime partners', 'Past year partners', 'Age of first sex'))),
+      Outcome = factor(Outcome, levels = rev(c('Partnered', 'Lifetime partners (partners per year)', 'Past year partners', 'Age of first sex'))),
       Significant = sign(conf.low) == sign(conf.high)
     )
 }
@@ -595,3 +595,24 @@ effects_plots <- function(models, controls = "Anthropometric"){
     )
   wrap_plots(out$Plot, ncol = 2) + plot_layout(axes = 'collect', guides = 'collect')
 }
+
+
+effects_plots2 <- function(df1, df2, controls = "Anthropometric"){
+  out <-
+    bind_rows(list(Pilot = df1, Confirmatory = df2), .id = 'Stage') |>
+    dplyr::filter(Controls == controls) |>
+    rowwise() |>
+    mutate(
+      Plot = list(
+        plot_predictions(Model, condition = c("strength_sex_centered", "sex")) +
+          scale_color_binary() +
+          xlab("Strength (S by sex)") +
+          ylab(Outcome) +
+          theme_minimal()
+      )
+    ) |>
+    ungroup() |>
+    arrange(Outcome, desc(Stage))
+  wrap_plots(out$Plot, ncol = 2, byrow = T) + plot_layout(axes = 'collect', guides = 'collect')
+}
+
