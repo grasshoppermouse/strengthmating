@@ -596,7 +596,6 @@ effects_plots <- function(models, controls = "Anthropometric"){
   wrap_plots(out$Plot, ncol = 2) + plot_layout(axes = 'collect', guides = 'collect')
 }
 
-
 effects_plots2 <- function(df1, df2, controls = "Anthropometric"){
   out <-
     bind_rows(list(Pilot = df1, Confirmatory = df2), .id = 'Stage') |>
@@ -615,4 +614,3 @@ effects_plots2 <- function(df1, df2, controls = "Anthropometric"){
     arrange(Outcome, desc(Stage))
   wrap_plots(out$Plot, ncol = 2, byrow = T) + plot_layout(axes = 'collect', guides = 'collect')
 }
-
