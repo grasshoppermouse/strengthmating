@@ -206,7 +206,7 @@ There were also clear sex differences in the effects of sex-specific strength on
 #| label: fig-coefs
 #| fig-width: 10
 #| fig-height: 8
-#| fig-cap: Coefficients of sex-specific strength, and strength X sex interaction for our four mating success outcomes and our five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Bars are 95% CIs. Left Pilot study results. Right Confirmatory study results. For the full regression tables, see the SI.
+#| fig-cap: "Coefficients of sex-specific strength, and strength X sex interaction for our four mating success outcomes and our five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Bars are 95\% CIs. Left: Pilot study results. Right: Confirmatory study results. For the full regression tables, see the SI."
 
 plot_coefs + plot_coefs_stage2 + plot_layout(axes = 'collect_y', axis_titles = 'collect')
 ```
@@ -356,7 +356,7 @@ Unlike findings from the pilot study, a clear sex difference in the effects of s
 
 :::{#fig-stage2effects}
 ```{r}
-effects_plots(models_stage2)
+plot_effects_all
 ```
 
 Effects of sex-specific standardized strength on mating outcomes, by sex. Strength is centered and scaled by 2 SD, separately for each sex (almost all participants therefore fall between -1 and 1). Plots are based on the anthropometric control models, with control variables held at their mean values. Lifetime partners is modeled as the rate of new partners per year since reaching sexual maturity (age 12).
