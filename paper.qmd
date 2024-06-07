@@ -230,21 +230,12 @@ Previous research found that higher musculature was associated with decreased in
 #| fig.height: 8
 #| fig.cap: Coefficient plot of predictors of immune investment (WBCC) from generalized linear models (Pilot). Variables labeled (S) have been centered at the mean and standardized by 2 SD. Bars are 95% CIs.
 
-plot_immune <- forestplot(
-  immune_models$mwbc,
-  immune_models$mwbc_alt,
-  intercept = F,
-  facet = F,
-  dodgewidth = .4,
-  varnames = vnames, 
-  modelnames = mmnames) +
-  scale_color_binary() +
-  theme_minimal(17) +
-  guides(colour = guide_legend(reverse = T), shape = guide_legend(reverse = T))
+plot_immune_both <- 
+  plot_immune + guides(colour = 'none', shape = 'none') + plot_immune_stage2 + plot_layout(axes = 'collect', guides = 'collect')
 
-ggsave("Figures/plot_immune.pdf", plot_immune, width = 14, height = 7)
+ggsave("Figures/plot_immune_both.pdf", plot_immune, width = 14, height = 7)
 
-plot_immune
+plot_immune_both
 ```
 
 ### Models of energy and protein intake
@@ -266,7 +257,7 @@ plot_energy <- forestplot(
   varnames = vnames, 
   modelnames = mmnames) +
   scale_color_binary() +
-  ggtitle('Energy') +
+  ggtitle('Stage 1: Pilot Energy') +
   theme_bw(17) +
   guides(colour = guide_none(), shape = guide_none())
 
@@ -280,7 +271,7 @@ plot_protein <- forestplot(
   modelnames = mmnames) +
   scale_color_binary() +
   guides(colour = guide_legend(reverse = T), shape = guide_legend(reverse = T)) +
-  ggtitle('Protein') +
+  ggtitle('Stage 1: Pilot Protein') +
   theme_bw(17) +
   theme(axis.text.y = element_blank())
   

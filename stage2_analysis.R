@@ -107,6 +107,7 @@ plot_immune_stage2 <- forestplot(
   varnames = vnames,
   modelnames = mmnames) +
   scale_color_binary() +
+  ggtitle("Stage 2: Confirmatory") +
   theme_minimal(17) +
   guides(colour = guide_legend(reverse = T), shape = guide_legend(reverse = T))
 plot_immune_stage2
@@ -123,7 +124,7 @@ plot_energy_stage2 <- forestplot(
   varnames = vnames,
   modelnames = mmnames) +
   scale_color_binary() +
-  ggtitle('Energy') +
+  ggtitle('Stage 2: Confirmatory Energy') +
   theme_bw(17) +
   guides(colour = guide_none(), shape = guide_none())
 
@@ -137,7 +138,7 @@ plot_protein_stage2 <- forestplot(
   modelnames = mmnames) +
   scale_color_binary() +
   guides(colour = guide_legend(reverse = T), shape = guide_legend(reverse = T)) +
-  ggtitle('Protein') +
+  ggtitle('Stage 2: Confirmatory Protein') +
   theme_bw(17) +
   theme(axis.text.y = element_blank())
 

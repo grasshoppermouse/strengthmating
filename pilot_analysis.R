@@ -79,6 +79,18 @@ plot_lifetime_coefs <-
 plot_lifetime_coefs
 ggsave("Figures/plot_lifetime_coefs.pdf", plot_lifetime_coefs)
 
+plot_immune <- forestplot(
+  immune_models$mwbc,
+  immune_models$mwbc_alt,
+  intercept = F,
+  facet = F,
+  dodgewidth = .4,
+  varnames = vnames,
+  modelnames = mmnames) +
+  scale_color_binary() +
+  ggtitle("Stage 1: Pilot") +
+  theme_minimal(17)
+
 # SI ----------------------------------------------------------------------
 
 # Descriptive statistics tables
