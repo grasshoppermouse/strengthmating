@@ -410,7 +410,7 @@ fitmodels <- function(design){
 # Immune models ------------------------------------------------------------
 
 # design.adults
-fit_immune_models <- function(design){
+fit_immune_models <- function(design1, design2){
 
   list(
 
@@ -420,7 +420,7 @@ fit_immune_models <- function(design){
         strength_centered * sex +
         bmi_centered,
       family= quasipoisson(),
-      design=design
+      design=design1
     ),
 
     mwbc_alt = svyglm(
@@ -435,7 +435,7 @@ fit_immune_models <- function(design){
         tot_MET_centered +
         depression,
       family= quasipoisson(),
-      design=design
+      design=design2
     )
   )
 }
@@ -548,8 +548,8 @@ strength_stats <- function(models){
     ) |>
     unnest(Stats) |>
     mutate(
-      term = ifelse(term == 'strength_sex_centered', 'Strength (S)', 'Strength (S) X Sex (female)'),
-      term = factor(term, levels = c('Strength (S)', 'Strength (S) X Sex (female)')),
+      term = ifelse(term == 'strength_sex_centered', 'Strength (S by sex)', 'Strength (S by sex) X Sex (female)'),
+      term = factor(term, levels = c('Strength (S by sex)', 'Strength (S by sex) X Sex (female)')),
       Outcome = factor(Outcome, levels = rev(c('Partnered', 'Lifetime partners (partners per year)', 'Past year partners', 'Age of first sex'))),
       Significant = sign(conf.low) == sign(conf.high)
     )
@@ -614,3 +614,52 @@ effects_plots2 <- function(df1, df2, controls = "Anthropometric"){
     arrange(Outcome, desc(Stage))
   wrap_plots(out$Plot, ncol = 2, byrow = T) + plot_layout(axes = 'collect', guides = 'collect')
 }
+
+plot_predictions2 <- function(model, stage){
+  d <- plot_predictions(model, condition = c("strength_sex_centered", "sex"), draw = F)
+  d$Stage <- stage
+  return(d)
+}
+effects_plots3 <- function(df1, df2, controls = "Anthropometric"){
+  out <-
+    bind_rows(list(Pilot = df1, Confirmatory = df2), .id = 'Stage') |>
+    dplyr::filter(Controls == controls) |>
+    rowwise() |>
+    mutate(
+      Plot = list(
+        plot_predictions2(Model, Stage) |>
+        suppressWarnings()
+      ) |> setNames(Outcome)
+    ) |>
+    ungroup() |>
+    group_by(Outcome) |>
+    summarise(
+      Data = list(bind_rows(Plot, .id = 'Outcome')),
+    )
+  return(out)
+}
+
+out <- effects_plots3(models, models_stage2)
+out2 <-
+  bind_rows(out$Data) |>
+  mutate(
+    Stage = factor(Stage, levels = c('Pilot', 'Confirmatory'), labels = c('Stage 1: Pilot', 'Stage 2: Confirmatory')),
+    Outcome = ifelse(Outcome == 'Lifetime partners (partners per year)', 'Lifetime partners\n(partners per year)', Outcome)
+    )
+
+plot_effects_all <-
+  ggplot(out2, aes(strength_sex_centered, estimate, group=sex)) +
+  geom_ribbon(aes(ymin=conf.low, ymax=conf.high, fill=sex), alpha=0.2) +
+  geom_line(aes(colour=sex), size = 1) +
+  scale_color_binary() +
+  scale_fill_binary() +
+  guides(color = guide_legend(override.aes = list(linewidth=3)), fill = 'none') +
+  ylim(0, NA) +
+  xlab('Strength (centered by sex)') +
+  facet_grid(Outcome~Stage, scales = 'free_y') +
+  theme_bw() +
+  theme(
+    axis.title.y = element_text(angle = 0),
+    strip.text.y = element_text(angle = 0)
+  )
+ggsave("Figures/plot_effects_all.pdf", plot_effects_all, width = 10, height = 10)

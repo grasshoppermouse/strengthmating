@@ -34,7 +34,7 @@ designsG <- update_designs(designsG)
 
 models <- fitmodels(designsG$d.design.adults)
 modelsummaries <- getmodelsummaries(models)
-immune_models <- fit_immune_models(designsG$d.design.adults)
+immune_models <- fit_immune_models(designsG$d.design.adults, designsG$d.design.dietary.adults)
 intake_models <- fit_intake_models(designsG$d.design.dietary.adults)
 d_allstats <- allstats(models)
 d_strength_stats <- strength_stats(models)
@@ -53,13 +53,13 @@ plot_allcoefs
 ggsave("Figures/plot_allcoefs.pdf", plot_allcoefs, width = 14, height = 8)
 
 plot_coefs <-
-  ggplot(d_strength_stats, aes(estimate, Outcome, xmin = conf.low, xmax = conf.high, colour = Significant)) +
+  ggplot(d_strength_stats, aes(estimate, Controls, xmin = conf.low, xmax = conf.high, colour = Significant)) +
   geom_pointrange() +
   geom_vline(xintercept = 0, linetype = 'dotted') +
   scale_color_binary() +
   guides(colour = 'none') + # guide_legend(reverse = T)
   labs(title='Stage 1: Pilot study', x = 'Estimate (95% CI)', y = '') +
-  facet_grid(Controls ~ term) +
+  facet_grid(Outcome ~ term) +
   theme_bw(15) +
   theme(
     strip.text.y = element_blank()

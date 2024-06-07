@@ -3,7 +3,7 @@ designsH2 <- update_designs(designsH, cutoff = 100)
 
 models_stage2 <- fitmodels(designsH2$d.design.adults)
 modelsummaries_stage2 <- getmodelsummaries(models_stage2)
-immune_models_stage2 <- fit_immune_models(designsH2$d.design.adults) # Need to update to dietary design object
+immune_models_stage2 <- fit_immune_models(designsH2$d.design.adults, designsH2$d.design.dietary.adults) # Need to update to dietary design object
 intake_models_stage2 <- fit_intake_models(designsH2$d.design.dietary.adults)
 d_allstats_stage2 <- allstats(models_stage2)
 d_strength_stats_stage2 <- strength_stats(models_stage2)
@@ -22,13 +22,13 @@ plot_allcoefs_stage2
 ggsave("Figures/plot_allcoefs_stage2.pdf", plot_allcoefs_stage2, width = 14, height = 8)
 
 plot_coefs_stage2 <-
-  ggplot(d_strength_stats_stage2, aes(estimate, Outcome, xmin = conf.low, xmax = conf.high, colour = Significant)) +
+  ggplot(d_strength_stats_stage2, aes(estimate, Controls, xmin = conf.low, xmax = conf.high, colour = Significant)) +
   geom_pointrange() +
   geom_vline(xintercept = 0, linetype = 'dotted') +
   scale_color_binary() +
   guides(colour = guide_legend(reverse = T)) +
   labs(title='Stage 2: Confirmatory study', x = 'Estimate (95% CI)', y = '') +
-  facet_grid(Controls ~ term) +
+  facet_grid(Outcome ~ term) +
   theme_bw(15) +
   theme(strip.text.y = element_text(angle = 0))
 plot_coefs_stage2
