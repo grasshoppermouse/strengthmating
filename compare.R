@@ -1,4 +1,6 @@
 
+# Compare the coefficients of models with age vs. onset(ln(age))
+
 design <- designsG$d.design.adults
 
 originalmodels0 <- list(
@@ -73,27 +75,34 @@ originalmodels0 <- list(
 modelnames <- names(originalmodels0)
 
 originalmodels <- tibble(
-  Controls = name_dict[str_remove(modelnames, "\\d")],
+  Controls = control_dict[str_remove(modelnames, "\\d")],
   Outcome = outcome_dict[str_extract(modelnames, "\\d")],
   Model = originalmodels0,
   Stats = map(Model, \(x) {x$df.residual <- Inf; tidy(x, conf.int = T)})
 )
 
-originalstats <- strength_stats(originalmodels)
-newstats <- d_strength_stats |> dplyr::filter(Outcome == 'Lifetime partners (partners per year)')
-# newstats <- d_strength_stats_stage2 |> dplyr::filter(Outcome == 'Lifetime partners (partners per year)')
+originalstats <-
+  allstats(originalmodels) |>
+  dplyr::filter(term2 %in% sex_strength_terms)
+
+newstats <-
+  benefit_stats_strength |>
+  dplyr::filter(Outcome == 'Lifetime partners\n(partners per year)')
 
 originalstats$type <- 'Original'
 newstats$type <- 'New'
-thestats <- bind_rows(originalstats, newstats)
+thestats <-
+  bind_rows(originalstats, newstats) |>
+  mutate(term = factor(term, levels = unique(term)))
 
 plot_compare <-
   ggplot(thestats, aes(estimate, type, xmin = conf.low, xmax = conf.high, colour = type)) +
   geom_pointrange() +
   geom_vline(xintercept = 0, linetype = 'dotted') +
-  # scale_color_binary() +
+  scale_color_binary() +
   guides(colour = guide_legend(reverse = T)) +
   labs(x = 'Estimate (95% CI)', y = '') +
   facet_grid(Controls ~ term) +
   theme_bw(15) +
   theme(strip.text.y = element_text(angle = 0))
+

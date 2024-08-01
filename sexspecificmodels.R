@@ -529,7 +529,7 @@ sex_specific_models <- function(design){
   modelnames <- names(sexspecificmodels)
 
   dfmodels0 <- tibble(
-    Controls = name_dict[str_split_i(modelnames, "_", 1)],
+    Controls = control_dict[str_split_i(modelnames, "_", 1)],
     Outcome = outcome_dict[str_split_i(modelnames, "_", 2)],
     Sex = str_split_i(modelnames, "_", 3),
     Model = sexspecificmodels,
@@ -551,7 +551,7 @@ sex_specific_models <- function(design){
     dplyr::select(-Model) |>  # Remove due to RStudio bug
     dplyr::filter(term != "(Intercept)") |>
     mutate(
-      Outcome = factor(Outcome, levels = c('Partnered', 'Lifetime partners', 'Past year partners', 'Age of first sex')),
+      Outcome = factor(Outcome, levels = c('Partnered', 'Lifetime partners\n(partners per year)', 'Past year partners', 'Age of first sex')),
       Significant = p.value < 0.05
     )
 

@@ -10,20 +10,26 @@ library(marginaleffects)
 library(tinytable)
 library(patchwork)
 library(ggcorrplot)
+library(ggh4x)
 
-name_dict <- c(
+control_dict <- c(
   manth = 'Anthropometric',
   mheal = 'Health',
   mhor = 'Hormone',
   mphys = 'Activity',
-  msoc = 'Socioeconomic'
+  msoc = 'Socioeconomic',
+  mrep = 'Replication',
+  mexp = 'Expanded'
 )
 
 outcome_dict <- c(
-  "1" = "Lifetime partners (partners per year)",
+  "1" = "Lifetime partners\n(partners per year)",
   "2" = "Past year partners",
   "3" = "Age of first sex",
-  "4" = "Partnered"
+  "4" = "Partnered",
+  "5" = "Immunity",
+  "6" = "Energy",
+  "7" = "Protein"
 )
 
 # Coef plot labels --------------------------------------------------------------
@@ -53,15 +59,15 @@ vnames <- c(
   "strength_centered" = "Strength (S)",
   "strength" = "Strength",
   "sexfemale" = "Sex (Female)",
-  "sexfemale:strength_sex_centered" = "Sex (Female) x Strength",
-  "strength_sex_centered:sexfemale" = "Sex (Female) x Strength",
-  "sexfemale:strength_centered" = "Sex (Female) x Strength",
+  "sexfemale:strength_sex_centered" = "Sex (Female) x Strength (S by sex)",
+  "strength_sex_centered:sexfemale" = "Sex (Female) x Strength (S by sex)",
+  "sexfemale:strength_centered" = "Sex (Female) x Strength (S)",
   "age_centered" = "Age (S)",
   "age" = "Age",
   "partneredTRUE" = "Partnered",
   "sex_partners" = "Lifetime sex partners",
   "sex_partners_scaled" = "Lifetime sex partners (S)",
-  "strength_sex_centered:partneredTRUE" = "Partnered x Strength (S)",
+  "strength_sex_centered:partneredTRUE" = "Partnered x Strength (S by sex)",
   "age_centered:sexfemale" = "Age (S) x Sex (Female)",
   "height_centered" = "Height (S)",
   "weight_centered" = "Weight (S)",
@@ -99,19 +105,24 @@ vnames <- c(
   "avgcalories_centered" = "Average calories per day (S)"
 )
 
+sex_strength_terms <- c(
+  'sexfemale:strength_sex_centered',
+  'strength_sex_centered:sexfemale',
+  'strength_sex_centered',
+  'sexfemale:strength_centered',
+  'strength_centered'
+  )
+
 # Update design objects -----------------------------------
 
 
 update_designs <- function(designs, cutoff = 100){
 
-  # Removing those with >=100 lifetime sex partners
+  # Removing those with very high numbers of lifetime sex partners
   designs$d.design.adults <- subset(designs$d.design.adults, sex_partners < cutoff)
 
   # Scale sex_partners by the interquartile range
   designs$d.design.adults <- update(designs$d.design.adults, sex_partners_scaled = sex_partners/10)
-
-  # Difference between current age and age at first sex
-  designs$d.design.adults <- update(designs$d.design.adults, age_diff = age - age_first_sex)
 
   # Create numeric version of sex for correlation matrix
   designs$d.design.adults <- update(designs$d.design.adults, sex2 = ifelse(sex == "male", 1, 0))
@@ -123,10 +134,9 @@ update_designs <- function(designs, cutoff = 100){
 }
 
 
+# Regression models -------------------------------------------------------
 
-# Mating regression models -------------------------------------------------------
-
-fitmodels <- function(design){
+fitmodels <- function(design, design_dietary){
 
   models0 <- list(
 
@@ -393,37 +403,20 @@ fitmodels <- function(design){
         moderate_work,
       family = quasibinomial(),
       design = design
-    )
-  )
+    ),
 
-  modelnames <- names(models0)
+    # Immune models -------------------------------------------------------------
 
-  tibble(
-    Controls = name_dict[str_remove(modelnames, "\\d")],
-    Outcome = outcome_dict[str_extract(modelnames, "\\d")],
-    Model = models0,
-    Stats = map(Model, \(x) {x$df.residual <- Inf; tidy(x, conf.int = T)})
-  )
-}
-
-
-# Immune models ------------------------------------------------------------
-
-# design.adults
-fit_immune_models <- function(design1, design2){
-
-  list(
-
-    mwbc = svyglm(
+    mrep5 = svyglm(
       whitebloodcell ~
         age_centered * sex +
         strength_centered * sex +
         bmi_centered,
-      family= quasipoisson(),
-      design=design1
+      family = quasipoisson(),
+      design = design
     ),
 
-    mwbc_alt = svyglm(
+    mexp5 = svyglm(
       whitebloodcell ~
         age_centered * sex +
         strength_centered * sex +
@@ -434,22 +427,13 @@ fit_immune_models <- function(design1, design2){
         avgcalories_centered +
         tot_MET_centered +
         depression,
-      family= quasipoisson(),
-      design=design2
-    )
-  )
-}
-
-# Dietary Intake models ----------------------------------------------------
-
-# design.dietary.adults
-fit_intake_models <- function(design){
-
-  list(
+      family = quasipoisson(),
+      design = design_dietary
+    ),
 
     ## Energy models -----------------------------------------------------------
 
-    m_energy = svyglm(
+    mrep6 = svyglm(
       avgcalories ~
         age_centered +
         tot_MET_centered  +
@@ -457,10 +441,10 @@ fit_intake_models <- function(design){
         bmi_centered  +
         sex,
       family = gaussian(),
-      design = design
+      design = design_dietary
     ),
 
-    m_energy_alt = svyglm(
+    mexp6 = svyglm(
       avgcalories ~
         age_centered +
         tot_MET_centered +
@@ -471,12 +455,12 @@ fit_intake_models <- function(design){
         whitebloodcell_centered +
         foodinsecurity_adult,
       family = gaussian(),
-      design = design
+      design = design_dietary
     ),
 
-    ## Protein model -----------------------------------------------------------------
+    ## Protein models -----------------------------------------------------------------
 
-    m_protein = svyglm(
+    mrep7 = svyglm(
       avgprotein ~
         age_centered +
         tot_MET_centered  +
@@ -484,10 +468,10 @@ fit_intake_models <- function(design){
         bmi_centered  +
         sex,
       family = gaussian(),
-      design = design
+      design = design_dietary
     ),
 
-    m_protein_alt = svyglm(
+    mexp7 = svyglm(
       avgprotein ~
         age_centered +
         tot_MET_centered +
@@ -498,19 +482,22 @@ fit_intake_models <- function(design){
         whitebloodcell_centered +
         foodinsecurity_adult,
       family = gaussian(),
-      design = design
+      design = design_dietary
     )
+  )
+
+  modelnames <- names(models0)
+
+  tibble(
+    Controls = control_dict[str_remove(modelnames, "\\d")],
+    Outcome = outcome_dict[str_extract(modelnames, "\\d")],
+    Model = models0,
+    Stats = map(Model, \(x) {x$df.residual <- Inf; tidy(x, conf.int = T)}),
+    benefit_cost = ifelse(Outcome %in% c('Immunity', 'Energy', 'Protein'), 'Cost', 'Benefit')
   )
 }
 
 # Extract model stats -----------------------------------------------------
-
-extract_stats <- function(obj, terms = c('strength_sex_centered', 'sexfemale:strength_sex_centered', 'strength_sex_centered:sexfemale')){
-  obj$df.residual <- Inf
-  tidy(obj, conf.int = T) |>
-    dplyr::filter(term %in% terms) |>
-    dplyr::select(term, estimate, conf.low, conf.high)
-}
 
 custommodelsummary <- function(Controls, Model){
   models <- as.list(Model)
@@ -529,40 +516,13 @@ getmodelsummaries <- function(models){
 
 allstats <- function(models){
   models |>
-    mutate(
-      Stats = map(Model, \(m) {m$df.residual <- Inf; tidy(m, conf.int = T)})
-    ) |>
-    unnest(Stats) |>
     dplyr::select(-Model) |>  # Remove due to RStudio bug
+    unnest(Stats) |>
     dplyr::filter(term != "(Intercept)") |>
     mutate(
-      Outcome = factor(Outcome, levels = c('Partnered', ' (partners per year) partners', 'Past year partners', 'Age of first sex')),
-      term = factor(term, levels=rev(names(vnames)), labels=rev(vnames))
-    )
-}
-
-strength_stats <- function(models){
-  models |>
-    mutate(
-      Stats = map(Model, extract_stats)
-    ) |>
-    unnest(Stats) |>
-    mutate(
-      term = ifelse(term == 'strength_sex_centered', 'Strength (S by sex)', 'Strength (S by sex) X Sex (female)'),
-      term = factor(term, levels = c('Strength (S by sex)', 'Strength (S by sex) X Sex (female)')),
-      Outcome = factor(Outcome, levels = rev(c('Partnered', 'Lifetime partners (partners per year)', 'Past year partners', 'Age of first sex'))),
+      term2 = term,
+      term = factor(term, levels=rev(names(vnames)), labels=rev(vnames)),
       Significant = sign(conf.low) == sign(conf.high)
-    )
-}
-
-lifetime_stats <-function(models){
-  models |>
-    mutate(
-      Stats = map(Model, \(obj) extract_stats(obj, terms = 'sex_partners_scaled'))
-    ) |>
-    unnest(Stats) |>
-    mutate(
-      across(estimate:conf.high, exp)
     )
 }
 
@@ -620,6 +580,7 @@ plot_predictions2 <- function(model, stage){
   d$Stage <- stage
   return(d)
 }
+
 effects_plots3 <- function(df1, df2, controls = "Anthropometric"){
   out <-
     bind_rows(list(Pilot = df1, Confirmatory = df2), .id = 'Stage') |>
@@ -639,27 +600,283 @@ effects_plots3 <- function(df1, df2, controls = "Anthropometric"){
   return(out)
 }
 
-out <- effects_plots3(models, models_stage2)
-out2 <-
-  bind_rows(out$Data) |>
-  mutate(
-    Stage = factor(Stage, levels = c('Pilot', 'Confirmatory'), labels = c('Stage 1: Pilot', 'Stage 2: Confirmatory')),
-    Outcome = ifelse(Outcome == 'Lifetime partners (partners per year)', 'Lifetime partners\n(partners per year)', Outcome)
+
+# Summary tables ----------------------------------------------------------
+
+summary_tables <- function(design){
+
+  getncat <- design %>%
+    tbl_svysummary(
+      by = sex,
+      include = c(
+        partnered,
+        edu,
+        race,
+        perceived_abnormal_weight,
+        special_equipment,
+        vigorous_work,
+        moderate_work,
+        vigorous_rec,
+        moderate_rec),
+      statistic = list(
+        all_categorical() ~ "{N_nonmiss_unweighted}"
+      ) , missing = "no" )
+
+  getncon = design %>%
+    tbl_svysummary(
+      by = sex,
+      include = c(age_first_sex,
+                  sex_partners,
+                  sex_partners_year,
+                  strength,
+                  age,
+                  bmi,
+                  height,
+                  weight,
+                  whitebloodcell,
+                  hemoglobin,
+                  testosterone,
+                  chronic_disease_score,
+                  physical_disease_count,
+                  depression,
+                  avgcalories,
+                  avgprotein,
+                  foodinsecurity_adult,
+                  tot_MET),
+      statistic = list(
+        all_continuous() ~ "{N_nonmiss_unweighted}",
+        all_categorical() ~ "{N_nonmiss_unweighted}"
+      ),
+      digits = all_continuous() ~ 0,
+      type = list(
+        chronic_disease_score ~ "continuous",
+        physical_disease_count ~ "continuous",
+        foodinsecurity_adult ~ "continuous"
+      ),
+      missing = "no"
     )
 
-plot_effects_all <-
-  ggplot(out2, aes(strength_sex_centered, estimate, group=sex)) +
-  geom_ribbon(aes(ymin=conf.low, ymax=conf.high, fill=sex), alpha=0.2) +
-  geom_line(aes(colour=sex), size = 1) +
-  scale_color_binary() +
-  scale_fill_binary() +
-  guides(color = guide_legend(override.aes = list(linewidth=3)), fill = 'none') +
-  ylim(0, NA) +
-  xlab('Strength (centered by sex)') +
-  facet_grid(Outcome~Stage, scales = 'free_y') +
-  theme_bw() +
-  theme(
-    axis.title.y = element_text(angle = 0),
-    strip.text.y = element_text(angle = 0)
+  getratio = design %>%
+    tbl_svysummary(
+      by = sex,
+      include = c(age_first_sex,
+                  sex_partners,
+                  sex_partners_year,
+                  strength,
+                  age,
+                  bmi,
+                  height,
+                  weight,
+                  whitebloodcell,
+                  hemoglobin,
+                  testosterone,
+                  chronic_disease_score,
+                  physical_disease_count,
+                  depression,
+                  avgcalories,
+                  avgprotein,
+                  foodinsecurity_adult,
+                  tot_MET),
+      statistic = list(
+        all_continuous() ~ "{mean}",
+        all_categorical() ~ "{p}"
+      ),
+      digits = list(
+        all_continuous() ~ c(2)
+      ),
+      type = list(
+        chronic_disease_score ~ "continuous",
+        physical_disease_count ~ "continuous",
+        foodinsecurity_adult ~ "continuous"
+      ),
+      missing = "no"
+    ) %>%
+    modify_table_body(
+      ~ .x %>%
+        dplyr::mutate(ratio = round(as.numeric(gsub(",", "", stat_1))/as.numeric(gsub(",", "", stat_2)), digits = 2))
+    )
+
+  list(
+
+    cat = design %>%
+      tbl_svysummary(
+        by = sex,
+        include = c(
+          partnered,
+          edu,
+          race,
+          perceived_abnormal_weight,
+          special_equipment,
+          vigorous_work,
+          moderate_work,
+          vigorous_rec,
+          moderate_rec
+        ),
+        label  = list(
+          partnered = "Partnered",
+          edu = "Education",
+          race = "Race and Ethnicity",
+          perceived_abnormal_weight = "Perceived abnormal weight",
+          special_equipment = "Special equipment needed to walk",
+          vigorous_work = "Work involves vigorous activity",
+          moderate_work = "Work involves moderate activity",
+          vigorous_rec = "Recreation involves vigorous activity",
+          moderate_rec = "Recreation involves moderate activity"
+        ),
+        statistic = list(all_categorical() ~ "{n_unweighted} ({p}%)"),
+        missing = "no"
+      ) %>%
+      modify_table_body(
+        ~ .x %>%
+          dplyr::mutate(n_male = getncat$table_body$stat_1, digits = 2) %>%
+          dplyr::mutate(n_female = getncat$table_body$stat_2, digits = 2) %>%
+          dplyr::relocate(n_male, .before = stat_1) %>%
+          dplyr::relocate(n_female, .before = stat_2)
+      ) %>%
+      modify_header(
+        label = "**Variable**",
+        n_male = "**N**",
+        n_female = "**N**",
+        stat_1 = "**Mean (SD) or n (%)**",
+        stat_2 = "**Mean (SD) or n (%)**",
+      ) %>%
+      modify_spanning_header(list(
+        c("stat_1", "n_male") ~ "**Male**",
+        c("stat_2", "n_female") ~ "**Female**"
+      )) %>%
+      bold_labels(),
+
+    con = design %>%
+      tbl_svysummary(
+        by = sex,
+        include = c(
+          age_first_sex,
+          sex_partners,
+          sex_partners_year,
+          strength,
+          age,
+          bmi,
+          height,
+          weight,
+          whitebloodcell,
+          hemoglobin,
+          testosterone,
+          chronic_disease_score,
+          physical_disease_count,
+          depression,
+          avgcalories,
+          avgprotein,
+          foodinsecurity_adult,
+          tot_MET
+        ),
+        label  = list(
+          age_first_sex = "Age at first sex (years)",
+          sex_partners = "Lifetime number of sexual partners",
+          sex_partners_year = "Past year number of sexual partners",
+          strength = "Combined Grip Strength (kg)",
+          age = "Age (Years)",
+          bmi = "Body mass index (kg/m^2)",
+          height = "Height (cm)",
+          weight = "Weight (kg)",
+          whitebloodcell = "White blood cell count (1000 cells/µL)",
+          hemoglobin = "Hemoglobin (g/dL)",
+          testosterone = "Testosterone (ng/dL)",
+          chronic_disease_score = "Chronic Disease Score (0-6)",
+          physical_disease_count = "Disease Impairment Score (0-5)",
+          depression = "Depression Score (0-27)",
+          avgcalories = "Dietary energy intake (kcals)",
+          avgprotein = "Dietary protein intake (grams)",
+          foodinsecurity_adult = "Food Insecurity Rating (1-4)",
+          tot_MET = "Total MET"
+        ),
+        statistic = list(all_continuous() ~ "{mean} ({sd})",
+                         all_categorical() ~ "{n_unweighted} ({p}%)"),
+        digits = all_continuous() ~ 2,
+        type = list(
+          chronic_disease_score ~ "continuous",
+          physical_disease_count ~ "continuous",
+          foodinsecurity_adult ~ "continuous"
+        ),
+        missing = "no"
+      ) %>%
+      modify_table_body(
+        ~ .x %>%
+          dplyr::mutate(ratio = getratio$table_body$ratio, digits = 2) %>%
+          dplyr::mutate(n_male = getncon$table_body$stat_1, digits = 2) %>%
+          dplyr::mutate(n_female = getncon$table_body$stat_2, digits = 2) %>%
+          dplyr::relocate(n_male, .before = stat_1) %>%
+          dplyr::relocate(n_female, .before = stat_2)
+      )  %>%
+      add_difference(test = everything() ~ "smd",
+                     estimate_fun = list(all_continuous() ~ purrr::partial(style_ratio, digits = 2))) %>%
+      modify_column_hide(columns = ci) %>%
+      modify_header(
+        label = "**Variable**",
+        ratio = "**Ratio**",
+        n_male = "**N**",
+        n_female = "**N**",
+        stat_1 = "**Mean (SD)**",
+        stat_2 = "**Mean (SD)**",
+        estimate = "**SMD**"
+      ) %>%
+      modify_spanning_header(list(
+        c("stat_1", "n_male") ~ "**Male**",
+        c("stat_2", "n_female") ~ "**Female**",
+        c("ratio", "estimate") ~ "**Sexual Dimorphism**"
+      )) %>%
+      modify_footnote(all_stat_cols() ~ "Weighted means and standard deviations shown for continuous variables, unweighted n (%) for categorical variables") %>%
+      # modify_caption("Descriptive statistics and sex differences for participants ages 18-60 using population weights") %>%
+      bold_labels()
   )
-ggsave("Figures/plot_effects_all.pdf", plot_effects_all, width = 10, height = 10)
+
+}
+
+
+
+# Correlation matrices ----------------------------------------------------
+
+cor_mats <- function(designs){
+
+  f <-
+    ~ sex_partners +
+    sex_partners_year +
+    age_first_sex +
+    age +
+    strength +
+    bmi +
+    edu +
+    hemoglobin +
+    whitebloodcell +
+    depression +
+    chronic_disease_score +
+    physical_disease_count +
+    testosterone +
+    vigorous_rec +
+    moderate_rec +
+    vigorous_work +
+    moderate_work
+
+  cor_mat_f <- svycor(
+    f,
+    designs$d.design.adult.female,
+    na.rm = T
+  )
+
+  cor_mat_m <- svycor(
+    f,
+    designs$d.design.adult.male,
+    na.rm = T
+  )
+
+  cor_mat <- svycor(
+    update(f, ~ . + sex2),
+    designs$d.design.adults,
+    na.rm = T
+  )
+
+  list(
+    cor_mat_cors_f = cor_mat_f$cors,
+    cor_mat_cors_m = cor_mat_m$cors,
+    cor_mat_cors = cor_mat$cors
+  )
+}
