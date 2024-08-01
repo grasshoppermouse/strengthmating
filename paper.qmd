@@ -38,10 +38,12 @@ crossref:
 ```{r}
 source('functions.R')
 source('pilot_analysis.R')
-source('simulate.R')
 source('sexspecificmodels.R')
 source('stage2_analysis.R')
 source('compare.R')
+
+# source('simulate.R')
+load("df_pwr.rda")
 ```
 
 Abstract
@@ -187,7 +189,7 @@ Our initial analyses found little support for a sex difference in the effect of 
 ```{r}
 #| label: fig-ecdf
 #| fig-width: 10
-#| fig-cap: Cumulative distribution of the number of sex partners, by sex. Participants who reported 100 or more partners were removed from the analysis. The x-axis is on a log scale, so 1 was added to the number of partners to prevent removal of individuals with 0 sex partners (only for this plot and not for any analyses). 
+#| fig-cap: Cumulative distribution of the number of sex partners, by sex. Participants who reported 100 or more partners were removed from the analysis. The x-axis is on a log scale, so 1 was added to the number of partners to prevent removal of individuals with 0 sex partners (only for this Figure and not for any analyses). 
 
 plot_sexpartners
 ```
@@ -206,18 +208,19 @@ There were also clear sex differences in the effects of sex-specific strength on
 #| label: fig-coefs
 #| fig-width: 10
 #| fig-height: 8
-#| fig-cap: "Coefficients of sex-specific strength, and strength X sex interaction for our four mating success outcomes and our five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Bars are 95\% CIs. Left: Pilot study results. Right: Confirmatory study results. For the full regression tables, see the SI."
+#| fig-cap: "Coefficients of sex-specific strength, and strength X sex interaction for our four mating success outcomes and our five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Bars are 95% CIs. For the full regression tables, see the SI."
 
-plot_coefs + plot_coefs_stage2 + plot_layout(axes = 'collect_y', axis_titles = 'collect')
+# plot_coefs + plot_coefs_stage2 + plot_layout(axes = 'collect_y', axis_titles = 'collect')
+plot_coefs_combined
 ```
 
 For a plot of all coefficients, see @fig-allcoefs.
 
 ```{r}
 #| label: fig-allcoefs
-#| fig-cap: Coefficients from all models of our four mating success outcomes and our five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Bars are 95\% CIs. For the full regression tables, see the SI.
+#| fig-cap: Stage 2 Confirmatory study coefficients from all models of the four mating success outcomes and the five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Mexican Amercians are the base level for the ethnicity control variable. Bars are 95\% CIs. For the full regression tables, see the SI.
 
-plot_allcoefs
+plot_allcoefs_stage2
 ```
 
 ### Immune costs of strength
@@ -230,54 +233,27 @@ Previous research found that higher musculature was associated with decreased in
 #| fig.height: 8
 #| fig.cap: Coefficient plot of predictors of immune investment (WBCC) from generalized linear models (Pilot). Variables labeled (S) have been centered at the mean and standardized by 2 SD. Bars are 95% CIs.
 
-plot_immune_both <- 
-  plot_immune + guides(colour = 'none', shape = 'none') + plot_immune_stage2 + plot_layout(axes = 'collect', guides = 'collect')
+# plot_immune_both <- 
+#   plot_immune + guides(colour = 'none', shape = 'none') + plot_immune_stage2 + plot_layout(axes = 'collect', guides = 'collect')
 
-ggsave("Figures/plot_immune_both.pdf", plot_immune, width = 14, height = 7)
+ggsave("Figures/plot_immune_strength_combined.pdf", plot_immune_strength_combined, width = 14, height = 7)
 
-plot_immune_both
+plot_immune_strength_combined
 ```
 
 ### Models of energy and protein intake
 
-Finally, we tested whether strength was related to increased energy or protein intake (@fig-energy). We found that strength was a significant, positive predictor of both energy and protein intake controlling for sex. In the expanded models with additional controls, strength was no longer a significant predictor of energy intake but remained a significant predictor of protein intake.
+Finally, we tested whether strength was related  to increased energy or protein intake (@fig-energy). We found that strength was a significant, positive predictor of both energy and protein intake controlling for sex. In the expanded models with additional controls, strength was no longer a significant predictor of energy intake but remained a significant predictor of protein intake.
 
 ```{r}
 #| label: fig-energy
 #| fig.width: 12
 #| fig.height: 8
-#| fig.cap: Coefficient plot of predictors of dietary energy intake (kcals) and dietary protein (g) from generalized linear models (Pilot). Variables labelled (S) have been centered at the mean and standardized by 2 SD. Bars are 95% CIs.
-
-plot_energy <- forestplot(
-  intake_models$m_energy,
-  intake_models$m_energy_alt,
-  intercept = F,
-  facet = F,
-  dodgewidth = .4,
-  varnames = vnames, 
-  modelnames = mmnames) +
-  scale_color_binary() +
-  ggtitle('Stage 1: Pilot Energy') +
-  theme_bw(17) +
-  guides(colour = guide_none(), shape = guide_none())
-
-plot_protein <- forestplot(
-  intake_models$m_protein,
-  intake_models$m_protein_alt,
-  intercept = F,
-  facet = F,
-  dodgewidth = .4,
-  varnames = vnames, 
-  modelnames = mmnames) +
-  scale_color_binary() +
-  guides(colour = guide_legend(reverse = T), shape = guide_legend(reverse = T)) +
-  ggtitle('Stage 1: Pilot Protein') +
-  theme_bw(17) +
-  theme(axis.text.y = element_blank())
+#| fig.cap: Coefficient plots of predictors of dietary energy (kcals) and protein (g) intake from generalized linear models for Stage 1 Pilot (left) and Stage 2 Confirmatory (right). Variables labelled (S) have been centered at the mean and standardized by 2 SD. Bars are 95% CIs.
   
-p <- plot_energy + plot_protein + plot_layout(axes = 'collect') 
-ggsave("Figures/plot_energy_protein.pdf", p, width = 12, height = 6)
-p
+# p <- plot_energy_coefs / plot_protein_coefs + plot_layout(guides = 'collect', axis_titles = 'collect')
+ggsave("Figures/plot_intake_strength_combined.pdf", plot_intake_strength_combined, width = 12, height = 6)
+plot_intake_strength_combined
 ```
 
 ## Pilot Results Discussion
@@ -304,17 +280,17 @@ In a large, nationally representative US sample, we predict that formidability w
 
 We indicate our predictions for the results of the confirmatory tests, specifically, our predictions for significant coefficients of strength and of the interaction between sex and strength, in @tbl-predictions. We indicate for each outcome whether we predict a significant positive, negative, or no effect of these variables across our control models.
 
-| Outcome            | Strength coefficient | Strength X Sex coefficient |
-|--------------------|:--------------------:|:--------------------------:|
-| Partnered status   |           +          |              -             |
-| Lifetime partners  |           +          |              -             |
-| Past year partners |           0          |              0             |
-| Age at first sex   |           0          |              0             |
-| Immunity           |           -          |              0             |
-| Energy             |           0          |                            |
-| Protein            |           +          |                            |
+| Outcome            | Strength coefficient  | Strength X Sex coefficient |
+|--------------------|:---------------------:|:--------------------------:|
+| Partnered status   |           +   ✓      |              -   ✓         |
+| Lifetime partners  |           +   ✓      |              -   ❌         |
+| Past year partners |           0   ✓      |              0   ✓         |
+| Age at first sex   |           0   ✓      |              0   ✓         |
+| Immunity           |           -   ❌      |              0   ✓         |
+| Energy             |           0   ❌      |                            |
+| Protein            |           +   ✓      |                            |
 
-: Predictions. A plus sign (+) indicates a predicted significantly positive coefficient in all models, a negative sign (-) indicates a predicted significantly negative coefficient in all models, and zero (0) indicates a predicted non-significant coefficient in any model. A blank indicates not relevant. {#tbl-predictions}
+: Predictions. A plus sign (+) indicates a predicted significantly positive coefficient in all models, a negative sign (-) indicates a predicted significantly negative coefficient in all models, and zero (0) indicates a predicted non-significant coefficient in any model. A blank indicates not relevant. ✓: Supported in confirmatory study. ❌: Not supported in confirmatory study. {#tbl-predictions}
 
 ## Power
 
@@ -326,27 +302,19 @@ Our methods and models will remain identical to those reported in the pilot stud
 
 ## Deviation from Stage 1 method
 
-Models and R code for three of our four mating success outcome variables remain identical to those used in the Stage 1 pilot study. However, although the Poisson regression model of lifetime sexual partners in the pilot study included age as a control, it is more appropriate to instead include it as an exposure variable (an offset) in the model, which we now do. We also treat this exposure as years since sexual maturity (age - 12 years). The change in the strength and strength:sex coefficients from this change in model specification is minimal (see @sfig-comparison).
+Models and R code for three of our four mating success outcome variables remain identical to those used in the Stage 1 pilot study. However, although the Poisson regression model of lifetime sexual partners in the pilot study included age as a control, it is more appropriate to instead include age as an exposure variable (an offset) in the model, which we now do. We also treat this exposure as years since sexual maturity (age - 12 years). The changes in the strength and strength:sex coefficients from this change in model specification are minimal (see @sfig-comparison).
 
 ## Results
 
 ```{r}
-#| label: fig-stage2coef
+#| label: fig-effects
 #| fig-width: 10
 #| fig-height: 8
-#| fig-cap: Coefficients of sex-specific strength, and strength X sex interaction for our four mating success outcomes and our five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Bars are 95\% CIs. For the full regression tables, see the SI.
+#| fig-cap: Effects of sex-specific standardized strength on mating outcomes, by sex. Strength is centered and scaled by 2 SD, separately for each sex (almost all participants therefore fall between -1 and 1). Plots are based on the anthropometric control models, with control variables held at their mean values. Lifetime partners is modeled as the rate of new partners per year since reaching sexual maturity (age 12).
 
-plot_coefs_stage2
-```
-
-
-:::{#fig-stage2effects}
-```{r}
 plot_effects_all
 ```
 
-Effects of sex-specific standardized strength on mating outcomes, by sex. Strength is centered and scaled by 2 SD, separately for each sex (almost all participants therefore fall between -1 and 1). Plots are based on the anthropometric control models, with control variables held at their mean values. Lifetime partners is modeled as the rate of new partners per year since reaching sexual maturity (age 12).
-:::
 
 # Acknowledgements
 
@@ -376,12 +344,15 @@ Power to detect strength and sex X strength coefficients that range from 25% to 
 
 ## Pilot study
 
-Descriptive statistics.
+### Descriptive statistics
 
 ::: {#stbl-stats}
-`{r} tbl_stack(list(con, cat))`
+```{r}
+pilot_summary_stats <- summary_tables(designsG$d.design.adults)
+tbl_stack(list(pilot_summary_stats$con, pilot_summary_stats$cat))
+```
 
-Descriptive statistics of pilot study sample.
+Pilot: Descriptive statistics and sex differences for participants ages 18-60 using population weights
 :::
 
 <!-- ### Models of mating success with anthropometric, socioeconomic, health, hormone, and physical activity controls -->
@@ -392,7 +363,7 @@ Descriptive statistics of pilot study sample.
 ::: {#sfig-tradeoff}
 ```{r}
 #| fig-width: 11
-plot_lifetime_coefs
+plot_lifetime_coefs_combined
 ```
 
 The adjusted odds ratios of numbers of lifetime partners on partnered status. In these models, lifetime partners was divided by 10, the interquartile range.
@@ -411,23 +382,15 @@ marginal |>
 The average marginal effect of a 2 standard deviation increase in strength on each mating outcome, by sex and partnered status, for the models with anthropometric controls.
 :::
 
-### Effects plots (Pilot)
-
-:::{#sfig-effects}
-```{r}
-effects_plots(models)
-```
-
-Effects of sex-specific standardized strength on mating outcomes, by sex. Strength is centered and scaled by 2 SD, separately for each sex (almost all participants therefore fall between -1 and 1). Plots are based on the anthropometric control models, with control variables held at their mean values. Lifetime partners is modeled as the rate of new partners per year since reaching sexual maturity (age 12).
-:::
-
 
 ### Correlation matrices of study variables
 
 ::: {#sfig-cor}
 ```{r}
 
-cor_bothsexes <- ggcorrplot(cor_mat_cors, lab = T, hc.order = T, hc.method = 'ward.D', title = 'Both sexes')
+pilot_cor_mats <- cor_mats(designsG)
+
+cor_bothsexes <- ggcorrplot(pilot_cor_mats$cor_mat_cors, lab = T, hc.order = T, hc.method = 'ward.D', title = 'Pilot: Both sexes')
 ggsave("Figures/cor_bothsexes.pdf", cor_bothsexes, width = 12, height = 12)
 cor_bothsexes
 ```
@@ -439,7 +402,7 @@ Correlation matrix of study variables (both sexes). Rows and columns ordered by 
 ::: {#sfig-fcor}
 ```{r}
 
-cor_females <- ggcorrplot(cor_mat_cors_f, lab = T, hc.order = T, hc.method = 'ward.D', title = 'Females')
+cor_females <- ggcorrplot(pilot_cor_mats$cor_mat_cors_f, lab = T, hc.order = T, hc.method = 'ward.D', title = 'Pilot: Females')
 ggsave("Figures/cor_females.pdf", cor_females, width = 12, height = 12)
 cor_females
 ```
@@ -451,7 +414,7 @@ Correlation matrix of study variables for females only. Rows and columns ordered
 ::: {#sfig-mcor}
 ```{r}
 
-cor_males <- ggcorrplot(cor_mat_cors_m, lab = T, hc.order = T, hc.method = 'ward.D', title = 'Males')
+cor_males <- ggcorrplot(pilot_cor_mats$cor_mat_cors_m, lab = T, hc.order = T, hc.method = 'ward.D', title = 'Pilot: Males')
 ggsave("Figures/cor_males.pdf", cor_males, width = 12, height = 12)
 cor_males
 ```
@@ -464,7 +427,7 @@ Correlation matrix of study variables for males only. Rows and columns ordered b
 ```{r}
 #| results: asis
 for (i in 1:nrow(modelsummaries)){
-  cat(paste('####', modelsummaries$title[i]))
+  cat(paste('####', str_replace(modelsummaries$title[i], '\n', ' '))) # Remove line feed char
   print(modelsummaries$summary[[i]])
 }
 ```
@@ -495,19 +458,31 @@ Regression tables for sex-specific models of the effect of strength on mating su
 ```{r}
 #| results: asis
 for (i in 1:nrow(dfmodelsummaries)){
-  cat(paste('####', dfmodelsummaries$title[i]))
+  cat(paste('####', str_replace(dfmodelsummaries$title[i], '\n', ' ')))
   print(dfmodelsummaries$summary[[i]])
 }
 ```
 
 ## Stage 2 confirmatory study
 
+### Descriptive statistics
+
+::: {#stbl-confirmstats}
+```{r}
+confirm_summary_stats <- summary_tables(designsH2$d.design.adults)
+tbl_stack(list(confirm_summary_stats$con, confirm_summary_stats$cat))
+```
+
+Confirmatory: Descriptive statistics and sex differences for participants ages 18-60 using population weights
+:::
+
+
 :::{#sfig-comparison}
 ```{r}
 plot_compare
 ```
 
-A comparison of strength and strength:sex cofficients with the original model specification for the lifetime sex partners (anthropometric controls) that included age as a control variable (orignal), and the specification that now instead includes years since sexual maturity (age-12) as an exposure variable (offset) (new). Both models are quasi-Poisson models.
+A comparison of strength and strength:sex cofficients with the original model specification for the lifetime sex partners (anthropometric controls) that included age as a control variable (original), and the specification that now instead includes years since sexual maturity (age-12) as an exposure variable (offset) (new). Both models are quasi-Poisson models.
 :::
 
 # References
