@@ -48,7 +48,9 @@ load("df_pwr.rda")
 
 Abstract
 
-Theory and evidence suggest that the mating benefits of muscle mass in human males trade off with costs of increased energy intake and decreased measures of native immunity, likely due to an evolutionary history of sexual selection. It is unknown if females experience a similar tradeoff. Using data from the 2013-2014 phase of the National Health and Nutrition Examination Survey (NHANES), a large nationally representative sample of the US (N = 4384), we will test whether grip strength, a proxy for upper body strength and physical formidability, is a positive predictor of self-reported measures of adult mating success (lifetime number of sexual partners, past year number of sexual partners, age at first intercourse, and current partnership status) in both males and females, controlling for numerous anthropometric, socioeconomic, hormone, health, and physical activity related potential confounds. We will also test if there is a positive relationship between grip strength and dietary energy and protein intake, and a negative relationship between grip strength and native immune function. This study replicates an earlier study of US males [@lassek2009] with numerous additional control variables, and it additionally tests these relationships in females.
+<!-- Theory and evidence suggest that the mating benefits of muscle mass in human males trade off with costs of increased energy intake and decreased measures of native immunity, likely due to an evolutionary history of sexual selection. It is unknown if females experience a similar tradeoff. Using data from the 2013-2014 phase of the National Health and Nutrition Examination Survey (NHANES), a large nationally representative sample of the US (N = 4384), we will test whether grip strength, a proxy for upper body strength and physical formidability, is a positive predictor of self-reported measures of adult mating success (lifetime number of sexual partners, past year number of sexual partners, age at first intercourse, and current partnership status) in both males and females, controlling for numerous anthropometric, socioeconomic, hormone, health, and physical activity related potential confounds. We will also test if there is a positive relationship between grip strength and dietary energy and protein intake, and a negative relationship between grip strength and native immune function. This study replicates an earlier study of US males [@lassek2009] with numerous additional control variables, and it additionally tests these relationships in females. -->
+
+Theory and evidence suggest that the mating benefits of muscle mass in human males trade off with costs of increased energy intake and decreased measures of native immunity, likely due to an evolutionary history of sexual selection. It is unknown if females experience a similar tradeoff. Using data from the 2013-2014 phase of the National Health and Nutrition Examination Survey (NHANES), a large nationally representative sample of the US (N = 4384), we tested the prediction from the sexual selection hypothesis that the effect of upper body strength, proxied by grip strength, on mating success is significantly positive for males and significantly less so for females. We found a main effect of strength on mating success proxied by lifetime number of sexual partners and current partnership status, but not past year number of sexual partners or age at first intercourse, for both males and females. We found consistent evidence for a sex:strength interaction on partnered status, such that strength was significantly more important for male partnered status than female. Our results produced mixed evidence for a sex:strength interaction on lifetime number of sexual partners. We also tested for tradeoffs of strength with immune and dietary intake and found a positive relationship between strength and protein intake but no relationship with energy intake, and a negative relationship between grip strength and native immune function. This study replicates an earlier study of US men (Lassek & Gaulin, 2009) with numerous additional control variables, and the expansion of these models to include women.
 
 # Sexual dimorphism in modern humans
 
@@ -184,7 +186,9 @@ male_median_year <-
 high_partners_year <- sum(d_G$sex_partners_year >= 10, na.rm=T)
 ```
 
-Our initial analyses found little support for a sex difference in the effect of strength on mating success, contrary to the sexual selection hypothesis. We traced this failure to the unusually high number of lifetime sex partners reported by some men and women. We discovered that whereas women reported a median number of `{r} female_median` lifetime sex partners, and men `{r} male_median` partners, there were `{r} high_partners` individuals who reported 100 or more partners, a few of whom reported 1000 or more (@fig-ecdf). We decided to restrict our sample to individuals with fewer than 100 lifetime sex partners for several reasons. First, support for the sexual selection hypothesis was weak if these individuals were included, but much stronger if they were excluded. We suspect that because our sample is large and nationally representative, it probably includes sex workers, as well as individuals who regularly use the services of sex workers, and whose high partner numbers would therefore not reflect mate attraction or intrasexual competition. Second, there was an unusually high number of participants reporting exactly 100 lifetime sex partners, suggesting inaccurate recollections. Finally, our statistical models do not easily accommodate the high degree of overdispersion caused by these few exceptionally high partner numbers, and our extensive simulations showed that high overdispersion would reduce our statistical power to detect sex differences. We will use the same cutoff for our confirmatory study.
+Our initial analyses found little support for a sex difference in the effect of strength on mating success, contrary to the sexual selection hypothesis. We traced this failure to the unusually high number of lifetime sex partners reported by some men and women. We discovered that whereas women reported a median number of `{r} female_median` lifetime sex partners, and men `{r} male_median` partners, there were `{r} high_partners` individuals who reported 100 or more partners, a few of whom reported 1000 or more (@fig-ecdf). We decided to restrict our sample to individuals with fewer than 100 lifetime sex partners for several reasons. First, support for the sexual selection hypothesis was weak if these individuals were included, but much stronger if they were excluded. We suspect that because our sample is large and nationally representative, it probably includes sex workers, as well as individuals who regularly use the services of sex workers, and whose high partner numbers would therefore not reflect mate attraction or intrasexual competition. Second, there was an unusually high number of participants reporting exactly 100 lifetime sex partners, suggesting inaccurate recollections. Finally, our statistical models do not easily accommodate the high degree of overdispersion caused by these few exceptionally high partner numbers, and our extensive simulations showed that high overdispersion would reduce our statistical power to detect sex differences. We used the same cutoff for our confirmatory study.
+
+CHECK: edit key to refer to pilot and confirmatory data instead of G and H.
 
 ```{r}
 #| label: fig-ecdf
@@ -204,59 +208,23 @@ Our pilot results revealed strong positive significant main effects of sex-speci
 
 There were also clear sex differences in the effects of sex-specific strength on two mating success outcomes---partnered status and lifetime number of partners---with smaller effects for women compared to men, as predicted by the sexual selection hypothesis. There was also a persistent negative association of numbers of lifetime partners on the probability of partnered status in all models of this outcome (@sfig-tradeoff). Finally there was no evidence for a sex difference in the effects of sex-specific strength on past year number of partners or age at first sex, contrary to the sexual selection hypothesis. See the right column of @fig-coefs.
 
-```{r}
-#| label: fig-coefs
-#| fig-width: 10
-#| fig-height: 8
-#| fig-cap: "Coefficients of sex-specific strength, and strength X sex interaction for our four mating success outcomes and our five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Bars are 95% CIs. For the full regression tables, see the SI."
-
-# plot_coefs + plot_coefs_stage2 + plot_layout(axes = 'collect_y', axis_titles = 'collect')
-plot_coefs_combined
-```
-
 For a plot of all coefficients, see @fig-allcoefs.
-
-```{r}
-#| label: fig-allcoefs
-#| fig-cap: Stage 2 Confirmatory study coefficients from all models of the four mating success outcomes and the five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Mexican Amercians are the base level for the ethnicity control variable. Bars are 95\% CIs. For the full regression tables, see the SI.
-
-plot_allcoefs_stage2
-```
 
 ### Immune costs of strength
 
 Previous research found that higher musculature was associated with decreased investment in native immunity. We developed two models of immune investment in white blood cell count (@fig-immune). In the replication model, strength was a significant negative predictor of WBCC for both men and women (there was no significant interaction of sex and strength) controlling for age and BMI. In the expanded model with additional controls, including the substitution of height and weight for BMI, strength was now not significant, albeit with a coefficient that was very similar to the replication model.
 
-```{r}
-#| label: fig-immune
-#| fig.width: 12
-#| fig.height: 8
-#| fig.cap: Coefficient plot of predictors of immune investment (WBCC) from generalized linear models (Pilot). Variables labeled (S) have been centered at the mean and standardized by 2 SD. Bars are 95% CIs.
+Previous research found that higher musculature was associated with decreased investment in native immunity. We developed two models of immune investment in white blood cell count (@fig-immune). In the Lassek and Gaulin model, strength was a significant negative predictor of WBCC for both men and women (there was no significant interaction of sex and strength) controlling for age and BMI. In the expanded model with additional controls, including the substitution of height and weight for BMI, strength was no longer significant, albeit with a coefficient that was very similar to the replication model. 
 
-# plot_immune_both <- 
-#   plot_immune + guides(colour = 'none', shape = 'none') + plot_immune_stage2 + plot_layout(axes = 'collect', guides = 'collect')
-
-ggsave("Figures/plot_immune_strength_combined.pdf", plot_immune_strength_combined, width = 14, height = 7)
-
-plot_immune_strength_combined
-```
+CHECK: remind me why we are not using strength centered by sex here. 
 
 ### Models of energy and protein intake
 
 Finally, we tested whether strength was related  to increased energy or protein intake (@fig-energy). We found that strength was a significant, positive predictor of both energy and protein intake controlling for sex. In the expanded models with additional controls, strength was no longer a significant predictor of energy intake but remained a significant predictor of protein intake.
 
-```{r}
-#| label: fig-energy
-#| fig.width: 12
-#| fig.height: 8
-#| fig.cap: Coefficient plots of predictors of dietary energy (kcals) and protein (g) intake from generalized linear models for Stage 1 Pilot (left) and Stage 2 Confirmatory (right). Variables labelled (S) have been centered at the mean and standardized by 2 SD. Bars are 95% CIs.
-  
-# p <- plot_energy_coefs / plot_protein_coefs + plot_layout(guides = 'collect', axis_titles = 'collect')
-ggsave("Figures/plot_intake_strength_combined.pdf", plot_intake_strength_combined, width = 12, height = 6)
-plot_intake_strength_combined
-```
-
 ## Pilot Results Discussion
+
+For ease of comparison, pilot results discussed here are displayed in conjunction with confirmatory results in the Confirmatory Results section below. 
 
 Using grip strength as a proxy for muscularity, this pilot study replicated findings from @lassek2009 that muscularity is significantly positively associated with two of the four indices of mating success, including our additional index of mating success---partnered status---even after controlling for a wider range of potential confounds including socioeconomic, health, hormone, and physical activity variables. The exceptions were that strength was not a significant predictor of past year partners, nor of age at first sex in the socioeconomic control model; the coefficient of the latter, however, was similar in sign and magnitude to the significant strength coefficients in the other models. Strength was also associated with immune, energy, and protein costs in the replication models, but not in the expanded control models of immune or energy costs; it remained a significant predictor of protein intake, however. The expanded control models included height, which might be a proxy for aspects of strength, such as lower body strength, that are not accounted for by grip strength.
 
@@ -270,11 +238,12 @@ Strength was also not significantly associated with the number of partners in th
 
 Our pilot results support the importance of strength to male short-term mating success as well as to the long-term partnerships that are the basis of biparental care in human reproduction [@Gettler_2020; @Bribiescas_2012]. Across evolutionary time, fitness for both men and women was heavily dependent on successfully obtaining long term partners, thereby reaping the efficiency benefits of a sexual division of labor [@Quinlan_2007; @Quinlan_2008]. More specifically, humans require provisioning for an extended period [@kaplan2000; @davison2021; @davison2022], and paternal care is an important predictor of child outcomes [@Winking_2011; @Starkweather_2021]. Thus, our pilot study underscores that the sexual selection hypothesis for the relationship between strength and mating success should include long-term mating in addition to numbers of sexual partners. Moreover, because strength indexes productivity in addition to formidability, our results could demonstrate an evolved female preference for productivity, i.e., the greater ability over human evolution of stronger men to provision offspring through big-game hunting [@kaplan2000; @apicella2014], although an evolved preference for protection from predators or other men in long-term relationships is possible too [@willems2017b; @kelly2005].
 
-## Limitations
+CHECK: moved limitations section to confirmatory discussion. 
+<!-- ## Limitations -->
 
-Our registered report has one aim: to test the prediction from the sexual selection hypothesis that the effect of upper body strength on reproductive success is significantly positive for males and significantly less so for females. Our aim is not to test all possible byproduct hypotheses, nor is it possible to do so. Therefore, we are unable to control for in-utero testosterone exposure, or other conditions such as Polycystic Ovarian Syndrome (PCOS) that might influence the relationship between grip strength and our measures of mating success. Likewise, NHANES does not collect data on sociosexuality. As described in our methods, in industrialized populations like the U.S., widespread access to contraceptives uncouples reproductive success from mating behavior for both men and women. Measures of mating success, including partnered status, number of sexual partners, and age at first sexual intercourse, are used as proxies as they are assumed to have been strongly correlated with reproductive success under ancestral conditions [@perusse1993]. Finally, all pilot results were obtained after considerable exploratory analysis, and must be replicated in a confirmatory study.
+<!-- Our registered report has one aim: to test the prediction from the sexual selection hypothesis that the effect of upper body strength on reproductive success is significantly positive for males and significantly less so for females. Our aim is not to test all possible byproduct hypotheses, nor is it possible to do so. Therefore, we are unable to control for in-utero testosterone exposure, or other conditions such as Polycystic Ovarian Syndrome (PCOS) that might influence the relationship between grip strength and our measures of mating success. Likewise, NHANES does not collect data on sociosexuality. As described in our methods, in industrialized populations like the U.S., widespread access to contraceptives uncouples reproductive success from mating behavior for both men and women. Measures of mating success, including partnered status, number of sexual partners, and age at first sexual intercourse, are used as proxies as they are assumed to have been strongly correlated with reproductive success under ancestral conditions [@perusse1993]. Finally, all pilot results were obtained after considerable exploratory analysis, and must be replicated in a confirmatory study. -->
 
-# Stage 2 Confirmatory Study
+# Stage 2 Confirmatory Study Predictions
 
 In a large, nationally representative US sample, we predict that formidability will be significantly positively associated with mating success as indexed by partnered status and lifetime number of sexual partners, but not last year number of partners, nor age at first sex after controlling for ethnicity. We also predict a significant interaction with sex such that strength will be a stronger predictor of male than female partnered status and number of lifetime partners, but not number of last year partners nor age at first sex. We also predict that there will be a significant negative association between formidability and immune function. Finally, we predict that formidability will be positively associated with dietary protein intake for both males and females.
 
@@ -304,9 +273,26 @@ Our methods and models remained identical to those reported in the pilot study, 
 
 Models and R code for three of our four mating success outcome variables remain identical to those used in the Stage 1 pilot study. However, although the Poisson regression model of lifetime sexual partners in the pilot study included age as a control, it is more appropriate to instead include age as an exposure variable (an offset) in the model, which we now do. We also treat this exposure as years since sexual maturity (age - 12 years). The changes in the strength and strength:sex coefficients from this change in model specification are minimal (see @sfig-comparison).
 
-We also discovered that because we included dietary energy intake in the expanded controls immune model we needed to utilize the weights calculated for the dietary data rather than the weights calculated for other data for this model. This is corrected in the confirmatory results for that model.
+We also discovered that because we included dietary energy intake in the expanded controls immune model we needed to utilize the weights calculated for the dietary data rather than the weights calculated for other data for this model. This is corrected in the confirmatory results for that model. CHECK: retroactively correct for pilot results? 
 
 ## Results
+```{r}
+#| label: fig-coefs
+#| fig-width: 10
+#| fig-height: 8
+#| fig-cap: "Coefficients of sex-specific strength, and strength X sex interaction for our four mating success outcomes and our five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Bars are 95% CIs. For the full regression tables, see the SI."
+
+# plot_coefs + plot_coefs_stage2 + plot_layout(axes = 'collect_y', axis_titles = 'collect')
+plot_coefs_combined
+```
+
+
+```{r}
+#| label: fig-allcoefs
+#| fig-cap: Stage 2 Confirmatory study coefficients from all models of the four mating success outcomes and the five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Mexican Amercians are the base level for the ethnicity control variable. Bars are 95\% CIs. For the full regression tables, see the SI.
+
+plot_allcoefs_stage2
+```
 
 ```{r}
 #| label: fig-effects
@@ -322,10 +308,40 @@ Unlike findings from the pilot study, a clear sex difference in the effects of s
 
 Effects of sex-specific standardized strength on mating outcomes, by sex. Strength is centered and scaled by 2 SD, separately for each sex (almost all participants therefore fall between -1 and 1). Plots are based on the anthropometric control models, with control variables held at their mean values. Lifetime partners is modeled as the rate of new partners per year since reaching sexual maturity (age 12).
 
+```{r}
+#| label: fig-immune
+#| fig.width: 12
+#| fig.height: 8
+#| fig.cap: Coefficient plot of predictors of immune investment (WBCC) from generalized linear models (Pilot). Variables labeled (S) have been centered at the mean and standardized by 2 SD. Bars are 95% CIs.
+
+# plot_immune_both <- 
+#   plot_immune + guides(colour = 'none', shape = 'none') + plot_immune_stage2 + plot_layout(axes = 'collect', guides = 'collect')
+
+ggsave("Figures/plot_immune_strength_combined.pdf", plot_immune_strength_combined, width = 14, height = 7)
+
+plot_immune_strength_combined
+```
+
+
+```{r}
+#| label: fig-energy
+#| fig.width: 12
+#| fig.height: 8
+#| fig.cap: Coefficient plots of predictors of dietary energy (kcals) and protein (g) intake from generalized linear models for Stage 1 Pilot (left) and Stage 2 Confirmatory (right). Variables labelled (S) have been centered at the mean and standardized by 2 SD. Bars are 95% CIs.
+  
+# p <- plot_energy_coefs / plot_protein_coefs + plot_layout(guides = 'collect', axis_titles = 'collect')
+ggsave("Figures/plot_intake_strength_combined.pdf", plot_intake_strength_combined, width = 12, height = 6)
+plot_intake_strength_combined
+```
+
 ## Discussion
 The purpose of this study was to replicate as closely as possible, the results from @lassek2009, in new data that included women and used combined grip strength as a proxy for upper body strength. We found consistent support for a positive relationship between combined grip strength and two measures of mating success: being currently partnered, and lifetime number of sexual partners for both men and women, controlling for numerous possible confounds. We found no consistent association between strength and age at first sex or number of past year sexual partners. 
 
 We also tested for interactions between sex and strength on these mating success outcomes. Across both pilot and confirmatory data, we found a consistent interaction between sex and strength on partnered status, such that grip strength was more important for predicting males' partnered status than females. Although in the pilot data we did see evidence of an interaction between sex and strength on the outcome lifetime number of sexual partners, such that strength was more important for predicting males' lifetime sexual partners, this effect was not present in the confirmatory data. 
+
+## Limitations
+
+Our registered report had one aim: to test the prediction from the sexual selection hypothesis that the effect of upper body strength on reproductive success is significantly positive for males and significantly less so for females. Our aim was not to test all possible byproduct hypotheses, nor was it possible to do so. We were unable to control for in-utero testosterone exposure, or other conditions such as Polycystic Ovarian Syndrome (PCOS) that might influence the relationship between grip strength and our measures of mating success. Likewise, NHANES does not collect data on sociosexuality. As described in our methods, in industrialized populations like the U.S., widespread access to contraceptives uncouples reproductive success from mating behavior for both men and women. Measures of mating success, including partnered status, number of sexual partners, and age at first sexual intercourse, are used as proxies as they are assumed to have been strongly correlated with reproductive success under ancestral conditions [@perusse1993]. Finally, all pilot results were obtained after considerable exploratory analysis, and therefore our confirmatory results were critical to testing our predictions.
 
 # Acknowledgements
 
