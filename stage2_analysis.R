@@ -1,7 +1,7 @@
 
 designsH2 <- update_designs(designsH, cutoff = 100)
 
-models_stage2 <- fitmodels(designsH2$d.design.adults, designsH2$d.design.dietary.adults)
+models_stage2 <- fitmodels(designsH2$d.design.adults, designsH2$d.design.dietary.adults, designsH$d.design.adults)
 modelsummaries_stage2 <- getmodelsummaries(models_stage2)
 marginal_stage2 <- marginals(models_stage2)
 

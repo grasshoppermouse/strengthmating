@@ -2,8 +2,19 @@
 
 # Cumulative distributions of sex partners ------------------------
 
+series_dict <- c(
+  "G" = "Pilot",
+  "H" = "Confirmatory"
+)
+
 plot_sexpartners <-
-  ggplot(d_GH[!is.na(d_G$sex_partners),], aes(sex_partners + 1, colour = paste(sex, series))) +
+  d_GH |> 
+  dplyr::filter(!is.na(sex_partners)) |> 
+  mutate(
+    series2 = paste(str_to_title(sex), series_dict[series]),
+    series2 = factor(series2, levels = c("Female Pilot", "Female Confirmatory", "Male Pilot", "Male Confirmatory"))
+  ) |> 
+  ggplot(aes(sex_partners + 1, colour = series2)) +
   stat_ecdf() +
   geom_vline(xintercept = 100, linetype = 'dotted') +
   annotate("text", label = 'Cutoff', x = 110, y = 0.80, hjust = 0) +
@@ -28,11 +39,11 @@ plot_sexpartners_year
 
 # Update pilot design objects -----------------------------------
 
-designsG <- update_designs(designsG)
+designsG2 <- update_designs(designsG)
 
 # Fit models --------------------------------------------------------------
 
-models <- fitmodels(designsG$d.design.adults, designsG$d.design.dietary.adults)
+models <- fitmodels(designsG2$d.design.adults, designsG2$d.design.dietary.adults, designsG$d.design.adults)
 modelsummaries <- getmodelsummaries(models)
 marginal <- marginals(models)
 
