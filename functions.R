@@ -118,9 +118,6 @@ sex_strength_terms <- c(
 
 update_designs <- function(designs, cutoff = 100){
 
-  # Removing those with very high numbers of lifetime sex partners
-  designs$d.design.adults <- subset(designs$d.design.adults, sex_partners < cutoff)
-
   # Scale sex_partners by the interquartile range
   designs$d.design.adults <- update(designs$d.design.adults, sex_partners_scaled = sex_partners/10)
 
@@ -130,13 +127,16 @@ update_designs <- function(designs, cutoff = 100){
   # Compute years since sexually maturity, defined as age 12
   designs$d.design.adults <- update(designs$d.design.adults, years_sexually_mature = age - 12)
 
+  # Removing those with very high numbers of lifetime sex partners
+  designs$d.design.adults <- subset(designs$d.design.adults, (sex_partners < cutoff) | is.na(sex_partners))
+
   return(designs)
 }
 
 
 # Regression models -------------------------------------------------------
 
-fitmodels <- function(design, design_dietary){
+fitmodels <- function(design, design_dietary, design_full){
 
   models0 <- list(
 
@@ -413,7 +413,7 @@ fitmodels <- function(design, design_dietary){
         strength_centered * sex +
         bmi_centered,
       family = quasipoisson(),
-      design = design
+      design = design_full
     ),
 
     mexp5 = svyglm(
