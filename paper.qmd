@@ -399,7 +399,7 @@ The average marginal effect of a 2 standard deviation increase in strength on ea
 ::: {#sfig-cor}
 ```{r}
 
-pilot_cor_mats <- cor_mats(designsG)
+pilot_cor_mats <- cor_mats(designsG2)
 
 cor_bothsexes <- ggcorrplot(pilot_cor_mats$cor_mat_cors, lab = T, hc.order = T, hc.method = 'ward.D', title = 'Pilot: Both sexes')
 ggsave("Figures/cor_bothsexes.pdf", cor_bothsexes, width = 12, height = 12)
@@ -446,7 +446,7 @@ for (i in 1:nrow(modelsummaries)){
 ### Sex-specific models
 
 ```{r}
-out_sexspecific_pilot <- sex_specific_models(designsG)
+out_sexspecific_pilot <- sex_specific_models(designsG2)
 plot_sexspecific_strength_coefs <- out_sexspecific_pilot$plot
 dfmodelsummaries <- out_sexspecific_pilot$summaries
 ```
