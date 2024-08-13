@@ -5,11 +5,11 @@
 
 # These models were fit at the request of an anonymous reviewer
 
-sex_specific_models <- function(design){
+sex_specific_models <- function(design, cutoff = 100){
 
   # Removing those with >=100 lifetime sex partners
-  design$d.design.adult.female <- subset(design$d.design.adult.female, sex_partners < 100)
-  design$d.design.adult.male <- subset(design$d.design.adult.male, sex_partners < 100)
+  design$d.design.adult.female <- subset(design$d.design.adult.female, (sex_partners < cutoff) | is.na(sex_partners))
+  design$d.design.adult.male <- subset(design$d.design.adult.male, (sex_partners < cutoff) | is.na(sex_partners))
 
   # Scale sex_partners by the interquartile range of all adults
   design$d.design.adult.female <- update(design$d.design.adult.female, sex_partners_scaled = sex_partners/10)
@@ -560,15 +560,16 @@ sex_specific_models <- function(design){
     dplyr::filter(term == 'strength')
 
   plot_sexspecific_strength_coefs <-
-    ggplot(strengthstats, aes(estimate, Outcome, xmin = conf.low, xmax = conf.high, colour = Sex, shape = Sex, alpha = Significant)) +
+    ggplot(strengthstats, aes(estimate, Controls, xmin = conf.low, xmax = conf.high, colour = Sex, shape = Sex, alpha = Significant)) +
     geom_pointrange(position = position_dodge(width = 0.5), linewidth = 1) +
     geom_vline(xintercept = 0, linetype = 'dotted') +
     scale_alpha_ordinal(range = c(0.35, 1)) +
     hagenutils::scale_color_binary() +
     guides(colour = guide_legend(reverse = T), shape = 'none', alpha = 'none') +
     labs(x = '\nStrength coefficient (95% CI)', y = '') +
-    facet_wrap(~Controls, ncol = 1) +
-    theme_bw(15)
+    facet_wrap(~Outcome, ncol = 1, strip.position = 'right') +
+    theme_bw(15) +
+    theme(strip.text.y = element_text(angle = 0))
 
   return(list(summaries = dfmodelsummaries, stats = strengthstats, plot = plot_sexspecific_strength_coefs))
 }
