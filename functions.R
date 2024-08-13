@@ -18,8 +18,8 @@ control_dict <- c(
   mhor = 'Hormone',
   mphys = 'Activity',
   msoc = 'Socioeconomic',
-  mrep = 'Replication',
-  mexp = 'Expanded'
+  mrep = 'Lassek and Gaulin',
+  mexp = 'Expanded controls'
 )
 
 outcome_dict <- c(
@@ -28,8 +28,8 @@ outcome_dict <- c(
   "3" = "Age of first sex",
   "4" = "Partnered",
   "5" = "Immunity",
-  "6" = "Energy",
-  "7" = "Protein"
+  "6" = "Energy (kcal)",
+  "7" = "Protein (g)"
 )
 
 # Coef plot labels --------------------------------------------------------------
@@ -493,7 +493,7 @@ fitmodels <- function(design, design_dietary, design_full){
     Outcome = outcome_dict[str_extract(modelnames, "\\d")],
     Model = models0,
     Stats = map(Model, \(x) {x$df.residual <- Inf; tidy(x, conf.int = T)}),
-    benefit_cost = ifelse(Outcome %in% c('Immunity', 'Energy', 'Protein'), 'Cost', 'Benefit')
+    benefit_cost = ifelse(Outcome %in% c('Immunity', 'Energy (kcal)', 'Protein (g)'), 'Cost', 'Benefit')
   )
 }
 
