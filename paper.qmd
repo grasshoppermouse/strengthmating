@@ -41,6 +41,7 @@ source('pilot_analysis.R')
 source('sexspecificmodels.R')
 source('stage2_analysis.R')
 source('compare.R')
+source('combinedGH.R')
 
 # source('simulate.R')
 load("df_pwr.rda")
@@ -593,5 +594,50 @@ for (i in 1:nrow(dfmodelsummaries_confirm)){
 }
 ```
 
+## Combined G and H series data (2011-2014)
+
+:::{#sfig-matingGH}
+
+```{r}
+#| fig-width: 12
+#| fig-height: 9
+plot_strengthGH
+```
+
+Strength coefficients from models of mating fit on combined data.
+:::
+
+:::{#sfig-effectsGH}
+
+```{r}
+#| fig-width: 12
+#| fig-height: 12
+plot_effects_lifetime_GH / plot_effects_partners_GH + plot_layout(axes = 'collect', guides = 'collect')
+```
+
+Strength coefficients effects plots of mating success models fit on combined data.
+:::
+
+:::{#sfig-immunityGH}
+
+```{r}
+#| fig-width: 11
+#| fig-height: 6
+plot_immune_strength_GH
+```
+
+Strength coefficients from immunity models fit on combined data.
+:::
+
+:::{#sfig-intakeGH}
+
+```{r}
+#| fig-width: 9
+#| fig-height: 6
+plot_intake_strength_GH
+```
+
+Strength coefficients from energy and protein intake models fit on combined data.
+:::
 
 # References
