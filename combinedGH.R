@@ -25,7 +25,7 @@ plot_strengthGH <-
   geom_vline(xintercept = 0, linetype = "dotted") +
   scale_color_binary() +
   guides(colour = guide_legend(reverse = T)) +
-  labs(title = "GH data (2011-2014)", x = "Estimate (95% CI)", y = "") +
+  labs(title = "G and H series data (2011-2014)", x = "Estimate (95% CI)", y = "") +
   facet_grid(Outcome ~ term) +
   theme_bw(15) +
   theme(strip.text.y = element_text(angle = 0))
@@ -84,10 +84,21 @@ plot_effects_lifetime_GH <-
   plot_predictions(modelsGH$Model$manth1, condition = c("strength_sex_centered", "sex")) +
   scale_color_binary() +
   scale_fill_binary() +
-  theme_minimal(20)
+  labs(
+    title = 'G and H series data (2011-2014)',
+    x = 'Strength (centered by sex)',
+    y = 'Lifetime sex\npartners'
+  ) +
+  theme_minimal(20) +
+  theme(axis.title.y = element_text(angle = 0))
 
 plot_effects_partners_GH <- 
   plot_predictions(modelsGH$Model$manth4, condition = c("strength_sex_centered", "sex")) +
   scale_color_binary() +
   scale_fill_binary() +
-  theme_minimal(20)
+    labs(
+      x = 'Strength (centered by sex)',
+      y = 'Partnered'
+    ) +
+  theme_minimal(20) +
+    theme(axis.title.y = element_text(angle = 0))
