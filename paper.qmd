@@ -206,37 +206,12 @@ The mean age was 38 years. Sexual dimorphism---the ratio of male mean:female mea
 Our pilot results revealed strong positive significant main effects of sex-specific strength on partnered status, numbers of lifetime partners, and age at first sex after controlling for all five sets of potential confounds. The only exception was that the strength coefficient for age at first sex was not significant after controlling for socioeconomic factors, although the sign and magnitude was very similar to those of these coefficients in the models with other control variables. There was no significant effect of sex-specific strength on the number of partners in the past year. See the left column of @fig-coefs. 
 
 There were also clear sex differences in the effects of sex-specific strength on two mating success outcomes---partnered status and lifetime number of partners---with smaller effects for women compared to men, as predicted by the sexual selection hypothesis. There was also a persistent negative association of numbers of lifetime partners on the probability of partnered status in all models of this outcome (@sfig-tradeoff). Finally there was no evidence for a sex difference in the effects of sex-specific strength on past year number of partners or age at first sex, contrary to the sexual selection hypothesis. See the right column of @fig-coefs.
-```{r}
-#| label: fig-coefs
-#| fig-width: 12
-#| fig-height: 10
-#| fig-cap: "Stage 1 pilot vs. stage 2 confirmatory coefficients of sex-specific strength, and strength X sex interaction for our four mating success outcomes and our five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Bars are 95% CIs. For the full regression tables, see the SI."
-
-# plot_coefs + plot_coefs_stage2 + plot_layout(axes = 'collect_y', axis_titles = 'collect')
-plot_coefs_combined
-```
 
 For a plot of all coefficients, see @fig-allcoefs.
-
-```{r}
-#| label: fig-allcoefs
-#| fig-width: 12
-#| fig-height: 8
-#| fig-cap: Stage 2 Confirmatory study coefficients from all models of the four mating success outcomes and the five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Mexican Amercians are the base level for the ethnicity control variable. Bars are 95\% CIs. For the full regression tables, see the SI.
-
-plot_allcoefs_stage2
-```
 
 ### Immune costs of strength
 
 Previous research found that higher musculature was associated with decreased investment in native immunity. We developed two models of immune investment in white blood cell count (@fig-immune). In the replication model, strength was a significant negative predictor of WBCC for both men and women (there was no significant interaction of sex and strength) controlling for age and BMI. In the expanded model with additional controls, including the substitution of height and weight for BMI, strength was now not significant, albeit with a coefficient that was very similar to the replication model.
-
-```{r}
-#| label: fig-immune
-#| fig.width: 12
-#| fig.height: 6
-#| fig.cap: Coefficient plot of predictors of immune investment (WBCC) from generalized linear models (Pilot). Variables labeled (S) have been centered at the mean and standardized by 2 SD. Bars are 95% CIs.
-```
 
 Previous research found that higher musculature was associated with decreased investment in native immunity. We developed two models of immune investment in white blood cell count (@fig-immune). In the Lassek and Gaulin model, strength was a significant negative predictor of WBCC for both men and women (there was no significant interaction of sex and strength) controlling for age and BMI. In the expanded model with additional controls, including the substitution of height and weight for BMI, strength was no longer significant, albeit with a coefficient that was very similar to the replication model.
 
@@ -298,7 +273,7 @@ As described in the methods section, a different set of weights is required in m
 
 ```{r}
 #| label: fig-coefs
-#| fig-width: 10
+#| fig-width: 12
 #| fig-height: 8
 #| fig-cap: "Coefficients of sex-specific strength, and strength X sex interaction for our four mating success outcomes and our five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Bars are 95% CIs. For the full regression tables, see the SI."
 
@@ -311,6 +286,8 @@ Unlike findings from the pilot study, a clear sex difference in the effects of s
 
 ```{r}
 #| label: fig-allcoefs
+#| fig-width: 12
+#| fig-height: 10
 #| fig-cap: Stage 2 Confirmatory study coefficients from all models of the four mating success outcomes and the five sets of potential confounding variables. Partnered coefficients are from logistic regressions, partner number coefficients are from quasi-Poisson glm regressions, and age at first sex coefficients are from Gaussian glm regressions. Mexican Amercians are the base level for the ethnicity control variable. Bars are 95\% CIs. For the full regression tables, see the SI.
 
 plot_allcoefs_stage2
@@ -331,7 +308,7 @@ In our confirmatory data we found no significant effects of strength or a sex X 
 ```{r}
 #| label: fig-immune
 #| fig.width: 12
-#| fig.height: 8
+#| fig.height: 6
 #| fig.cap: Coefficient plot of predictors of immune investment (WBCC) from generalized linear models (Pilot). Variables labeled (S) have been centered at the mean and standardized by 2 SD. Bars are 95% CIs.
 
 # plot_immune_both <- 
