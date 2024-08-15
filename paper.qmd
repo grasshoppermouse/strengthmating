@@ -89,7 +89,13 @@ Previous research has shown that physical formidability in males (operationalize
 
 ## Experimental aims and hypotheses
 
-According to the sexual selection hypothesis, males evolved greater physical formidability than females because physical formidability increased the mating success of males more than females. The aim of this study is to replicate the costs and benefits of formidability reported by @lassek2009 using similar nationally representative data, controlling for a wider range of possible confounds, and precisely prespecifying the statistical models in a registered report format. It also aims to investigate if these costs and benefits are also experienced by women, and specifically if the effect of physical strength on mating success, a proxy for reproductive success, is greater for men than women, as the sexual selection hypothesis predicts.
+According to the sexual selection hypothesis, males evolved greater physical formidability than females because physical formidability increased the mating success of males more than females. The aim of this study is to replicate the costs and benefits of formidability reported by @lassek2009 using similar nationally representative data, controlling for a wider range of possible confounds, and precisely prespecifying the statistical models in a registered report format. It also aims to investigate if these costs and benefits are also experienced by women, and specifically if the effect of physical strength on mating success, a proxy for reproductive success, is greater for men than women, as the sexual selection hypothesis predicts. See @fig-sexualselection.
+
+:::{#fig-sexualselection}
+![](sexualselection.svg)
+
+Predicted relationships between upper body strength and various indices of mating success, such as numbers of partners, partnered status, and age at first sex, for both men and women. According to the sexual selection hypothesis, sexual dimorphism in upper body strength is explained by its positive effect on male mating success but not female mating success.
+:::
 
 # Pilot study
 
