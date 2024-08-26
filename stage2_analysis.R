@@ -187,7 +187,7 @@ plot_immune_combined
 
 intake_stats_stage2 <-
   d_allstats_stage2 |>
-  dplyr::filter(Outcome %in% c('Energy', 'Protein'))
+  dplyr::filter(Outcome %in% c('Energy (kcal)', 'Protein (g)'))
 
 intake_stats_strength_stage2 <-
   intake_stats_stage2 |>
@@ -195,7 +195,7 @@ intake_stats_strength_stage2 <-
 
 intake_stats_strength_combined <-
   d_allstats_combined |>
-  dplyr::filter(Outcome %in% c('Energy', 'Protein'), term2 %in% sex_strength_terms)|>
+  dplyr::filter(Outcome %in% c('Energy (kcal)', 'Protein (g)'), term2 %in% sex_strength_terms)|>
   mutate(
     term = factor(term, levels = (unique(term)))
   )
@@ -206,9 +206,9 @@ plot_intake_strength_combined <-
   geom_vline(xintercept = 0, linetype = 'dotted') +
   scale_color_binary() +
   guides(shape = guide_legend(override.aes = list(linetype = 0)), colour = guide_legend(reverse = T, override.aes = list(linetype = 0))) +
-  labs(x = '\nStrength coefficient estimate (95% CI)', y = '') +
+  labs(x = '\nStrength coefficient estimates (95% CI)', y = '') +
   # facet_grid2(Outcome ~ Stage, scales = 'free_x', independent = 'x') +
-  facet_wrap(~Outcome, scales = 'free_x') +
+  facet_wrap(~Outcome, scales = 'free_x', ncol = 1, strip.position = 'right') +
   theme_bw(20) +
   theme(strip.text.y = element_text(angle = 0))
 plot_intake_strength_combined

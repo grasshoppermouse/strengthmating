@@ -1,7 +1,7 @@
 
 # Compare the coefficients of models with age vs. onset(ln(age))
 
-design <- designsG$d.design.adults
+design <- designsG2$d.design.adults
 
 originalmodels0 <- list(
 
@@ -95,14 +95,14 @@ thestats <-
   bind_rows(originalstats, newstats) |>
   mutate(term = factor(term, levels = unique(term)))
 
-plot_compare <-
+plot_compare_age_models <-
   ggplot(thestats, aes(estimate, type, xmin = conf.low, xmax = conf.high, colour = type)) +
   geom_pointrange() +
   geom_vline(xintercept = 0, linetype = 'dotted') +
   scale_color_binary() +
   guides(colour = guide_legend(reverse = T)) +
   labs(x = 'Estimate (95% CI)', y = '') +
-  facet_grid(Controls ~ term) +
+  facet_grid(Controls ~ term, scales = 'free_x') +
   theme_bw(15) +
   theme(strip.text.y = element_text(angle = 0))
 

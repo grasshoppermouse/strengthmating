@@ -107,7 +107,7 @@ ggsave("Figures/plot_lifetime_coefs.pdf", plot_lifetime_coefs)
 
 intake_stats <-
   d_allstats |>
-  dplyr::filter(Outcome %in% c('Energy', 'Protein'))
+  dplyr::filter(Outcome %in% c('Energy (kcal)', 'Protein (g)'))
 
 intake_stats_strength <-
   intake_stats |>
