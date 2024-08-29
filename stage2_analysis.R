@@ -62,7 +62,7 @@ plot_coefs_combined <-
   geom_vline(xintercept = 0, linetype = 'dotted') +
   scale_color_binary() +
   guides(colour = guide_legend(reverse = T)) +
-  labs(x = 'Estimate (95% CI)', y = '') +
+  labs(title = 'Grip strength', x = 'Estimate (95% CI)', y = '') +
   facet_grid(Outcome ~ term) +
   theme_bw(15) +
   theme(strip.text.y = element_text(angle = 0))

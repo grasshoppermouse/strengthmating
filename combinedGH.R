@@ -102,3 +102,7 @@ plot_effects_partners_GH <-
     ) +
   theme_minimal(20) +
     theme(axis.title.y = element_text(angle = 0))
+
+# Correlation of grip strength with lean masses --------------
+
+cor_out <- svycor(~ArmLeanexclBMC+LegLeanexclBMC+TrunkLeanexclBMC+TotalLeanexclBMC+strength, designsGH2$d.design.adults, na.rm=T)

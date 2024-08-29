@@ -24,9 +24,13 @@ control_dict <- c(
 
 outcome_dict <- c(
   "1" = "Lifetime partners\n(partners per year)",
+  "1b" = "Lifetime partners\n(partners per year)",
   "2" = "Past year partners",
+  "2b" = "Past year partners",
   "3" = "Age of first sex",
+  "3b" = "Age of first sex",
   "4" = "Partnered",
+  "4b" = "Partnered",
   "5" = "Immunity",
   "6" = "Energy (kcal)",
   "7" = "Protein (g)"
@@ -102,16 +106,65 @@ vnames <- c(
   "raceOtherRace" = "Other Race",
   "foodinsecurity_adult" = "Food Insecurity",
   "tot_MET_centered" = "Total MET (S)",
-  "avgcalories_centered" = "Average calories per day (S)"
+  "avgcalories_centered" = "Average calories per day (S)",
+
+  "arm_lean_centered" = "Arm lean mass (S)",
+  "leg_lean_centered" = "Legs lean mass (S)",
+  "trunk_lean_centered" = "Trunk lean mass (S)",
+  "upper_lean_centered" = "Upper lean mass (S)",
+  "total_lean_centered" = "Total lean mass (S)",
+
+  "arm_lean_sex_centered" = "Arm lean mass (S by sex)",
+  "leg_lean_sex_centered" = "Legs lean mass (S by sex)",
+  "trunk_lean_sex_centered" = "Trunk lean mass (S by sex)",
+  "total_lean_sex_centered" = "Total lean mass (S by sex)",
+
+  "arm_lean_sex_centered:sexfemale" = "Sex (female) x Arm lean mass (S by sex)",
+  "leg_lean_sex_centered:sexfemale" = "Sex (female) x Legs lean mass (S by sex)",
+  "trunk_lean_sex_centered:sexfemale" = "Sex (female) x Trunk lean mass (S by sex)",
+  "upper_lean_sex_centered:sexfemale" = "Sex (female) x Upper lean mass (S by sex)",
+  "total_lean_sex_centered:sexfemale" = "Sex (female) x Total lean mass (S by sex)",
+
+  "sexfemale:arm_lean_sex_centered" = "Sex (female) x Arm lean mass (S by sex)",
+  "sexfemale:leg_lean_sex_centered" = "Sex (female) x Legs lean mass (S by sex)",
+  "sexfemale:trunk_lean_sex_centered" = "Sex (female) x Trunk lean mass (S by sex)",
+  "sexfemale:upper_lean_sex_centered" = "Sex (female) x Upper lean mass (S by sex)",
+  "sexfemale:total_lean_sex_centered" = "Sex (female) x Total lean mass (S by sex)",
+
+  "sexfemale:arm_lean_centered" = "Sex (female) x Arm lean mass (S)",
+  "sexfemale:leg_lean_centered" = "Sex (female) x Legs lean mass (S)",
+  "sexfemale:trunk_lean_centered" = "Sex (female) x Trunk lean mass (S)",
+  "sexfemale:upper_lean_centered" = "Sex (female) x Upper lean mass (S)",
+  "sexfemale:total_lean_centered" = "Sex (female) x Total lean mass (S)",
+
+  "arm_leanbmc_centered" = "Arm lean mass (S)",
+  "leg_leanbmc_centered" = "Legs lean mass (S)",
+  "trunk_leanbmc_centered" = "Trunk lean mass (S)",
+  "total_leanbmc_centered" = "Total lean mass (S)",
+
+  "arm_leanbmc_sex_centered" = "Arm lean mass (S by sex)",
+  "leg_leanbmc_sex_centered" = "Legs lean mass (S by sex)",
+  "trunk_leanbmc_sex_centered" = "Trunk lean mass (S by sex)",
+  "total_leanbmc_sex_centered" = "Total lean mass (S by sex)",
+
+  "arm_leanbmc_sex_centered:sexfemale" = "Sex (female) x Arm lean mass (S by sex)",
+  "leg_leanbmc_sex_centered:sexfemale" = "Sex (female) x Legs lean mass (S by sex)",
+  "trunk_leanbmc_sex_centered:sexfemale" = "Sex (female) x Trunk lean mass (S by sex)",
+  "upper_leanbmc_sex_centered:sexfemale" = "Sex (female) x Upper lean mass (S by sex)",
+  "total_leanbmc_sex_centered:sexfemale" = "Sex (female) x Total lean mass (S by sex)",
+
+  "sexfemale:arm_leanbmc_sex_centered" = "Sex (female) x Arm lean mass (S by sex)",
+  "sexfemale:leg_leanbmc_sex_centered" = "Sex (female) x Legs lean mass (S by sex)",
+  "sexfemale:trunk_leanbmc_sex_centered" = "Sex (female) x Trunk lean mass (S by sex)",
+  "sexfemale:upper_leanbmc_sex_centered" = "Sex (female) x Upper lean mass (S by sex)",
+  "sexfemale:total_leanbmc_sex_centered" = "Sex (female) x Total lean mass (S by sex)"
+
 )
 
-sex_strength_terms <- c(
-  'sexfemale:strength_sex_centered',
-  'strength_sex_centered:sexfemale',
-  'strength_sex_centered',
-  'sexfemale:strength_centered',
-  'strength_centered'
-  )
+strength_terms0 <- c("strength", "arm_lean", "leg_lean", "trunk_lean", "total_lean", "upper_lean")
+strength_terms0 <- c(strength_terms0, paste0(strength_terms0, 'bmc'))
+strength_terms0 <- c(paste0(strength_terms0, "_centered"), paste0(strength_terms0, '_sex_centered'))
+sex_strength_terms <- c(strength_terms0, paste0(strength_terms0, ':sexfemale'), paste0('sexfemale:', strength_terms0))
 
 # Update design objects -----------------------------------
 
@@ -136,7 +189,48 @@ update_designs <- function(designs, cutoff = 100){
 
 # Regression models -------------------------------------------------------
 
-fitmodels <- function(design, design_dietary, design_full){
+fitmodels <- function(design, design_dietary, design_full, muscle = 'strength_centered', muscle_sex = 'strength_sex_centered'){
+
+  formulas <- list(
+    'manth1' = 'sex_partners ~ offset(log(years_sexually_mature)) + {muscle_sex} * sex + partnered + bmi_centered * sex',
+    'manth1b' = 'sex_partners ~ offset(log(years_sexually_mature)) + {muscle_sex} * sex + partnered + height_centered + weight_centered',
+    'msoc1' =  'sex_partners ~ offset(log(years_sexually_mature)) + {muscle_sex} * sex + partnered + edu + race',
+    'mheal1' = 'sex_partners ~ offset(log(years_sexually_mature)) + {muscle_sex} * sex + partnered + perceived_abnormal_weight + whitebloodcell_centered + hemoglobin_centered + special_equipment + chronic_disease_score + physical_disease_count + depression',
+    'mhor1' = 'sex_partners ~ offset(log(years_sexually_mature)) + {muscle_sex} * sex + partnered + testosterone_sex_centered * sex',
+    'mphys1' = 'sex_partners ~ offset(log(years_sexually_mature)) + {muscle_sex} * sex + partnered + vigorous_rec + moderate_rec + vigorous_work + moderate_work',
+
+    'manth2' = 'sex_partners_year ~ age_centered * sex + {muscle_sex} * sex + partnered * {muscle_sex} +  bmi_centered * sex',
+    'manth2b' = 'sex_partners_year ~ age_centered * sex + {muscle_sex} * sex + partnered * {muscle_sex} +  height_centered + weight_centered',
+    'msoc2' = 'sex_partners_year ~ age_centered * sex + {muscle_sex} * sex + partnered * {muscle_sex} + edu + race',
+    'mheal2' = 'sex_partners_year ~ age_centered * sex + {muscle_sex} * sex + partnered * {muscle_sex} + perceived_abnormal_weight + whitebloodcell_centered + hemoglobin_centered + special_equipment + chronic_disease_score + physical_disease_count + depression',
+    'mhor2' = 'sex_partners_year ~ age_centered * sex + {muscle_sex} * sex + partnered * {muscle_sex} + testosterone_sex_centered * sex',
+    'mphys2' = 'sex_partners_year ~ age_centered * sex + {muscle_sex} * sex + partnered * {muscle_sex} + vigorous_rec + moderate_rec + vigorous_work + moderate_work',
+
+    'manth3' = 'age_first_sex ~ age_centered * sex + {muscle_sex} * sex + partnered  + bmi_centered * sex',
+    'manth3b' = 'age_first_sex ~ age_centered * sex + {muscle_sex} * sex + partnered  + height_centered + weight_centered',
+    'msoc3' =  'age_first_sex ~ age_centered * sex + {muscle_sex} * sex + partnered + race + edu',
+    'mheal3' = 'age_first_sex ~ age_centered * sex + {muscle_sex} * sex + partnered  + bmi_centered * sex',
+    'mhor3' = 'age_first_sex ~ age_centered * sex + {muscle_sex} * sex + partnered + testosterone_sex_centered * sex',
+    'mphys3' = 'age_first_sex ~ age_centered * sex + {muscle_sex} * sex + partnered + vigorous_rec + moderate_rec + vigorous_work + moderate_work',
+
+    'manth4' = 'partnered ~ sex_partners_scaled + age_centered * sex + {muscle_sex} * sex + bmi_centered * sex',
+    'manth4b' = 'partnered ~ sex_partners_scaled + age_centered * sex + {muscle_sex} * sex + height_centered + weight_centered',
+    'msoc4' =  'partnered ~ sex_partners_scaled + age_centered * sex + {muscle_sex} * sex + edu + race',
+    'mheal4' = 'partnered ~ sex_partners_scaled + age_centered * sex + {muscle_sex} * sex + perceived_abnormal_weight + whitebloodcell_centered + hemoglobin_centered + special_equipment + chronic_disease_score + physical_disease_count + depression',
+    'mhor4' = 'partnered ~ sex_partners_scaled + age_centered * sex + {muscle_sex} * sex + testosterone_sex_centered * sex',
+    'mphys4' = 'partnered ~ sex_partners_scaled + age_centered * sex + {muscle_sex} * sex + vigorous_rec + moderate_rec + vigorous_work + moderate_work',
+
+    'mrep5' = 'whitebloodcell ~ age_centered * sex + {muscle} * sex + bmi_centered',
+    'mexp5' = 'whitebloodcell ~ age_centered * sex + {muscle} * sex + weight_centered + height_centered + testosterone_sex_centered * sex + foodinsecurity_adult  + avgcalories_centered + tot_MET_centered + depression',
+
+    'mrep6' = 'avgcalories ~ age_centered + tot_MET_centered  + {muscle} + bmi_centered  + sex',
+    'mexp6' = 'avgcalories ~ age_centered + tot_MET_centered + {muscle} + sex + weight_centered + height_centered + whitebloodcell_centered + foodinsecurity_adult',
+
+    'mrep7' = 'avgprotein ~ age_centered + tot_MET_centered  + {muscle} + bmi_centered  + sex',
+    'mexp7' = 'avgprotein ~ age_centered + tot_MET_centered + {muscle} + sex + weight_centered + height_centered + whitebloodcell_centered + foodinsecurity_adult'
+  )
+
+  formulas <- map(formulas, \(x) formula(str_glue(x)))
 
   models0 <- list(
 
@@ -144,64 +238,34 @@ fitmodels <- function(design, design_dietary, design_full){
 
     # Anthropometric
     manth1 = svyglm(
-      sex_partners ~
-        offset(log(years_sexually_mature)) +
-        strength_sex_centered * sex +
-        partnered +
-        bmi_centered * sex,
+      formulas$manth1,
       family = quasipoisson(),
       design = design
     ),
 
     # Socioeconomic model
     msoc1 = svyglm(
-      sex_partners ~
-        offset(log(years_sexually_mature)) +
-        strength_sex_centered * sex +
-        partnered +
-        edu +
-        race,
+      formulas$msoc1,
       family = quasipoisson(),
       design = design
     ),
 
     # Health model
     mheal1 = svyglm(
-      sex_partners ~
-        offset(log(years_sexually_mature)) +
-        strength_sex_centered * sex +
-        partnered +
-        perceived_abnormal_weight +
-        whitebloodcell_centered +
-        hemoglobin_centered +
-        special_equipment +
-        chronic_disease_score +
-        physical_disease_count +
-        depression,
+      formulas$mheal1,
       family = quasipoisson(),
       design = design
     ),
 
     mhor1 = svyglm(
-      sex_partners ~
-        offset(log(years_sexually_mature)) +
-        strength_sex_centered * sex +
-        partnered +
-        testosterone_sex_centered * sex,
+      formulas$mhor1,
       family = quasipoisson(),
       design = design
     ),
 
     # Physical activity
     mphys1 = svyglm(
-      sex_partners ~
-        offset(log(years_sexually_mature)) +
-        strength_sex_centered * sex +
-        partnered +
-        vigorous_rec +
-        moderate_rec +
-        vigorous_work +
-        moderate_work,
+      formulas$mphys1,
       family = quasipoisson(),
       design = design
     ),
@@ -210,64 +274,34 @@ fitmodels <- function(design, design_dietary, design_full){
 
     # Anthropometric model
     manth2 = svyglm(
-      sex_partners_year ~
-        age_centered * sex +
-        strength_sex_centered * sex +
-        partnered * strength_sex_centered + #keeping partnered x strength interaction only for this model
-        bmi_centered * sex,
+      formulas$manth2,
       family = quasipoisson(),
       design = design
     ),
 
     # Socioeconomic model
     msoc2 = svyglm(
-      sex_partners_year ~
-        age_centered * sex +
-        strength_sex_centered * sex +
-        partnered * strength_sex_centered +
-        edu +
-        race,
+      formulas$msoc2,
       family = quasipoisson(),
       design = design
     ),
 
     # Health model
     mheal2 = svyglm(
-      sex_partners_year ~
-        age_centered * sex +
-        strength_sex_centered * sex +
-        partnered * strength_sex_centered +
-        perceived_abnormal_weight +
-        whitebloodcell_centered +
-        hemoglobin_centered +
-        special_equipment +
-        chronic_disease_score +
-        physical_disease_count +
-        depression,
+      formulas$mheal2,
       family = quasipoisson(),
       design = design
     ),
 
     mhor2 = svyglm(
-      sex_partners_year ~
-        age_centered * sex +
-        strength_sex_centered * sex +
-        partnered * strength_sex_centered +
-        testosterone_sex_centered * sex,
+      formulas$mhor2,
       family = quasipoisson(),
       design = design
     ),
 
     # Physical activity
     mphys2 = svyglm(
-      sex_partners_year ~
-        age_centered * sex +
-        strength_sex_centered * sex +
-        partnered * strength_sex_centered +
-        vigorous_rec +
-        moderate_rec +
-        vigorous_work +
-        moderate_work,
+      formulas$mphys2,
       family = quasipoisson(),
       design = design
     ),
@@ -276,64 +310,34 @@ fitmodels <- function(design, design_dietary, design_full){
 
     # Anthropometric
     manth3 = svyglm(
-      age_first_sex ~
-        age_centered * sex +
-        strength_sex_centered * sex +
-        partnered  +
-        bmi_centered * sex,
+      formulas$manth3,
       family = gaussian(),
       design = design
     ),
 
     # Socioeconomic
     msoc3 = svyglm(
-      age_first_sex ~
-        age_centered * sex +
-        strength_sex_centered * sex +
-        partnered +
-        race +
-        edu,
+      formulas$msoc3,
       family = gaussian(),
       design = design
     ),
 
     # Health
     mheal3 = svyglm(
-      age_first_sex ~
-        age_centered * sex +
-        strength_sex_centered * sex +
-        partnered +
-        perceived_abnormal_weight +
-        whitebloodcell_centered +
-        hemoglobin_centered +
-        special_equipment +
-        chronic_disease_score +
-        physical_disease_count +
-        depression,
+      formulas$mheal3,
       family = gaussian(),
       design = design
     ),
 
     mhor3 = svyglm(
-      age_first_sex ~
-        age_centered * sex +
-        strength_sex_centered * sex +
-        partnered +
-        testosterone_sex_centered * sex,
+      formulas$mhor3,
       family = gaussian(),
       design = design
     ),
 
     # Physical activity
     mphys3 = svyglm(
-      age_first_sex ~
-        age_centered * sex +
-        strength_sex_centered * sex +
-        partnered +
-        vigorous_rec +
-        moderate_rec +
-        vigorous_work +
-        moderate_work,
+      formulas$mphys3,
       family = gaussian(),
       design = design
     ),
@@ -342,65 +346,35 @@ fitmodels <- function(design, design_dietary, design_full){
 
     # Anthropometric model
     manth4 = svyglm(
-      partnered ~
-        sex_partners_scaled +
-        age_centered * sex +
-        strength_sex_centered * sex +
-        bmi_centered * sex,
+      formulas$manth4,
       family = quasibinomial(),
       design = design
     ),
 
     # Socioeconomic model
     msoc4 = svyglm(
-      partnered ~
-        sex_partners_scaled +
-        age_centered * sex +
-        strength_sex_centered * sex +
-        edu +
-        race,
+      formulas$msoc4,
       family = quasibinomial(),
       design = design
     ),
 
     # Health
     mheal4 = svyglm(
-      partnered ~
-        sex_partners_scaled +
-        age_centered * sex +
-        strength_sex_centered * sex +
-        perceived_abnormal_weight +
-        whitebloodcell_centered +
-        hemoglobin_centered +
-        special_equipment +
-        chronic_disease_score +
-        physical_disease_count +
-        depression,
+      formulas$mheal4,
       family = quasibinomial(),
       design = design
     ),
 
     # Hormone
     mhor4 = svyglm(
-      partnered ~
-        sex_partners_scaled +
-        age_centered * sex +
-        strength_sex_centered * sex +
-        testosterone_sex_centered * sex,
+      formulas$mhor4,
       family = quasibinomial(),
       design = design
     ),
 
     # Physical activity
     mphys4 = svyglm(
-      partnered ~
-        sex_partners_scaled +
-        age_centered * sex +
-        strength_sex_centered * sex +
-        vigorous_rec +
-        moderate_rec +
-        vigorous_work +
-        moderate_work,
+      formulas$mphys4,
       family = quasibinomial(),
       design = design
     ),
@@ -408,25 +382,13 @@ fitmodels <- function(design, design_dietary, design_full){
     # Immune models -------------------------------------------------------------
 
     mrep5 = svyglm(
-      whitebloodcell ~
-        age_centered * sex +
-        strength_centered * sex +
-        bmi_centered,
+      formulas$mrep5,
       family = quasipoisson(),
       design = design_full
     ),
 
     mexp5 = svyglm(
-      whitebloodcell ~
-        age_centered * sex +
-        strength_centered * sex +
-        weight_centered +
-        height_centered +
-        testosterone_sex_centered * sex +
-        foodinsecurity_adult  +
-        avgcalories_centered +
-        tot_MET_centered +
-        depression,
+      formulas$mexp5,
       family = quasipoisson(),
       design = design_dietary
     ),
@@ -434,26 +396,13 @@ fitmodels <- function(design, design_dietary, design_full){
     ## Energy models -----------------------------------------------------------
 
     mrep6 = svyglm(
-      avgcalories ~
-        age_centered +
-        tot_MET_centered  +
-        strength_centered +
-        bmi_centered  +
-        sex,
+      formulas$mrep6,
       family = gaussian(),
       design = design_dietary
     ),
 
     mexp6 = svyglm(
-      avgcalories ~
-        age_centered +
-        tot_MET_centered +
-        strength_centered +
-        sex +
-        weight_centered +
-        height_centered +
-        whitebloodcell_centered +
-        foodinsecurity_adult,
+      formulas$mexp6,
       family = gaussian(),
       design = design_dietary
     ),
@@ -461,26 +410,13 @@ fitmodels <- function(design, design_dietary, design_full){
     ## Protein models -----------------------------------------------------------------
 
     mrep7 = svyglm(
-      avgprotein ~
-        age_centered +
-        tot_MET_centered  +
-        strength_centered +
-        bmi_centered  +
-        sex,
+      formulas$mrep7,
       family = gaussian(),
       design = design_dietary
     ),
 
     mexp7 = svyglm(
-      avgprotein ~
-        age_centered +
-        tot_MET_centered +
-        strength_centered +
-        sex +
-        weight_centered +
-        height_centered +
-        whitebloodcell_centered +
-        foodinsecurity_adult,
+      formulas$mexp7,
       family = gaussian(),
       design = design_dietary
     )
@@ -489,8 +425,9 @@ fitmodels <- function(design, design_dietary, design_full){
   modelnames <- names(models0)
 
   tibble(
+    modelnames = modelnames,
     Controls = control_dict[str_remove(modelnames, "\\d")],
-    Outcome = outcome_dict[str_extract(modelnames, "\\d")],
+    Outcome = outcome_dict[str_extract(modelnames, "\\db*")],
     Model = models0,
     Stats = map(Model, \(x) {x$df.residual <- Inf; tidy(x, conf.int = T)}),
     benefit_cost = ifelse(Outcome %in% c('Immunity', 'Energy (kcal)', 'Protein (g)'), 'Cost', 'Benefit')
@@ -600,11 +537,79 @@ effects_plots3 <- function(df1, df2, controls = "Anthropometric"){
   return(out)
 }
 
+# Lean mass plot -------------------------------
+
+lean_mass_plot <- function(title, muscle, muscle_sex, mating_only = T){
+  modelsG <-
+    fitmodels(
+      designsG2$d.design.adults,
+      designsG2$d.design.dietary.adults,
+      designsG$d.design.adults,
+      muscle = muscle,
+      muscle_sex = muscle_sex
+    )
+
+  modelsH <-
+    fitmodels(
+      designsH2$d.design.adults,
+      designsH2$d.design.dietary.adults,
+      designsH$d.design.adults,
+      muscle = muscle,
+      muscle_sex = muscle_sex
+    )
+
+  lean_stats <- bind_rows(
+    "Stage 1: Pilot" = allstats(modelsG),
+    "Stage 2: Confirmatory" = allstats(modelsH),
+    .id = "Stage"
+  ) |>
+  mutate(term = factor(term, levels = unique(term)))
+
+  p1 <- lean_stats |>
+    dplyr::filter(benefit_cost == "Benefit", term2 %in% sex_strength_terms) |>
+    ggplot(aes(estimate, Controls, xmin = conf.low, xmax = conf.high, colour = Significant, shape = Stage)) +
+    geom_pointrange(size = 0.4, linewidth = 0.7, position = position_dodge(width = 0.8)) +
+    geom_vline(xintercept = 0, linetype = "longdash") +
+    scale_color_binary() +
+    labs(title = paste(title, "vs. mating success"), x = "\nEstimate (95% CI)", y = "") +
+    facet_grid(Outcome ~ term) +
+    theme_bw(15) +
+    theme(strip.text.y = element_text(angle = 0))
+
+  if (mating_only) return(p1)
+
+  print(p1)
+
+  p2 <- lean_stats |>
+    dplyr::filter(str_detect(Outcome, "Energy|Protein"), term2 %in% sex_strength_terms) |>
+    ggplot(aes(estimate, Controls, xmin = conf.low, xmax = conf.high, colour = Significant, shape = Stage)) +
+    geom_pointrange(size = 0.4, linewidth = 0.7, position = position_dodge(width = 0.8)) +
+    geom_vline(xintercept = 0, linetype = "longdash") +
+    scale_color_binary(direction = -1) +
+    labs(title = paste(title, "vs. intake"), x = "\nEstimate (95% CI)", y = "") +
+    facet_wrap(~Outcome, scales = "free_x", ncol = 1, strip.position = "right") +
+    theme_bw(15) +
+    theme(strip.text.y = element_text(angle = 0))
+
+  print(p2)
+
+  p3 <- lean_stats |>
+    dplyr::filter(str_detect(Outcome, "Immunity"), term2 %in% sex_strength_terms) |>
+    ggplot(aes(estimate, Controls, xmin = conf.low, xmax = conf.high, colour = Significant, shape = Stage)) +
+    geom_pointrange(size = 0.4, linewidth = 0.7, position = position_dodge(width = 0.8)) +
+    geom_vline(xintercept = 0, linetype = "longdash") +
+    scale_color_binary() +
+    labs(title = paste(title, "vs. immunity"), x = "\nEstimate (95% CI)", y = "") +
+    facet_wrap(~term) +
+    theme_bw(15) +
+    theme(strip.text.y = element_text(angle = 0))
+
+  print(p3)
+}
 
 # Summary tables ----------------------------------------------------------
 
-summary_tables <- function(design){
-
+summary_tables <- function(design) {
   getncat <- design %>%
     tbl_svysummary(
       by = sex,
@@ -617,32 +622,40 @@ summary_tables <- function(design){
         vigorous_work,
         moderate_work,
         vigorous_rec,
-        moderate_rec),
+        moderate_rec
+      ),
       statistic = list(
         all_categorical() ~ "{N_nonmiss_unweighted}"
-      ) , missing = "no" )
+      ), missing = "no"
+    )
 
-  getncon = design %>%
+  getncon <- design %>%
     tbl_svysummary(
       by = sex,
-      include = c(age_first_sex,
-                  sex_partners,
-                  sex_partners_year,
-                  strength,
-                  age,
-                  bmi,
-                  height,
-                  weight,
-                  whitebloodcell,
-                  hemoglobin,
-                  testosterone,
-                  chronic_disease_score,
-                  physical_disease_count,
-                  depression,
-                  avgcalories,
-                  avgprotein,
-                  foodinsecurity_adult,
-                  tot_MET),
+      include = c(
+        age,
+        age_first_sex,
+        sex_partners,
+        sex_partners_year,
+        strength,
+        ArmLeanexclBMC,
+        LegLeanexclBMC,
+        TrunkLeanexclBMC,
+        TotalLeanexclBMC,
+        bmi,
+        height,
+        weight,
+        whitebloodcell,
+        hemoglobin,
+        testosterone,
+        chronic_disease_score,
+        physical_disease_count,
+        depression,
+        avgcalories,
+        avgprotein,
+        foodinsecurity_adult,
+        tot_MET
+      ),
       statistic = list(
         all_continuous() ~ "{N_nonmiss_unweighted}",
         all_categorical() ~ "{N_nonmiss_unweighted}"
@@ -656,27 +669,33 @@ summary_tables <- function(design){
       missing = "no"
     )
 
-  getratio = design %>%
+  getratio <- design %>%
     tbl_svysummary(
       by = sex,
-      include = c(age_first_sex,
-                  sex_partners,
-                  sex_partners_year,
-                  strength,
-                  age,
-                  bmi,
-                  height,
-                  weight,
-                  whitebloodcell,
-                  hemoglobin,
-                  testosterone,
-                  chronic_disease_score,
-                  physical_disease_count,
-                  depression,
-                  avgcalories,
-                  avgprotein,
-                  foodinsecurity_adult,
-                  tot_MET),
+      include = c(
+        age,
+        age_first_sex,
+        sex_partners,
+        sex_partners_year,
+        strength,
+        ArmLeanexclBMC,
+        LegLeanexclBMC,
+        TrunkLeanexclBMC,
+        TotalLeanexclBMC,
+        bmi,
+        height,
+        weight,
+        whitebloodcell,
+        hemoglobin,
+        testosterone,
+        chronic_disease_score,
+        physical_disease_count,
+        depression,
+        avgcalories,
+        avgprotein,
+        foodinsecurity_adult,
+        tot_MET
+      ),
       statistic = list(
         all_continuous() ~ "{mean}",
         all_categorical() ~ "{p}"
@@ -693,11 +712,10 @@ summary_tables <- function(design){
     ) %>%
     modify_table_body(
       ~ .x %>%
-        dplyr::mutate(ratio = round(as.numeric(gsub(",", "", stat_1))/as.numeric(gsub(",", "", stat_2)), digits = 2))
+        dplyr::mutate(ratio = round(as.numeric(gsub(",", "", stat_1)) / as.numeric(gsub(",", "", stat_2)), digits = 2))
     )
 
   list(
-
     cat = design %>%
       tbl_svysummary(
         by = sex,
@@ -712,7 +730,7 @@ summary_tables <- function(design){
           vigorous_rec,
           moderate_rec
         ),
-        label  = list(
+        label = list(
           partnered = "Partnered",
           edu = "Education",
           race = "Race and Ethnicity",
@@ -745,16 +763,19 @@ summary_tables <- function(design){
         c("stat_2", "n_female") ~ "**Female**"
       )) %>%
       bold_labels(),
-
     con = design %>%
       tbl_svysummary(
         by = sex,
         include = c(
+          age,
           age_first_sex,
           sex_partners,
           sex_partners_year,
           strength,
-          age,
+          ArmLeanexclBMC,
+          LegLeanexclBMC,
+          TrunkLeanexclBMC,
+          TotalLeanexclBMC,
           bmi,
           height,
           weight,
@@ -769,12 +790,16 @@ summary_tables <- function(design){
           foodinsecurity_adult,
           tot_MET
         ),
-        label  = list(
+        label = list(
+          age = "Age (Years)",
           age_first_sex = "Age at first sex (years)",
           sex_partners = "Lifetime number of sexual partners",
           sex_partners_year = "Past year number of sexual partners",
           strength = "Combined Grip Strength (kg)",
-          age = "Age (Years)",
+          ArmLeanexclBMC = "Arm lean mass (g)",
+          LegLeanexclBMC = "Leg lean mass (g)",
+          TrunkLeanexclBMC = "Trunk lean mass (g)",
+          TotalLeanexclBMC = "Total lean mass (g)",
           bmi = "Body mass index (kg/m^2)",
           height = "Height (cm)",
           weight = "Weight (kg)",
@@ -789,8 +814,10 @@ summary_tables <- function(design){
           foodinsecurity_adult = "Food Insecurity Rating (1-4)",
           tot_MET = "Total MET"
         ),
-        statistic = list(all_continuous() ~ "{mean} ({sd})",
-                         all_categorical() ~ "{n_unweighted} ({p}%)"),
+        statistic = list(
+          all_continuous() ~ "{mean} ({sd})",
+          all_categorical() ~ "{n_unweighted} ({p}%)"
+        ),
         digits = all_continuous() ~ 2,
         type = list(
           chronic_disease_score ~ "continuous",
@@ -806,9 +833,11 @@ summary_tables <- function(design){
           dplyr::mutate(n_female = getncon$table_body$stat_2, digits = 2) %>%
           dplyr::relocate(n_male, .before = stat_1) %>%
           dplyr::relocate(n_female, .before = stat_2)
-      )  %>%
-      add_difference(test = everything() ~ "smd",
-                     estimate_fun = list(all_continuous() ~ purrr::partial(style_ratio, digits = 2))) %>%
+      ) %>%
+      add_difference(
+        test = everything() ~ "smd",
+        estimate_fun = list(all_continuous() ~ purrr::partial(style_ratio, digits = 2))
+      ) %>%
       modify_column_hide(columns = ci) %>%
       modify_header(
         label = "**Variable**",
@@ -828,8 +857,8 @@ summary_tables <- function(design){
       # modify_caption("Descriptive statistics and sex differences for participants ages 18-60 using population weights") %>%
       bold_labels()
   )
-
 }
+
 
 
 
@@ -843,6 +872,10 @@ cor_mats <- function(designs){
     age_first_sex +
     age +
     strength +
+    ArmLeanexclBMC +
+    LegLeanexclBMC +
+    TrunkLeanexclBMC +
+    TotalLeanexclBMC +
     bmi +
     edu +
     hemoglobin +
@@ -879,4 +912,15 @@ cor_mats <- function(designs){
     cor_mat_cors_m = cor_mat_m$cors,
     cor_mat_cors = cor_mat$cors
   )
+}
+
+
+# Sex differences ---------------------------------------------------------
+
+sexdiff <- function(var, design){
+  means <- svyby(make.formula(var), by =~sex, design = design, FUN = svymean, na.rm = T)
+  means <- means[[var]]
+  vars <- svyby(make.formula(var), by =~sex, design = design, FUN = svyvar, na.rm = T)
+  vars <- vars[[var]]
+  (means[1] - means[2])/sqrt((vars[1] + vars[2])/2)
 }
