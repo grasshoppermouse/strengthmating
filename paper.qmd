@@ -96,7 +96,7 @@ According to the sexual selection hypothesis, males evolved greater physical for
 ::: {#fig-sexualselection}
 ![](sexualselection.svg)
 
-Predicted relationships between upper body strength and various indices of mating success, such as numbers of partners, partnered status, and age at first sex, for both men and women. According to the sexual selection hypothesis, sexual dimorphism in upper body strength is explained by a positive effect on male mating success that is greater than its effect on female mating success, i.e., an interaction (the hypothesis does not necessarily predict no relationship between female strength and mating success, however).
+Predicted relationships between upper body strength and various indices of mating success, such as numbers of partners, partnered status, and age at first sex, for both men and women. According to the sexual selection hypothesis, sexual dimorphism in upper body strength is explained by a positive effect on male mating success that is greater than its effect on female mating success, i.e., a sex:strength interaction (the hypothesis does allow some positive or negative relationship between female strength and mating success, however, which is represented by the grey uncertainty band on the female slope).
 :::
 
 # Pilot study
@@ -175,7 +175,7 @@ Exploratory analysis revealed a negative association between the lifetime number
 
 ## Analysis
 
-All analyses were completed in `{r} R.version.string`, using the survey package [`{r} packageVersion("survey")`, @lumley2021] in order to incorporate the survey sampling weights and to preserve the representative structure of the sample. We modeled lifetime and past year numbers of partners using a quasi-Poisson generalized linear regression model (glm), since these variables are overdispersed count data. We modeled age at first sexual intercourse and white blood cell count with a Gaussian glm. We modeled partnered status using a binomial glm. Analyses included adults ages 18-60 because this is the period when the majority of reproduction takes place and because these are the years when grip strength is the most stable.
+All analyses were completed in `{r} R.version.string`, using the survey package [`{r} packageVersion("survey")`, @lumley2021] in order to incorporate the survey sampling weights and to preserve the representative structure of the sample. We modeled lifetime past year numbers of partners, and white blood cell count using a quasi-Poisson generalized linear regression model (glm), since these variables are overdispersed count data. We modeled age at first sexual intercourse and energy and protein intakes with a Gaussian glm. We modeled partnered status using a binomial glm. Analyses included adults ages 18-60 because this is the period when the majority of reproduction takes place and because these are the years when grip strength is the most stable.
 
 ## Pilot Study Results
 
