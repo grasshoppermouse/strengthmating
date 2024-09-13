@@ -356,7 +356,7 @@ plot_intake_strength_combined
 
 ```{r}
 #| label: tbl-predictionsresults
-#| tbl-cap: "Predictions. A plus sign (+) indicates a predicted significantly positive coefficient in all models of grip strength; a negative sign (-) indicates a predicted significantly negative coefficient in all such models; a zero (0) indicates a predicted non-significant coefficient in any such model; and a blank indicates not relevant. ✓: Supported in confirmatory study. ❌: Not supported in confirmatory study."
+#| tbl-cap: "Predictions. A plus sign (+) indicates a predicted significantly positive coefficient in all models of grip strength; a negative sign (-) indicates a predicted significantly negative coefficient in all such models; a zero (0) indicates a predicted non-significant coefficient in any such model; and a blank indicates not relevant. ✓: Supported in confirmatory study. ❌: Not supported in confirmatory study. *The posthoc results found a significant negative association between lean mass and immunity, and a positive association with energy."
 
 tribble(
               ~Outcome, ~Prediction, ~Result, ~Prediction, ~Result,
@@ -364,8 +364,8 @@ tribble(
    "Lifetime partners",     "+",       "✓",       "-",       "❌",
   "Past year partners",     "0",       "✓",       "0",       "✓",
     "Age at first sex",     "0",       "✓",       "0",       "✓",
-            "Immunity",     "-",       "❌",      "0",       "✓",
-              "Energy",     "0",       "❌",        "",        "",
+            "Immunity",     "-",       "❌*",      "0",       "✓",
+              "Energy",     "0",       "❌*",        "",        "",
              "Protein",     "+",       "✓",        "",        ""
   ) |>      
   tt() |> 
