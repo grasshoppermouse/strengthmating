@@ -1,0 +1,105 @@
+### Anthropometric models of mating success
+
+In the anthropometric control model (@sfig-anthro), strength was significantly associated with higher numbers of lifetime and past year sex partners and an earlier age at first sex, and the interaction with sex was not significant.
+
+::: {#sfig-anthro}
+```{r}
+#| fig-width: 12
+#| fig-height: 8
+
+plot_anthro <- forestplot(
+  m_agefirst,
+  m_lifetime,
+  m_pastyear,
+  m_partnered,
+  intercept = F,
+  facet = F,
+  dodgewidth = .5,
+  modelnames = mnames1,
+  varnames = vnames, 
+  size = 1.2, 
+  linewidth = 1
+) + theme_minimal(17) +
+  guides(colour = guide_legend(reverse = T), shape = guide_legend(reverse = T))
+
+ggsave("Figures/plot_anthro.pdf", plot_anthro, width = 14, height = 7)
+
+plot_anthro
+```
+
+Anthropometric models of mating success (Pilot). Coefficient plot from generalized linear models. Variables labelled (S) have been centered at the mean and standardized by 2 SD.
+:::
+
+
+
+::: {#sfig-lifetime}
+```{r}
+#| fig-height: 10
+forestplot2(m_lifetime, msoc1, mheal1, mphys1, mhor1, title = "Lifetime Number of Sexual Partners")
+```
+
+Models of lifetime number of sex partners.
+:::
+
+
+::: {#sfig-year}
+```{r}
+#| fig-height: 10
+forestplot2(m_pastyear, msoc2,mheal2, mphys2, mhor2, title = "Past Year Number of Sexual Partners")
+```
+
+Models past year sex partners.
+:::
+
+
+::: {#sfig-agefirstsex}
+```{r}
+#| fig-height: 10
+forestplot2(m_agefirst, msoc3, mheal3, mphys3, mhor3, title = "Age at First Sex")
+```
+
+Models of age at first sex
+:::
+
+::: {#sfig-partnered}
+```{r}
+#| fig-height: 10
+forestplot2(m_partnered, msoc4, mheal4, mphys4, mhor4, title = "Currently Partnered")
+```
+
+Models of partnered status
+:::
+
+
+```{r}
+forestplot2 <- function(..., title=""){
+  models <- list(...)
+  models <- map(models, \(m) {m$df.residual = Inf; return(m)})
+  models <- c(models, list(
+    intercept = F,
+    facet = F,
+    dodgewidth = .8,
+    modelnames = mnames,
+    varnames = vnames,
+    size = 0.7,
+    linewidth = 0.7
+  ))
+
+  p <- do.call(forestplot, models)
+
+  p +
+    guides(colour = guide_legend(reverse = T), shape = guide_legend(reverse = T)) +
+    labs(title = title) +
+    theme_minimal() +
+    theme(axis.text.y = element_text(size = 9), plot.title = element_text(size = 11))
+}
+```
+
+| Outcome            | Strength coefficient | Strength X Sex coefficient |
+|--------------------|:--------------------:|:--------------------------:|
+| Partnered status   |         0.99         |            0.90 (0.67)            |
+| Lifetime partners  |         0.99         |            0.90 (0.66)            |
+| Past year partners |         0.80         |            0.30 (0.21)            |
+
+: Power to detect our predicted effects. Strength coefficients (effect sizes) were set to 3/4 of those we found in our pilot study, interaction coefficients were set to the same magnitude (but opposite sign) of the strength coefficients (value in parentheses is power to detect 3/4 of that effect), sample size was set to that of our unobserved data, and $\alpha = 0.05$. {#tbl-power}
+
