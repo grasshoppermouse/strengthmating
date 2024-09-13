@@ -283,6 +283,9 @@ As described in the methods section, a different set of weights is required in m
 
 ## Confirmatory Study Results
 
+### Descriptive statistics
+Sample characteristics were similar in the confirmatory dataset to those in the pilot dataset. See @stbl-confirmstats for weighted means, standard deviations, and standardized mean differences of all variables for men and women. 
+
 ```{r}
 #| label: fig-coefs
 #| fig-width: 12
