@@ -59,19 +59,19 @@ mmnames <- c(
 )
 
 vnames <- c(
-  "strength_sex_centered" = "Strength (S by sex)",
-  "strength_centered" = "Strength (S)",
-  "strength" = "Strength",
+  "strength_sex_centered" = "Grip Strength (S by sex)",
+  "strength_centered" = "Grip Strength (S)",
+  "strength" = "Grip Strength",
   "sexfemale" = "Sex (Female)",
-  "sexfemale:strength_sex_centered" = "Sex (Female) x Strength (S by sex)",
-  "strength_sex_centered:sexfemale" = "Sex (Female) x Strength (S by sex)",
+  "sexfemale:strength_sex_centered" = "Sex (Female) x Grip Strength (S by sex)",
+  "strength_sex_centered:sexfemale" = "Sex (Female) x Grip Strength (S by sex)",
   "sexfemale:strength_centered" = "Sex (Female) x Strength (S)",
   "age_centered" = "Age (S)",
   "age" = "Age",
   "partneredTRUE" = "Partnered",
   "sex_partners" = "Lifetime sex partners",
   "sex_partners_scaled" = "Lifetime sex partners (S)",
-  "strength_sex_centered:partneredTRUE" = "Partnered x Strength (S by sex)",
+  "strength_sex_centered:partneredTRUE" = "Partnered x Grip Strength (S by sex)",
   "age_centered:sexfemale" = "Age (S) x Sex (Female)",
   "height_centered" = "Height (S)",
   "weight_centered" = "Weight (S)",
@@ -485,7 +485,7 @@ effects_plots <- function(models, controls = "Anthropometric"){
       Plot = list(
         plot_predictions(Model, condition = c("strength_sex_centered", "sex")) +
           scale_color_binary() +
-          xlab("Strength (S by sex)") +
+          xlab("Grip Strength (S by sex)") +
           ylab(Outcome) +
           theme_minimal()
       )
@@ -502,7 +502,7 @@ effects_plots2 <- function(df1, df2, controls = "Anthropometric"){
       Plot = list(
         plot_predictions(Model, condition = c("strength_sex_centered", "sex")) +
           scale_color_binary() +
-          xlab("Strength (S by sex)") +
+          xlab("Grip Strength (S by sex)") +
           ylab(Outcome) +
           theme_minimal()
       )
