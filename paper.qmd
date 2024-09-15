@@ -365,7 +365,8 @@ tribble(
   group_tt(j = list("Grip strength coefficient" = 2:3, "Grip strength X sex coefficient" = 4:5))
 ```
 
-## Post Hoc Analyses
+# Post Hoc Analyse
+
 We were made aware that Dual-Energy X-ray Absorptiometry (DXA) data were published for these series after our initial download of the data for this study. DXA data provide alternatives to grip strength for assessing muscle mass, and include the lean masses (i.e., fat-free mass, optionally including or excluding bone mineral content) in grams of each arm and leg, the trunk, and total body. Total body lean mass is similar to the bioelectrical impedance analysis fat-free mass variable used by @lassek2009. For reviews of DXA measurements of body composition, see @shepherd2017 and @messina2020. For details of the NHANES DXA measurements, see @DXXG2023. In addition to our grip strength models, we also fit our models exactly as specified in stage 1 except substituting four DXA lean masses for grip strength (all masses excluded bone mineral content). Specifically, we computed arm lean mass as the sum of left and right arm lean masses, and leg lean mass as the sum of left and right leg lean masses. We then fit our models using arm, leg, trunk, and total lean masses, each standardized by sex as described earlier for grip strength.
 
 Our post hoc analyses revealed that coefficients for sex-specific arm lean mass were generally similar in direction to those of sex-specific grip strength discussed above, including a strong positive significant main effect on partnered status and numbers of lifetime partners after controlling for all five sets of potential confounds. In addition, sex-specific arm lean mass had a significantly smaller association with partnered status for women than men, consistent with the sexual selection hypothesis. We found mixed evidence for a main effect of sex-specific lean mass in the age of first sex models, as these were not significant predictors after controlling for socioeconomic or physical activity controls. As with sex-specific grip strength, sex-specific arm lean mass was not a predictor of past year number of sexual partners in any control model. Sex-specific leg, trunk, and total lean mass were not consistently related to any mating success outcome. See @fig-leancoefs and @sfig-legs - @sfig-total.
@@ -381,7 +382,9 @@ lean_mass_plot("Arm lean mass", "arm_lean_centered", "arm_lean_sex_centered")
 
 Unlike grip strength, arm, leg, and total (but not trunk) lean masses were all negatively associated with WBCC. We found that all lean masses were significant, positive predictors of both energy and protein intake controlling for sex. In the expanded models with additional controls, all lean masses remained significant predictors of energy and protein intake. See @sfig-arms - @sfig-total.
 
-## Discussion
+Finally, we fit our grip strength models on the combined data (2011-2014). Results qualitatively correspond to those seen in the pilot study, which is not surprising because our models were developed on the pilot data. See @sfig-matingGH - @sfig-intakeGH.
+
+# Discussion
 
 The purpose of this study was to replicate, as closely as possible, the @lassek2009 study with new data that used combined grip strength as a proxy for upper body strength, as well as the lean masses of arms, legs, trunk, and total body. Unlike @lassek2009, we included women to test if the associations of upper body strength and lean masses with mating success were greater for men than women, as predicted by the sexual selection hypothesis. We also included numerous additional control variables, and used a registered report format with pre-specified models developed using pilot data in Stage 1 and then fit on held-out data in Stage 2. 
 
@@ -399,7 +402,7 @@ Finally, we found consistent evidence for a tradeoff between both grip strength 
 
 Our registered report had one aim: to test the prediction from the sexual selection hypothesis that the effect of upper body strength on reproductive success is significantly positive for males and significantly less so for females. Our aim was not to test all possible byproduct hypotheses, nor was it possible to do so. We were unable to control for in-utero testosterone exposure, or other conditions such as Polycystic Ovarian Syndrome (PCOS) that might influence the relationship between grip strength and our measures of mating success. Likewise, NHANES does not collect data on sociosexuality. As described in our methods, in industrialized populations like the U.S., widespread access to contraceptives uncouples reproductive success from mating behavior for both men and women. Measures of mating success, including partnered status, number of sexual partners, and age at first sexual intercourse, are used as proxies as they are assumed to have been strongly correlated with reproductive success under ancestral conditions [@perusse1993]. In addition, in confirmatory analyses of mating outcomes (but not immune, energy, or protein outcomes) we removed `{r} sum(designsH$d.design.adults$variables$sex_partners>=100, na.rm = T)` participants with 100 or more lifetime sexual partners (`{r} signif(100*sum(designsH$d.design.adults$variables$sex_partners>=100, na.rm = T)/nrow(designsH$d.design.adults$variables), 3)`%) on the grounds that these might involve evolutionarily novel patterns of behavior that would not conform to predictions of the sexual selection hypothesis. Ideally, however, analyses would account for the full range of variation in sexual behavior. Finally, all pilot results were obtained after considerable exploratory analysis, with a high risk of overfitting the data, and therefore our confirmatory results were critical to testing our predictions. However, even our confirmatory results were based on generalized linear models, but there might be important non-linear relationships that would alter interpretations.
 
-## Conclusion 
+# Conclusion 
 
 Our results most strongly support the importance of upper body strength to male long-term mating success, which is the basis of biparental care in human reproduction [@Gettler_2020; @Bribiescas_2012]. This benefit would compensate for the energy, protein, and immune costs associated with strength in our confirmatory results and lean masses in our *post hoc* results. Across evolutionary time, fitness for both men and women was heavily dependent on successfully obtaining long term partners, thereby reaping the efficiency benefits of a sexual division of labor [@Quinlan_2007; @Quinlan_2008]. More specifically, human children require provisioning for an extended period [@kaplan2000; @davison2021; @davison2022], and paternal care is an important predictor of child outcomes [@Winking_2011; @Starkweather_2021]. Thus, our study underscores that the sexual selection hypothesis for the relationship between strength and mating success should include long-term mating in addition to numbers of sexual partners. 
 
@@ -635,6 +638,57 @@ for (i in 1:nrow(modelsummaries_stage2)){
 }
 ```
 
+## Post hoc results
+
+### Lean mass coefficient plots
+
+#### Arm lean mass
+
+::: {#sfig-arms}
+
+```{r}
+#| fig-width: 11
+lean_mass_plot("Arm lean mass", "arm_lean_centered", "arm_lean_sex_centered", mating_only = F)
+```
+
+Coefficient plots for arm lean mass vs. mating success outcomes, energy and protein intake, and immunity (white blood cell count).
+:::
+
+#### Leg lean mass
+
+::: {#sfig-legs}
+
+```{r}
+#| fig-width: 11
+lean_mass_plot("Leg lean mass", "leg_lean_centered", "leg_lean_sex_centered", mating_only = F)
+```
+
+Coefficient plots for leg lean mass vs. mating success outcomes, energy and protein intake, and immunity (white blood cell count).
+:::
+
+#### Trunk lean mass
+
+::: {#sfig-trunk}
+
+```{r}
+#| fig-width: 11
+lean_mass_plot("Trunk lean mass", "trunk_lean_centered", "trunk_lean_sex_centered", mating_only = F)
+```
+
+Coefficient plots for trunk lean mass vs. mating success outcomes, energy and protein intake, and immunity (white blood cell count).
+:::
+
+#### Total lean mass
+
+::: {#sfig-total}
+```{r}
+#| fig-width: 11
+lean_mass_plot("Total lean mass", "total_lean_centered", "total_lean_sex_centered", mating_only = F)
+```
+
+Coefficient plots for total lean mass vs. mating success outcomes, energy and protein intake, and immunity (white blood cell count).
+:::
+
 ### Sex-specific models
 
 ```{r}
@@ -666,7 +720,7 @@ for (i in 1:nrow(dfmodelsummaries_confirm)){
 }
 ```
 
-## Combined G and H series data (2011-2014)
+### Combined G and H series data (2011-2014)
 
 ::: {#sfig-matingGH}
 
@@ -710,55 +764,6 @@ plot_intake_strength_GH
 ```
 
 Grip strength coefficients from energy and protein intake models fit on combined data.
-:::
-
-## Lean mass coefficient plots
-
-### Arm lean mass
-
-::: {#sfig-arms}
-
-```{r}
-#| fig-width: 11
-lean_mass_plot("Arm lean mass", "arm_lean_centered", "arm_lean_sex_centered", mating_only = F)
-```
-
-Coefficient plots for arm lean mass vs. mating success outcomes, energy and protein intake, and immunity (white blood cell count).
-:::
-
-### Leg lean mass
-
-::: {#sfig-legs}
-
-```{r}
-#| fig-width: 11
-lean_mass_plot("Leg lean mass", "leg_lean_centered", "leg_lean_sex_centered", mating_only = F)
-```
-
-Coefficient plots for leg lean mass vs. mating success outcomes, energy and protein intake, and immunity (white blood cell count).
-:::
-
-### Trunk lean mass
-
-::: {#sfig-trunk}
-
-```{r}
-#| fig-width: 11
-lean_mass_plot("Trunk lean mass", "trunk_lean_centered", "trunk_lean_sex_centered", mating_only = F)
-```
-
-Coefficient plots for trunk lean mass vs. mating success outcomes, energy and protein intake, and immunity (white blood cell count).
-:::
-
-### Total lean mass
-
-::: {#sfig-total}
-```{r}
-#| fig-width: 11
-lean_mass_plot("Total lean mass", "total_lean_centered", "total_lean_sex_centered", mating_only = F)
-```
-
-Coefficient plots for total lean mass vs. mating success outcomes, energy and protein intake, and immunity (white blood cell count).
 :::
 
 # References
