@@ -24,7 +24,7 @@ plot_allcoefs_stage2 <-
   geom_vline(xintercept=0, linetype='longdash') +
   labs(x='\nEstimate (95% CI)', y='') +
   facet_wrap(~ Outcome, ncol = 4, scales = "free_x") +
-  theme_minimal() +
+  theme_minimal(15) +
   theme(legend.position = 'bottom', legend.title = element_blank())
 plot_allcoefs_stage2
 ggsave("Figures/plot_allcoefs_stage2.pdf", plot_allcoefs_stage2, width = 14, height = 8)
@@ -234,8 +234,9 @@ plot_effects_all <-
   guides(color = guide_legend(override.aes = list(linewidth=3)), fill = 'none') +
   ylim(0, NA) +
   xlab('Strength (centered by sex)') +
+  ylab('Estimate') +
   facet_grid(Outcome~Stage, scales = 'free_y') +
-  theme_bw() +
+  theme_bw(15) +
   theme(
     axis.title.y = element_text(angle = 0),
     strip.text.y = element_text(angle = 0)

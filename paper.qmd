@@ -16,8 +16,9 @@ format:
   html:
     toc: true
     embed-resources: true
+    keep-md: false
   # docx:
-  #   number-sections: true
+  #   number-sections: false
   #   fig-format: pdf
 execute:
   echo: false
@@ -55,7 +56,7 @@ Theory and evidence suggest that the mating benefits of muscle mass in human mal
 
 # Sexual dimorphism in modern humans
 
-The mechanisms that have shaped human sexual dimorphism and whether they have primarily operated on male or female traits remain debated. Sexual dimorphism refers to sex differences in morphological and behavioral traits, excluding reproductive organs [@plavcan2001]. Unlike most animals, mammalian sexual size dimorphism, when it exists, tends to be male biased [@andersson1994; @Tombak_2024]. In humans, sexual size dimorphism is observable as early as the first trimester in utero where male embryos are larger than female embryos [@bukowski2007]. Body composition dimorphism is evident through childhood such that, adjusted for height, males have higher lean body mass and females have higher fat mass [@kirchengast2010]. At puberty, sexual dimorphism in size and body composition significantly increases such that in adults, adjusting for a 7-8% dimorphism for height, men have 12-25% higher body mass [@lassek2022], which is slightly greater than body mass dimorphism in gibbons, and slightly less than chimpanzees [@plavcan2012; @smith1997; @Puts_2023]. Men also have larger and stronger bones [@wells2007]. Other traits that are sexually dimorphic in humans include digit ratio, voice pitch, facial features, body and facial hair growth, and canine length [@Puts_2023].
+The mechanisms that have shaped human sexual dimorphism and whether they have primarily operated on male or female traits continue to be debated. Sexual dimorphism refers to sex differences in morphological and behavioral traits, excluding reproductive organs [@plavcan2001]. Unlike most animals, mammalian sexual size dimorphism, when it exists, tends to be male biased [@andersson1994; @Tombak_2024]. In humans, sexual size dimorphism is observable as early as the first trimester in utero where male embryos are larger than female embryos [@bukowski2007]. Body composition dimorphism is evident through childhood such that, adjusted for height, males have higher lean body mass and females have higher fat mass [@kirchengast2010]. At puberty, sexual dimorphism in size and body composition significantly increases such that in adults, adjusting for a 7-8% dimorphism for height, men have 12-25% higher body mass [@lassek2022], which is slightly greater than body mass dimorphism in gibbons, and slightly less than chimpanzees [@plavcan2012; @smith1997; @Puts_2023]. Men also have larger and stronger bones [@wells2007]. Other traits that are sexually dimorphic in humans include digit ratio, voice pitch, facial features, body and facial hair growth, and canine length [@Puts_2023].
 
 While humans are only moderately dimorphic in terms of overall body mass, this is not the case for fat and muscle allocation, which are highly dimorphic [@puts2010] due to women’s copious storage of fat and male investment in muscle mass. Men have between 30% and 42% more fat-free mass [@lassek2022], 61% more overall muscle mass, and 78% more muscle mass in the upper arms. This concentrated muscle dimorphism in the arms and back translates to greater upper body strength in men than women. Studies of sex differences in strength show that men are stronger on average than women on all tests of muscle strength, but especially for tests of upper-body muscle strength, where female upper-body strength is 50-60% of male upper-body strength while lower-body strength is 60-70% of male values, and trunk strength is 60% of male values [@nuzzo2023]. Muscle mass alone does not explain the sex difference in strength, as strength assessments are often greater in males than females even when pair-matched on muscle thickness [@kataoka2023], and likewise men have greater strength-to-body mass ratios than women [@nuzzo2023].
 
@@ -63,7 +64,7 @@ There is no evidence for a sex difference in the ability of the nervous system t
 
 ## Sexual dimorphism hypotheses
 
-Two hypotheses for the evolution of human sexual size dimorphism and body composition dimorphism dominate the literature: 1) intrasexual selection through male contests and 2) intersexual selection through female mate choice. Both assert that men with more masculine traits had higher biological fitness over evolutionary history: intrasexual selection if more formidable men were able to physically outcompete other men for access to mates, and intersexual selection if females preferentially mated with men who displayed masculine traits. The male contest and the female choice hypotheses concur that sexual size and strength dimorphism are proximately (that is, developmentally) caused by sex differences in androgen hormones in the uterine environment and during differentiation at puberty. They differ, however, in the ultimate (functional) explanations for these differences, as discussed below.
+Two hypotheses for the evolution of human sexual size dimorphism and body composition dimorphism dominate the literature: 1) intrasexual selection through male contests and 2) intersexual selection through female mate choice. Both assert that men with more masculine traits had higher biological fitness over evolutionary history: intrasexual selection if more formidable men were able to physically outcompete other men for access to mates, and intersexual selection if females preferentially mated with men who displayed masculine traits. The male contest and the female choice hypotheses concur that sexual size and strength dimorphism are proximately (that is, developmentally) caused by sex differences in androgen hormones in the uterine environment and during differentiation at puberty. They differ, however, in the ultimate (functional) explanations for these differences, as discussed next.
 
 ### Male contest competition
 
@@ -92,7 +93,7 @@ Previous research has shown that physical formidability in males (operationalize
 According to the sexual selection hypothesis, males evolved greater physical formidability than females because physical formidability increased the mating success of males more than females. The aim of this study is to replicate the costs and benefits of formidability reported by @lassek2009 using similar nationally representative data, controlling for a wider range of possible confounds, and precisely prespecifying the statistical models in a registered report format. It also aims to investigate if these costs and benefits are also experienced by women, and specifically if there is a positive effect of physical strength on male mating success, a proxy for reproductive success, that is significantly greater than its effect on women's mating success, as the sexual selection hypothesis predicts. See @fig-sexualselection.
 
 ::: {#fig-sexualselection}
-![](sexualselection.svg)
+![](Figures/Figure1.svg)
 
 Theoretically predicted relationships between upper body strength and various indices of mating success, such as numbers of sexual partners, partnered status, and age at first sex, for both men and women. According to the sexual selection hypothesis, sexual dimorphism in upper body strength is explained by a positive effect on male mating success that is greater than its effect on female mating success, i.e., a sex x strength interaction (the hypothesis does allow for some degree of positive or negative relationship between female strength and mating success, however, which is represented by the grey uncertainty band on the female slope).
 :::
@@ -119,7 +120,7 @@ Finally, to assess costs of greater upper body strength, we investigated the rel
 
 ### Key explanatory variables
 
-Our main explanatory variable of mating success is formidability, which @lassek2009 operationalized as fat-free mass and limb muscle volume. Since those variables were not available in our data, we operationalized formidability as combined grip strength (kg), the sum of the highest of three readings taken on each hand using a dynamometer (hereafter 'grip strength'). All regression models also included sex (male/female), our second main explanatory variable. All models also controlled for age in years and partnered status (not included in models where partnered status was the outcome variable). Continuous-valued predictor variables were centered and standardized by 2 standard deviations which approximately matches the variation in binary variables like sex, thus making the regression coefficients more comparable [@gelman2008]. Standardized variables are denoted in figures as 'Variable Name (S)'. 
+Our main explanatory variable of mating success is formidability, which @lassek2009 operationalized as fat-free mass and limb muscle volume. Since those variables were not available in our data (but see @sec-posthoc), we operationalized formidability as combined grip strength (kg), the sum of the highest of three readings taken on each hand using a dynamometer (hereafter 'grip strength'). All regression models also included sex (male/female), our second main explanatory variable. All models also controlled for age in years and partnered status (not included in models where partnered status was the outcome variable). Continuous-valued predictor variables were centered and standardized by 2 standard deviations which approximately matches the variation in binary variables like sex, thus making the regression coefficients more comparable [@gelman2008]. Standardized variables are denoted in figures as 'Variable Name (S)'. 
 
 The interaction between sex and grip strength was crucial for our models since we wanted to test if the effect of grip strength on mating and immune outcomes is different for women than for men. Grip strength is highly sexually dimorphic, however, with about 90% of men stronger than about 90% of women [@smith2022], and is thus highly collinear with sex, a problem for regression modeling and interpretation. We therefore computed a sex-specific grip strength value as follows: for each sex we centered grip strength at the sex-specific mean and divided by two times the sex-specific standard deviation. Thus, for women, low or high values are relative to other women, and for men, low or high values are relative to other men. We denote the use of this predictor in text as 'sex-specific grip strength' and figures below as 'Grip Strength (S by sex).' The sex-specific values were used in all models except the immune function and dietary intake models described below, which assess the costs of high upper body strength. Here, an index of absolute rather than relative strength is called for, and we used grip strength standardized across both sexes, denoted as Grip Strength (S) in results below. (See the post hoc analyses section, where in addition to grip strength, we also fit models using lean body masses.)
 
@@ -143,11 +144,13 @@ The socioeconomic control model included education and race as categorical varia
 
 ### Health control model
 
-An umbrella review found the grip strength is a useful indicator of general health status, early all-cause mortality, cardiovascular mortality, and disability [@soysal2021]. Furthermore, healthy status is associated with higher likelihood of sexual activity, frequency of sexual activity, and reported quality of sex in men and women [@lindau2010]. Another study of men aged 45-59 found that lower sexual activity was associated with increased mortality [@daveysmith1997]. The health model, therefore, included a number of variables related to health. White blood cell count (1000 cells/µL) and hemoglobin (g/dL) were included to control for acute infection. Depression, which is negatively related to grip strength [@smith2022], was measured using the Patient Health Questionnaire-9 [PHQ-9, @kroenke2001], a validated nine-item screening instrument. Each item represents a symptom of depression, and for each one participants were asked to consider how frequently they had been bothered by that symptom over the past two weeks, rated on a scale from 0 (not at all) to 3 (nearly everyday). These ratings were summed to produce a depression score ranging from 0-27. Chronic illness was included using Chronic Disease Score (0-6) a count of chronic diseases participants reported having been diagnosed with including diabetes, cancer, stroke, arthritis, heart disease and respiratory disease. A point was added for each disease a participant reported being diagnosed with, regardless of any impairment due to the disease. We then controlled for impairment resulting from chronic illness (Disease Impairment Score; 0-5) calculated from a different NHANES question, which asked participants to list up to five health conditions that specifically cause them to have difficulties with physical activities. We also controlled for physical disability and using the item "special equipment" which referred to participants' report that they needed special equipment to walk. Finally the 'perceived abnormal weight' variable was coded as true or false depending on whether a participant reported that they perceived their weight to be abnormal.
+An umbrella review found the grip strength is a useful indicator of general health status, early all-cause mortality, cardiovascular mortality, and disability [@soysal2021]. Furthermore, healthy status is associated with higher likelihood of sexual activity, frequency of sexual activity, and reported quality of sex in men and women [@lindau2010]. Another study of men aged 45-59 found that lower sexual activity was associated with increased mortality [@daveysmith1997]. The health model, therefore, included a number of variables related to health. White blood cell count (1000 cells/µL) and hemoglobin (g/dL) were included to control for acute infection. Depression, which is negatively related to grip strength [@smith2022], was measured using the Patient Health Questionnaire-9 [PHQ-9, @kroenke2001], a validated nine-item screening instrument. Each item represents a symptom of depression, and for each one participants were asked to consider how frequently they had been bothered by that symptom over the past two weeks, rated on a scale from 0 (not at all) to 3 (nearly everyday). These ratings were summed to produce a depression score ranging from 0-27. 
+
+Chronic illness was included using Chronic Disease Score (0-6), a count of chronic diseases participants reported having been diagnosed with, including diabetes, cancer, stroke, arthritis, heart disease and respiratory disease. A point was added for each disease a participant reported being diagnosed with, regardless of any impairment due to the disease. We then controlled for impairment resulting from chronic illness (Disease Impairment Score; 0-5) calculated from a different NHANES question, which asked participants to list up to five health conditions that specifically cause them to have difficulties with physical activities. We also controlled for physical disability using the item "special equipment" which referred to participants' report that they needed special equipment to walk. Finally the 'perceived abnormal weight' variable was coded as true or false depending on whether a participant reported that they perceived their weight to be abnormal.
 
 ### Hormone control model
 
-There is evidence that testosterone is positively associated with higher numbers of partners for men and less robustly so for women [@pollet2011; @vananders2007], but mixed evidence that it is related to sexual desire [@vananders2013]. For review of mixed evidence of the often complex relationships between testosterone and sexual desire, sexual behavior, partnered status, and parenting for men and women see @vananders2013. Likewise, although some have found a positive correlation between circulating testosterone and grip strength [@Chiu_2019], other studies have found no association [@Gettler_2010; @Ribeiro_2016]. There is evidence that testosterone-related single nucleotide polymorphisms (SNPs) are associated with greater strength performance [@Guilherme_2021]. The hormone control model included serum total testosterone (ng/dL). Since male mean testosterone is an order of magnitude higher than the female mean, testosterone, like grip strength, was highly confounded with sex, one of our key predictor variables. We therefore computed a sex-specific testosterone value in the same way we did for grip strength. This differed from other centered and standardized variables which we centered and standardized across all male and female values.
+There is evidence that testosterone is positively associated with higher numbers of partners for men and less robustly so for women [@pollet2011; @vananders2007], but mixed evidence that it is related to sexual desire [@vananders2013]. For review of mixed evidence of the often complex relationships between testosterone and sexual desire, sexual behavior, partnered status, and parenting for men and women see @vananders2013. Likewise, although some have found a positive correlation between circulating testosterone and grip strength [@Chiu_2019], other studies have found no association [@Gettler_2010; @Ribeiro_2016]. There is evidence that testosterone-related single nucleotide polymorphisms (SNPs) are associated with greater strength performance [@Guilherme_2021]. The hormone control model therefore included serum total testosterone (ng/dL). Since male mean testosterone is an order of magnitude higher than the female mean, testosterone, like grip strength, was highly confounded with sex, one of our key predictor variables. We therefore computed a sex-specific testosterone value in the same way we did for grip strength.
 
 ### Physical activity control model
 
@@ -218,7 +221,7 @@ For a plot of all coefficients, see @fig-allcoefs.
 
 ### Immune costs of strength
 
-Previous research found that higher musculature was associated with decreased investment in innate immunity. We developed two models of immune investment in white blood cell count (@fig-immune). In the Lassek and Gaulin model, grip strength was a significant negative predictor of WBCC for both men and women (there was no significant interaction of sex and grip strength) controlling for age and BMI. In the expanded model with additional controls, including the substitution of height and weight for BMI, grip strength was no longer significant, albeit with a coefficient that was very similar to the replication model.
+Previous research found that higher musculature was associated with decreased investment in innate immunity. We developed two models of immune investment in white blood cell count (@fig-immune). In our version of the Lassek and Gaulin model, grip strength was a significant negative predictor of WBCC for both men and women (there was no significant interaction of sex and grip strength) controlling for age and BMI. In the expanded model with additional controls, including the substitution of height and weight for BMI, grip strength was no longer significant, albeit with a coefficient that was very similar to the replication model.
 
 ### Models of energy and protein intake
 
@@ -226,7 +229,7 @@ Finally, we tested whether grip strength was related to increased energy or prot
 
 ## Pilot Results Discussion
 
-Using sex-specific grip strength as a proxy for muscularity, this pilot study replicated findings from @lassek2009 that muscularity is significantly positively associated with two of the four indices of mating success, including our additional index of mating success---partnered status---even after controlling for a wider range of potential confounds including socioeconomic, health, hormone, and physical activity variables. The exceptions were that sex-specific grip strength was not a significant predictor of past-year partners, nor of age at first sex in the socioeconomic control model; the coefficient of the latter, however, was similar in sign and magnitude to the significant sex-specific grip strength coefficients in the other models. Grip strength was also associated with immune, energy, and protein costs in the Lassek and Gaulin models, but not in the expanded control models of immune or energy costs; it remained a significant predictor of protein intake, however. The expanded control models included height, which might be a proxy for aspects of strength, such as lower body strength, that are not accounted for by grip strength.
+Using sex-specific grip strength as a proxy for muscularity, this pilot study replicated findings from @lassek2009 that muscularity is significantly positively associated with two of the four indices of mating success, including our additional index of mating success---partnered status---even after controlling for a wider range of potential confounds including socioeconomic, health, hormone, and physical activity variables. The exceptions were that sex-specific grip strength was not a significant predictor of past-year partners, nor of age at first sex in the socioeconomic control model; the coefficient of the latter, however, was similar in sign and magnitude to the significant sex-specific grip strength coefficients in the other models. Grip strength was also associated with immune, energy, and protein costs in our versions of the Lassek and Gaulin models, but not in the expanded control models of immune or energy costs; it remained a significant predictor of protein intake, however. The expanded control models included height, which might be a proxy for aspects of strength, such as lower body strength, that are not accounted for by grip strength.
 
 The sexual selection hypothesis predicts that the effect of strength on mating success will be greater for men than for women, and this prediction was exceptionally well-supported for partnered status and lifetime sexual partners. In humans, biological fitness depends critically on extensive investment in offspring which typically takes place in long-term partnerships. We therefore propose that the sexual selection hypothesis for the sexual dimorphism in physical formidability applies to long-term partnerships (proxied by our partnered variable), as well as short-term matings (proxied by partner numbers). Thus, our pilot study supports the hypothesis that muscularity increases both short- and long-term mating success for men more than it does for women. Lifetime sexual partners was also a negative predictor of partnered status (@sfig-tradeoff), suggesting a tradeoff in pursuing these two reproductive strategies. 
 
@@ -319,7 +322,8 @@ plot_effects_all
 ```
 
 ### Immune costs of strength
-In our confirmatory data we found no significant effects of grip strength or a $grip\ strength\times sex$ interaction on WBCC in either our Lassek and Gaulin model, or the expanded controls model (@fig-immune). 
+
+In our confirmatory data we found no significant effects of grip strength or a $grip\ strength\times sex$ interaction on WBCC in either our version of the Lassek and Gaulin model, or the expanded controls model (@fig-immune). 
 
 ```{r}
 #| label: fig-immune
@@ -365,9 +369,9 @@ tribble(
   group_tt(j = list("Grip strength coefficient" = 2:3, "Grip strength X sex coefficient" = 4:5))
 ```
 
-# Post Hoc Analyses
+# Post Hoc Analyses {#sec-posthoc}
 
-We were made aware that Dual-Energy X-ray Absorptiometry (DXA) data were published for these series after our initial download of the data for this study. DXA data provide alternatives to grip strength for assessing muscle mass, and include the lean masses (i.e., fat-free mass, optionally including or excluding bone mineral content) in grams of each arm and leg, the trunk, and total body. Total body lean mass is similar to the bioelectrical impedance analysis fat-free mass variable used by @lassek2009. For reviews of DXA measurements of body composition, see @shepherd2017 and @messina2020. For details of the NHANES DXA measurements, see @DXXG2023. In addition to our grip strength models, we also fit our models exactly as specified in stage 1 except substituting four DXA lean masses for grip strength (all masses excluded bone mineral content). Specifically, we computed arm lean mass as the sum of left and right arm lean masses, and leg lean mass as the sum of left and right leg lean masses. We then fit our models using arm, leg, trunk, and total lean masses, each standardized by sex as described earlier for grip strength.
+After we download the data for this study, Dual-Energy X-ray Absorptiometry (DXA) data were published for these series. DXA data provide alternatives to grip strength for assessing muscle mass, and include the lean masses (i.e., fat-free mass, optionally including or excluding bone mineral content) in grams of each arm and leg, the trunk, and total body. Total body lean mass is similar to the bioelectrical impedance analysis fat-free mass variable used by @lassek2009. For reviews of DXA measurements of body composition, see @shepherd2017 and @messina2020. For details of the NHANES DXA measurements, see @DXXG2023. In addition to our grip strength models, we also fit our models exactly as specified in stage 1 except substituting four DXA lean masses for grip strength (all masses excluded bone mineral content). Specifically, we computed arm lean mass as the sum of left and right arm lean masses, and leg lean mass as the sum of left and right leg lean masses. We then fit our models using arm, leg, trunk, and total lean masses, each standardized by sex as described earlier for grip strength.
 
 Our post hoc analyses revealed that coefficients for sex-specific arm lean mass were generally similar in direction to those of sex-specific grip strength discussed above, including a strong positive significant main effect on partnered status and lifetime number of partners after controlling for all five sets of potential confounds. In addition, sex-specific arm lean mass had a significantly smaller association with partnered status for women than men, consistent with the sexual selection hypothesis. We found mixed evidence for a main effect of sex-specific lean mass in the age of first sex models, as these were not significant predictors after controlling for socioeconomic or physical activity controls. As with sex-specific grip strength, sex-specific arm lean mass was not a predictor of past-year number of sexual partners in any control model. Sex-specific leg, trunk, and total lean mass were not consistently related to any mating success outcome. See @fig-leancoefs and @sfig-legs - @sfig-total.
 
@@ -400,7 +404,7 @@ Finally, we found consistent evidence for a tradeoff between both grip strength 
 
 ## Limitations
 
-Our registered report had one aim: to test the prediction from the sexual selection hypothesis that the effect of upper body strength on reproductive success is significantly positive for males and significantly less so for females. Our aim was not to test all possible byproduct hypotheses, nor was it possible to do so. We were unable to control for in-utero testosterone exposure, or other conditions such as Polycystic Ovarian Syndrome (PCOS) that might influence the relationship between grip strength and our measures of mating success. Likewise, NHANES does not collect data on sociosexuality. As described in our methods, in industrialized populations like the U.S., widespread access to contraceptives uncouples reproductive success from mating behavior for both men and women. Measures of mating success, including partnered status, number of sexual partners, and age at first sexual intercourse, are used as proxies as they are assumed to have been strongly correlated with reproductive success under ancestral conditions [@perusse1993]. In addition, in confirmatory analyses of mating outcomes (but not immune, energy, or protein outcomes) we removed `{r} sum(designsH$d.design.adults$variables$sex_partners>=100, na.rm = T)` participants with 100 or more lifetime sexual partners (`{r} signif(100*sum(designsH$d.design.adults$variables$sex_partners>=100, na.rm = T)/nrow(designsH$d.design.adults$variables), 3)`%) on the grounds that these might involve evolutionarily novel patterns of behavior that would not conform to predictions of the sexual selection hypothesis. Ideally, however, analyses would account for the full range of variation in sexual behavior (we fit our confirmatory models on the complete data, and all results were very similar to those we report). Finally, all pilot results were obtained after considerable exploratory analysis, with a high risk of overfitting the data, and therefore our confirmatory results were critical to testing our predictions. However, our confirmatory results were based on generalized linear models, but there might be important non-linear relationships that would alter interpretations.
+Our registered report had one aim: to test the prediction from the sexual selection hypothesis that the effect of upper body strength on reproductive success is significantly positive for males and significantly less so for females. Our aim was not to test all possible byproduct hypotheses, nor was it possible to do so. We were unable to control for in-utero testosterone exposure, or other conditions such as Polycystic Ovarian Syndrome (PCOS) that might influence the relationship between grip strength and our measures of mating success. Likewise, NHANES does not collect data on sociosexuality. As described in our methods, in industrialized populations like the U.S., widespread access to contraceptives uncouples reproductive success from mating behavior for both men and women. Measures of mating success, including partnered status, number of sexual partners, and age at first sexual intercourse, are used as proxies as they are assumed to have been strongly correlated with reproductive success under ancestral conditions [@perusse1993]. In addition, in confirmatory analyses of mating outcomes (but not immune, energy, or protein outcomes) we removed `{r} sum(designsH$d.design.adults$variables$sex_partners>=100, na.rm = T)` participants with 100 or more lifetime sexual partners (`{r} signif(100*sum(designsH$d.design.adults$variables$sex_partners>=100, na.rm = T)/nrow(designsH$d.design.adults$variables), 3)`%) on the grounds that these might involve evolutionarily novel patterns of behavior that would not conform to predictions of the sexual selection hypothesis. Ideally, however, analyses would account for the full range of variation in sexual behavior (in a post hoc analysis, we refit our models on the combined pilot and confirmatory data, and all results were very similar to those we report; see the SI). Finally, all pilot results were obtained after considerable exploratory analysis, with a high risk of overfitting the data, and therefore our confirmatory results were critical to testing our predictions. However, our confirmatory results were based on generalized linear models, but there might be important non-linear relationships that would alter interpretations.
 
 # Conclusion 
 
@@ -460,7 +464,8 @@ The adjusted odds ratios of lifetime number of sexual partners on partnered stat
 
 ### Marginal effects
 
-::: {#stab-marginal}
+::: {#stbl-marginal}
+
 ```{r}
 marginal |>
   tt() |>
@@ -511,13 +516,15 @@ cor_males
 Correlation matrix of study variables for males only. Rows and columns ordered by hierarchical clustering.
 :::
 
-### Regression tables
+### Regression tables (Pilot study)
 
 ```{r}
 #| results: asis
 for (i in 1:nrow(modelsummaries)){
-  cat(paste('####', str_replace(modelsummaries$title[i], '\n', ' '))) # Remove line feed char
+  heading <- str_replace(modelsummaries$title[i], '\n', ' ') # Remove line feed char
+  cat(paste0("\n\n::: {#stbl-", LETTERS[i], "}\n\n"))
   print(modelsummaries$summary[[i]])
+  cat(paste0("\n\n", heading, " regression model coefficients\n\n:::\n\n"))
 }
 ```
 
@@ -542,13 +549,15 @@ plot_sexspecific_strength_coefs
 Grip strength coefficients in each regression model fit separately by sex. Control variables are the same as for models fit with a sex X grip strength interaction term. Note that these models test if each strength coefficient is significantly different from 0, not if the male and female coefficients are significantly different from each other.
 :::
 
-Regression tables for sex-specific models of the effect of grip strength on mating success.
+#### Regression tables for sex-specific models of the effect of grip strength on mating success.
 
 ```{r}
 #| results: asis
 for (i in 1:nrow(dfmodelsummaries)){
-  cat(paste('####', str_replace(dfmodelsummaries$title[i], '\n', ' ')))
+  title <- str_replace(dfmodelsummaries$title[i], '\n', ' ') # Remove line feed char
+  cat(paste0("\n\n::: {#stbl-", LETTERS[i], "3}\n\n"))
   print(dfmodelsummaries$summary[[i]])
+  cat(paste0("\n\n", title, " regression model coefficients\n\n:::\n\n"))
 }
 ```
 
@@ -577,7 +586,7 @@ Pilot: A comparison of grip strength and $grip\ strength\times sex$ coefficients
 
 ### Marginal effects
 
-::: {#stab-marginal-confirm}
+::: {#stbl-marginal-confirm}
 ```{r}
 marginal_stage2 |>
   tt() |>
@@ -628,15 +637,19 @@ confirm_cor_males
 Confirmatory: Correlation matrix of study variables for males only. Rows and columns ordered by hierarchical clustering.
 :::
 
-### Regression tables
+### Regression tables (confirmatory study)
 
 ```{r}
 #| results: asis
+
 for (i in 1:nrow(modelsummaries_stage2)){
-  cat(paste('####', str_replace(modelsummaries_stage2$title[i], '\n', ' '))) # Remove line feed char
+  title <- str_replace(modelsummaries_stage2$title[i], '\n', ' ') # Remove line feed char
+  cat(paste0("\n\n::: {#stbl-", LETTERS[i], "2}\n\n"))
   print(modelsummaries_stage2$summary[[i]])
+  cat(paste0("\n\n", title, " regression model coefficients\n\n:::\n\n"))
 }
 ```
+
 
 ## Post hoc results
 
@@ -710,13 +723,16 @@ plot_sexspecific_strength_coefs_confirm
 Confirmatory: Strength coefficients in each regression model fit separately by sex. Control variables are the same as for models fit with a $grip\ strength\times sex$ interaction term. Note that these models test if each grip strength coefficient is significantly different from 0, not if the male and female coefficients are significantly different from each other.
 :::
 
-Regression tables for sex-specific models of the effect of grip strength on mating success.
+#### Regression tables for sex-specific models of the effect of grip strength on mating success.
 
 ```{r}
 #| results: asis
+
 for (i in 1:nrow(dfmodelsummaries_confirm)){
-  cat(paste('####', str_replace(dfmodelsummaries_confirm$title[i], '\n', ' ')))
+  title <- str_replace(dfmodelsummaries_confirm$title[i], '\n', ' ') # Remove line feed char
+  cat(paste0("\n\n::: {#stbl-", LETTERS[i], "4}\n\n"))
   print(dfmodelsummaries_confirm$summary[[i]])
+  cat(paste0("\n\n", title, " regression model coefficients\n\n:::\n\n"))
 }
 ```
 
@@ -730,7 +746,7 @@ for (i in 1:nrow(dfmodelsummaries_confirm)){
 plot_strengthGH
 ```
 
-Grip trength coefficients from models of mating fit on combined data.
+Grip strength coefficients from models of mating fit on combined data.
 :::
 
 ::: {#sfig-effectsGH}
